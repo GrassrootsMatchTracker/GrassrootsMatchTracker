@@ -9,9 +9,26 @@ const App = () => {
   const [teams, setTeams] = useState([]);
   const [players, setPlayers] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const [matches, setMatches] = useState([]);
+  const [formations, setFormations] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState('');
+  
+  // Match creation state
+  const [matchStep, setMatchStep] = useState(1);
+  const [newMatch, setNewMatch] = useState({
+    home_team_id: '',
+    away_team_id: '',
+    match_date: '',
+    venue: '',
+    match_type: 'Friendly'
+  });
+  const [selectedFormation, setSelectedFormation] = useState('4-4-2');
+  const [selectedPlayers, setSelectedPlayers] = useState({
+    starting: [],
+    substitutes: []
+  });
 
   // Logo component using your exact design
   const Logo = () => (
