@@ -1,11 +1,12 @@
 import requests
 import unittest
 import json
+import os
 from datetime import datetime, timedelta
 
 class GrassrootsMatchTrackerAPITest(unittest.TestCase):
     def setUp(self):
-        self.base_url = "http://localhost:8001"
+        self.base_url = "http://localhost:8001"  # Default URL
         self.api_url = f"{self.base_url}/api"
         
     def test_root_endpoint(self):
