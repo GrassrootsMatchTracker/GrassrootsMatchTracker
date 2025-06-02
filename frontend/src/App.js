@@ -84,6 +84,36 @@ const App = () => {
     }
   };
 
+  const fetchPlayers = async (teamId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/teams/${teamId}/players`);
+      const data = await response.json();
+      setPlayers(data);
+    } catch (error) {
+      console.error('Error fetching players:', error);
+    }
+  };
+
+  const fetchFormations = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/formations`);
+      const data = await response.json();
+      setFormations(data);
+    } catch (error) {
+      console.error('Error fetching formations:', error);
+    }
+  };
+
+  const fetchMatches = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/matches`);
+      const data = await response.json();
+      setMatches(data);
+    } catch (error) {
+      console.error('Error fetching matches:', error);
+    }
+  };
+
   const createTeam = async (teamData) => {
     try {
       setIsLoading(true);
