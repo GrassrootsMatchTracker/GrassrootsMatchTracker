@@ -54,6 +54,36 @@ const App = () => {
     }
   };
 
+  const fetchPlayers = async (teamId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/teams/${teamId}/players`);
+      const data = await response.json();
+      setPlayers(data);
+    } catch (error) {
+      console.error('Error fetching players:', error);
+    }
+  };
+
+  const fetchFormations = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/formations`);
+      const data = await response.json();
+      setFormations(data);
+    } catch (error) {
+      console.error('Error fetching formations:', error);
+    }
+  };
+
+  const fetchMatches = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/matches`);
+      const data = await response.json();
+      setMatches(data);
+    } catch (error) {
+      console.error('Error fetching matches:', error);
+    }
+  };
+
   const createTeam = async (teamData) => {
     try {
       setIsLoading(true);
@@ -74,9 +104,57 @@ const App = () => {
     }
   };
 
+  const createPlayer = async (playerData) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/players`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(playerData),
+      });
+      const newPlayer = await response.json();
+      setPlayers([...players, newPlayer]);
+      return newPlayer;
+    } catch (error) {
+      console.error('Error creating player:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createMatch = async (matchData) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${API_BASE_URL}/api/matches`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(matchData),
+      });
+      const newMatch = await response.json();
+      setMatches([...matches, newMatch]);
+      return newMatch;
+    } catch (error) {
+      console.error('Error creating match:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchTeams();
+    fetchFormations();
+    fetchMatches();
   }, []);
+
+  useEffect(() => {
+    if (selectedTeam) {
+      fetchPlayers(selectedTeam.id);
+    }
+  }, [selectedTeam]);
 
   // Home View
   const HomeView = () => (
