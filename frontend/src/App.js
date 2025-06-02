@@ -84,14 +84,6 @@ const App = () => {
     }
   };
 
-  const fetchPlayers = async (teamId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/teams/${teamId}/players`);
-      const data = await response.json();
-      setPlayers(data);
-    } catch (error) {
-      console.error('Error fetching players:', error);
-    }
   };
 
   const fetchFormations = async () => {
