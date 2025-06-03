@@ -697,14 +697,12 @@ const App = () => {
   const SquadView = () => {
     const [showForm, setShowForm] = useState(false);
     const [newPlayer, setNewPlayer] = useState({
-      name: '',
+      first_name: '',
+      last_name: '',
       squad_number: '',
       position: 'MID',
       photo: '',
-      age: '',
-      height: '',
-      weight: '',
-      nationality: ''
+      age: ''
     });
 
     const handleSubmit = async (e) => {
@@ -716,6 +714,7 @@ const App = () => {
       
       const playerData = {
         ...newPlayer,
+        name: `${newPlayer.first_name} ${newPlayer.last_name}`.trim(),
         team_id: selectedTeam.id,
         squad_number: parseInt(newPlayer.squad_number),
         age: newPlayer.age ? parseInt(newPlayer.age) : null
@@ -725,14 +724,12 @@ const App = () => {
       if (player) {
         setShowForm(false);
         setNewPlayer({
-          name: '',
+          first_name: '',
+          last_name: '',
           squad_number: '',
           position: 'MID',
           photo: '',
-          age: '',
-          height: '',
-          weight: '',
-          nationality: ''
+          age: ''
         });
       }
     };
@@ -747,6 +744,12 @@ const App = () => {
         reader.readAsDataURL(file);
       }
     };
+
+    // Generate age options from 3 to 100
+    const ageOptions = [];
+    for (let i = 3; i <= 100; i++) {
+      ageOptions.push(i);
+    }
 
     if (!selectedTeam) {
       return (
@@ -799,7 +802,6 @@ const App = () => {
                 </div>
                 <h4 className="text-xl font-bold mb-2">{player.name}</h4>
                 {player.age && <p className="text-gray-600">Age: {player.age}</p>}
-                {player.nationality && <p className="text-gray-600">Nationality: {player.nationality}</p>}
                 <div className="flex space-x-2 mt-4">
                   <button className="secondary-button flex-1">✏️</button>
                   <button className="secondary-button">🗑️</button>
@@ -823,15 +825,27 @@ const App = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Player Name</label>
+                      <label className="block text-sm font-medium mb-2">First Name</label>
                       <input
                         type="text"
-                        value={newPlayer.name}
-                        onChange={(e) => setNewPlayer({...newPlayer, name: e.target.value})}
+                        value={newPlayer.first_name}
+                        onChange={(e) => setNewPlayer({...newPlayer, first_name: e.target.value})}
                         className="input-field"
                         required
                       />
                     </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Last Name</label>
+                      <input
+                        type="text"
+                        value={newPlayer.last_name}
+                        onChange={(e) => setNewPlayer({...newPlayer, last_name: e.target.value})}
+                        className="input-field"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-2">Squad Number</label>
                       <input
@@ -843,6 +857,19 @@ const App = () => {
                         max="99"
                         required
                       />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Age</label>
+                      <select
+                        value={newPlayer.age}
+                        onChange={(e) => setNewPlayer({...newPlayer, age: e.target.value})}
+                        className="input-field"
+                      >
+                        <option value="">Select Age</option>
+                        {ageOptions.map(age => (
+                          <option key={age} value={age}>{age} years old</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   <div>
@@ -857,48 +884,6 @@ const App = () => {
                       <option value="MID">Midfielder (MID)</option>
                       <option value="FWD">Forward (FWD)</option>
                     </select>
-                  </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Age</label>
-                      <input
-                        type="number"
-                        value={newPlayer.age}
-                        onChange={(e) => setNewPlayer({...newPlayer, age: e.target.value})}
-                        className="input-field"
-                        min="16"
-                        max="50"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Height</label>
-                      <input
-                        type="text"
-                        value={newPlayer.height}
-                        onChange={(e) => setNewPlayer({...newPlayer, height: e.target.value})}
-                        className="input-field"
-                        placeholder="e.g. 180cm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Weight</label>
-                      <input
-                        type="text"
-                        value={newPlayer.weight}
-                        onChange={(e) => setNewPlayer({...newPlayer, weight: e.target.value})}
-                        className="input-field"
-                        placeholder="e.g. 75kg"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Nationality</label>
-                    <input
-                      type="text"
-                      value={newPlayer.nationality}
-                      onChange={(e) => setNewPlayer({...newPlayer, nationality: e.target.value})}
-                      className="input-field"
-                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Player Photo</label>
