@@ -342,18 +342,16 @@ async def create_team(team: Team):
 async def get_teams():
     """Get all teams"""
     teams = []
-    async for team in db.teams.find():
-        # Convert ObjectId to string
-        team["_id"] = str(team["_id"])
-        # Create a clean dict without MongoDB-specific fields
-        clean_team = {
-            "id": team.get("id"),
-            "name": team.get("name"),
-            "age_group": team.get("age_group"),
-            "logo_url": team.get("logo_url"),
-            "players": team.get("players", [])
+    async for team_doc in db.teams.find():
+        # Skip the MongoDB _id field entirely
+        team_data = {
+            "id": team_doc.get("id"),
+            "name": team_doc.get("name"),
+            "age_group": team_doc.get("age_group"),
+            "logo_url": team_doc.get("logo_url"),
+            "players": team_doc.get("players", [])
         }
-        teams.append(clean_team)
+        teams.append(team_data)
     return {"teams": teams}
 
 @app.get("/api/teams/{team_id}")
