@@ -274,8 +274,17 @@ def run_tests():
     suite.addTest(GrassrootsMatchTrackerAPITest('test_update_match'))
     
     # Run the tests
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite)
+    runner = unittest.TextTestRunner(verbosity=3)
+    result = runner.run(suite)
+    
+    # Print summary
+    print(f"\nTest Summary:")
+    print(f"  Ran {result.testsRun} tests")
+    print(f"  Successes: {result.testsRun - len(result.failures) - len(result.errors)}")
+    print(f"  Failures: {len(result.failures)}")
+    print(f"  Errors: {len(result.errors)}")
+    
+    return result
 
 if __name__ == "__main__":
     print("\n🔍 STARTING BACKEND API TESTS 🔍")
