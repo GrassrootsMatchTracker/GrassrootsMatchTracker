@@ -178,6 +178,202 @@ const App = () => {
     }
   }, [selectedTeam]);
 
+  // Formation Pitch Component
+  const FormationPitch = ({ formation, players, onPlayerSelect, selectedPlayers, homeTeam }) => {
+    const formationData = formations[formation];
+    if (!formationData) return null;
+
+    const handlePositionClick = (positionIndex) => {
+      onPlayerSelect(positionIndex);
+    };
+
+    const getPlayerForPosition = (positionIndex) => {
+      return selectedPlayers.starting.find(p => p.positionIndex === positionIndex);
+    };
+
+    return (
+      <div className="pitch-container relative w-full max-w-5xl mx-auto h-96 mb-6">
+        {/* Pitch markings */}
+        <div className="absolute inset-4 border-2 border-white rounded">
+          {/* Goal areas */}
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-16 border-2 border-white border-t-0"></div>
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-24 h-16 border-2 border-white border-b-0"></div>
+          
+          {/* Penalty areas */}
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-40 h-24 border-2 border-white border-t-0"></div>
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-40 h-24 border-2 border-white border-b-0"></div>
+          
+          {/* Center line and circle */}
+          <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 border-2 border-white rounded-full"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white rounded-full"></div>
+        </div>
+
+        {/* Formation name overlay */}
+        <div className="absolute top-2 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded">
+          {formation} Formation
+        </div>
+
+        {/* Team name overlay */}
+        <div className="absolute top-2 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded">
+          {homeTeam?.name || 'Home Team'}
+        </div>
+
+        {/* Player positions */}
+        {formationData.positions.map((position, index) => {
+          const assignedPlayer = getPlayerForPosition(index);
+          const isEmpty = !assignedPlayer;
+          
+          return (
+            <div
+              key={index}
+              className={`player-position cursor-pointer transition-all duration-200 ${
+                isEmpty ? 'hover:scale-110' : 'hover:scale-105'
+              }`}
+              style={{
+                left: `${position.x}%`,
+                top: `${position.y}%`,
+                backgroundColor: isEmpty ? '#dc2626' : '#10b981',
+                transform: 'translate(-50%, -50%)'
+              }}
+              onClick={() => handlePositionClick(index)}
+              title={isEmpty ? `Click to assign ${position.role}` : `${assignedPlayer.name} (#${assignedPlayer.squad_number})`}
+            >
+              {isEmpty ? (
+                <span className="text-xs font-bold">{position.role}</span>
+              ) : (
+                <span className="text-xs font-bold">{assignedPlayer.squad_number}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  // Player Selection Modal
+  const PlayerSelectionModal = ({ 
+    isOpen, 
+    onClose, 
+    availablePlayers, 
+    positionIndex, 
+    formationPosition, 
+    onPlayerAssign,
+    assignedPlayers 
+  }) => {
+    if (!isOpen) return null;
+
+    const handlePlayerSelect = (player) => {
+      onPlayerAssign(player, positionIndex);
+      onClose();
+    };
+
+    const isPlayerAssigned = (playerId) => {
+      return assignedPlayers.starting.some(p => p.id === playerId);
+    };
+
+    const getRecommendedPlayers = () => {
+      const positionRole = formationPosition?.role;
+      const positionMap = {
+        'GK': 'GK',
+        'RB': 'DEF', 'CB': 'DEF', 'LB': 'DEF',
+        'RWB': 'DEF', 'LWB': 'DEF',
+        'CDM': 'MID', 'CM': 'MID', 'CAM': 'MID',
+        'RM': 'MID', 'LM': 'MID', 'RAM': 'MID', 'LAM': 'MID',
+        'RW': 'FWD', 'LW': 'FWD', 'ST': 'FWD'
+      };
+      
+      const preferredPosition = positionMap[positionRole] || 'MID';
+      return availablePlayers.filter(p => p.position === preferredPosition);
+    };
+
+    const recommendedPlayers = getRecommendedPlayers();
+    const otherPlayers = availablePlayers.filter(p => !recommendedPlayers.includes(p));
+
+    return (
+      <div className="modal-overlay">
+        <div className="modal-content max-w-4xl">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold">
+              Select Player for {formationPosition?.role} Position
+            </h2>
+            <button 
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+
+          {recommendedPlayers.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 text-green-600">
+                ✅ Recommended Players ({formationPosition?.role})
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {recommendedPlayers.map(player => (
+                  <button
+                    key={player.id}
+                    onClick={() => handlePlayerSelect(player)}
+                    disabled={isPlayerAssigned(player.id)}
+                    className={`p-3 rounded-lg border-2 text-left transition ${
+                      isPlayerAssigned(player.id)
+                        ? 'border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed'
+                        : 'border-green-300 hover:border-green-500 hover:bg-green-50'
+                    }`}
+                  >
+                    <div className="font-bold">#{player.squad_number}</div>
+                    <div className="text-sm">{player.name}</div>
+                    <div className="text-xs text-gray-600">{player.position}</div>
+                    {isPlayerAssigned(player.id) && (
+                      <div className="text-xs text-red-600 mt-1">Already selected</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {otherPlayers.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3 text-amber-600">
+                ⚠️ Other Available Players
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {otherPlayers.map(player => (
+                  <button
+                    key={player.id}
+                    onClick={() => handlePlayerSelect(player)}
+                    disabled={isPlayerAssigned(player.id)}
+                    className={`p-3 rounded-lg border-2 text-left transition ${
+                      isPlayerAssigned(player.id)
+                        ? 'border-gray-300 bg-gray-100 text-gray-500 cursor-not-allowed'
+                        : 'border-amber-300 hover:border-amber-500 hover:bg-amber-50'
+                    }`}
+                  >
+                    <div className="font-bold">#{player.squad_number}</div>
+                    <div className="text-sm">{player.name}</div>
+                    <div className="text-xs text-gray-600">{player.position}</div>
+                    {isPlayerAssigned(player.id) && (
+                      <div className="text-xs text-red-600 mt-1">Already selected</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {availablePlayers.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <p className="text-lg">No players available for this team.</p>
+              <p className="text-sm">Please add players to the squad first.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   // Home View
   const HomeView = () => (
     <div className="min-h-screen">
