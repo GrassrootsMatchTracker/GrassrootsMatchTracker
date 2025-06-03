@@ -419,17 +419,19 @@ async def get_team_players(team_id: str):
     """Get all players for a team"""
     players = []
     async for player_doc in db.players.find({"team_id": team_id}):
-        # Skip the MongoDB _id field entirely
-        player_data = {
+        # Clean player data without MongoDB _id
+        player = {
             "id": player_doc.get("id"),
             "first_name": player_doc.get("first_name"),
             "last_name": player_doc.get("last_name"),
             "age": player_doc.get("age"),
             "position": player_doc.get("position"),
+            "squad_number": player_doc.get("squad_number"),
+            "photo_url": player_doc.get("photo_url"),
             "team_id": player_doc.get("team_id")
         }
-        players.append(player_data)
-    return {"players": players}
+        players.append(player)
+    return players
 
 @app.post("/api/matches")
 async def create_match(match: Match):
