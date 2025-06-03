@@ -1475,11 +1475,26 @@ function App() {
 
   const handleTeamAdd = async (teamData) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/teams`, teamData);
-      console.log('Team creation response:', response.data);
-      await fetchTeams(); // Refresh teams list
+      console.log('Frontend: Starting team creation with data:', teamData);
+      console.log('API URL:', `${API_BASE_URL}/api/teams`);
+      
+      const response = await axios.post(`${API_BASE_URL}/api/teams`, teamData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Frontend: Team creation response:', response.data);
+      
+      // Force refresh teams list
+      console.log('Frontend: Refreshing teams list...');
+      await fetchTeams();
+      console.log('Frontend: Teams refreshed successfully');
+      
+      return response.data;
     } catch (error) {
-      console.error('Error creating team:', error);
+      console.error('Frontend: Error creating team:', error);
+      console.error('Frontend: Error details:', error.response?.data);
       throw error;
     }
   };
