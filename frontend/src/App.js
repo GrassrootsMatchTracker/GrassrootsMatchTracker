@@ -147,6 +147,9 @@ const App = () => {
       venue: '',
       match_type: 'Friendly'
     });
+    const [homeTeamPlayers, setHomeTeamPlayers] = useState([]);
+    const [selectedHomeFormation, setSelectedHomeFormation] = useState('4-4-2');
+    const [selectedHomePlayers, setSelectedHomePlayers] = useState([]);
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -155,11 +158,25 @@ const App = () => {
           alert('Home and away teams must be different');
           return;
         }
-        setStep(2);
+        
+        // Fetch players for the home team
+        try {
+          const response = await fetch(`${API_BASE_URL}/api/teams/${matchData.home_team_id}/players`);
+          const players = await response.json();
+          setHomeTeamPlayers(players);
+          setStep(2);
+        } catch (error) {
+          console.error('Error fetching team players:', error);
+          alert('Error loading team players. Please try again.');
+        }
       } else {
+        // Create the match with selected formation and players
         const match = await createMatch({
           ...matchData,
-          match_date: new Date(matchData.match_date).toISOString()
+          match_date: new Date(matchData.match_date).toISOString(),
+          home_formation: selectedHomeFormation,
+          home_lineup: selectedHomePlayers.map(p => p.id),
+          status: 'scheduled'
         });
         if (match) {
           alert('Match created successfully!');
@@ -171,9 +188,37 @@ const App = () => {
             venue: '',
             match_type: 'Friendly'
           });
+          setSelectedHomePlayers([]);
           setCurrentView('home');
         }
       }
+    };
+
+    const handlePlayerSelect = (player) => {
+      if (selectedHomePlayers.length >= 11) {
+        alert('You can only select 11 players for the starting lineup');
+        return;
+      }
+      
+      if (selectedHomePlayers.find(p => p.id === player.id)) {
+        // Remove player if already selected
+        setSelectedHomePlayers(selectedHomePlayers.filter(p => p.id !== player.id));
+      } else {
+        // Add player to selection
+        setSelectedHomePlayers([...selectedHomePlayers, player]);
+      }
+    };
+
+    const handlePositionClick = (positionIndex) => {
+      // For now, just show a message - we can enhance this with player assignment modal later
+      if (selectedHomePlayers.length === 0) {
+        alert('Please select players from the available players list first');
+        return;
+      }
+      
+      const formationData = formations[selectedHomeFormation];
+      const position = formationData?.positions[positionIndex];
+      alert(`Position: ${position?.role}\nClick on players below to select them for your squad.`);
     };
 
     const homeTeam = teams.find(t => t.id === matchData.home_team_id);
@@ -189,6 +234,29 @@ const App = () => {
             <p className="text-gray-600">
               Step {step}: {step === 1 ? 'Match Details' : 'Choose Formation & Squad'}
             </p>
+            
+            {/* Progress Indicator */}
+            <div className="flex justify-center mt-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                    step === 1 ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
+                  }`}>
+                    {step === 1 ? '1' : '✓'}
+                  </div>
+                  <span className="ml-2 font-medium">Match Details</span>
+                </div>
+                <div className="w-8 h-0.5 bg-gray-300"></div>
+                <div className="flex items-center">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    step === 2 ? 'bg-red-600 text-white font-bold' : 'bg-gray-300 text-gray-600'
+                  }`}>
+                    2
+                  </div>
+                  <span className={`ml-2 ${step === 2 ? 'font-medium' : 'text-gray-500'}`}>Squad Selection</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {step === 1 ? (
@@ -288,6 +356,7 @@ const App = () => {
                     <p className="text-sm text-gray-500">{matchData.match_type}</p>
                     <p className="text-lg font-bold">VS</p>
                     <p className="text-sm text-gray-500">{new Date(matchData.match_date).toLocaleDateString()}</p>
+                    <p className="text-xs text-gray-400">{matchData.venue}</p>
                   </div>
                   <div className="text-center">
                     <h3 className="text-xl font-bold">{awayTeam?.name}</h3>
@@ -298,14 +367,14 @@ const App = () => {
 
               {/* Formation Selection */}
               <div className="feature-card">
-                <h3 className="text-xl font-bold mb-4">Choose Formation</h3>
+                <h3 className="text-xl font-bold mb-4">Choose Formation for {homeTeam?.name}</h3>
                 <div className="grid grid-cols-5 gap-4">
                   {Object.keys(formations).map(formation => (
                     <button
                       key={formation}
-                      onClick={() => setSelectedFormation(formation)}
+                      onClick={() => setSelectedHomeFormation(formation)}
                       className={`p-4 rounded-lg border-2 transition ${
-                        selectedFormation === formation 
+                        selectedHomeFormation === formation 
                           ? 'border-red-600 bg-red-50' 
                           : 'border-gray-300 hover:border-gray-400'
                       }`}
@@ -318,7 +387,9 @@ const App = () => {
 
               {/* Formation Pitch */}
               <div className="feature-card">
-                <h3 className="text-xl font-bold mb-4">Formation: {selectedFormation}</h3>
+                <h3 className="text-xl font-bold mb-4">
+                  Formation: {selectedHomeFormation} | Selected: {selectedHomePlayers.length}/11 players
+                </h3>
                 <div className="pitch-container relative w-full max-w-5xl mx-auto h-96 mb-6">
                   <div className="absolute inset-4 border-2 border-white rounded pitch-bg">
                     <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-16 border-2 border-white border-t-0"></div>
@@ -328,28 +399,108 @@ const App = () => {
                   </div>
                   
                   <div className="absolute top-2 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded">
-                    {selectedFormation} Formation
+                    {selectedHomeFormation} Formation
                   </div>
 
-                  {formations[selectedFormation]?.positions.map((position, index) => (
+                  <div className="absolute top-2 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded">
+                    {homeTeam?.name}
+                  </div>
+
+                  {formations[selectedHomeFormation]?.positions.map((position, index) => (
                     <div
                       key={index}
-                      className="player-position cursor-pointer"
+                      className="player-position cursor-pointer hover:scale-110 transition-all"
                       style={{
                         left: `${position.x}%`,
                         top: `${position.y}%`,
-                        transform: 'translate(-50%, -50%)'
+                        transform: 'translate(-50%, -50%)',
+                        backgroundColor: selectedHomePlayers[index] ? '#10b981' : '#dc2626'
                       }}
-                      title={`${position.role} Position`}
+                      onClick={() => handlePositionClick(index)}
+                      title={`${position.role} Position - Click to assign player`}
                     >
-                      <span className="text-xs font-bold">{position.role}</span>
+                      <span className="text-xs font-bold">
+                        {selectedHomePlayers[index]?.squad_number || position.role}
+                      </span>
                     </div>
                   ))}
                 </div>
                 <div className="text-center text-sm text-gray-600">
-                  💡 Interactive squad selection coming soon - formation visualization ready!
+                  💡 Click on positions above or select players below to build your starting XI
                 </div>
               </div>
+
+              {/* Player Selection */}
+              <div className="feature-card">
+                <h3 className="text-xl font-bold mb-4">
+                  Available Players ({homeTeamPlayers.length} total)
+                </h3>
+                {homeTeamPlayers.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No players found for this team.</p>
+                    <button 
+                      onClick={() => {
+                        setSelectedTeam(homeTeam);
+                        setCurrentView('squad');
+                      }}
+                      className="primary-button mt-4"
+                    >
+                      Add Players to Squad
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {homeTeamPlayers.map(player => {
+                      const isSelected = selectedHomePlayers.find(p => p.id === player.id);
+                      return (
+                        <div 
+                          key={player.id} 
+                          onClick={() => handlePlayerSelect(player)}
+                          className={`border-2 rounded-lg p-3 text-center cursor-pointer transition ${
+                            isSelected 
+                              ? 'border-green-500 bg-green-50' 
+                              : 'border-gray-300 hover:border-red-400 hover:bg-red-50'
+                          }`}
+                        >
+                          <div className="font-bold">#{player.squad_number}</div>
+                          <div className="text-sm">{player.name}</div>
+                          <div className="text-xs text-gray-600">{player.position}</div>
+                          {isSelected && (
+                            <div className="text-xs text-green-600 mt-1 font-semibold">✓ Selected</div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Selected Players Summary */}
+              {selectedHomePlayers.length > 0 && (
+                <div className="feature-card">
+                  <h3 className="text-xl font-bold mb-4">Selected Starting XI ({selectedHomePlayers.length}/11)</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {selectedHomePlayers.map((player, index) => (
+                      <div key={player.id} className="border border-green-300 rounded-lg p-3 bg-green-50">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="font-bold">#{player.squad_number}</div>
+                            <div className="text-sm">{player.name}</div>
+                            <div className="text-xs text-gray-600">{player.position}</div>
+                          </div>
+                          <button
+                            onClick={() => handlePlayerSelect(player)}
+                            className="text-red-600 hover:text-red-800 text-sm"
+                            title="Remove player"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="flex space-x-4">
                 <button 
@@ -360,9 +511,17 @@ const App = () => {
                 </button>
                 <button 
                   onClick={handleSubmit}
-                  className="primary-button flex-1"
+                  disabled={selectedHomePlayers.length !== 11}
+                  className={`flex-1 ${
+                    selectedHomePlayers.length !== 11
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'primary-button'
+                  }`}
                 >
-                  🎉 Create Match
+                  {selectedHomePlayers.length !== 11 
+                    ? `Select ${11 - selectedHomePlayers.length} more players (${selectedHomePlayers.length}/11)` 
+                    : '🎉 Create Match'
+                  }
                 </button>
               </div>
             </div>
