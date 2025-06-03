@@ -435,12 +435,8 @@ async def get_team_players(team_id: str):
     """Get all players for a team"""
     players = []
     async for player_doc in db.players.find({"team_id": team_id}):
-        # Convert to dict and handle ObjectId properly
-        player_dict = dict(player_doc)
-        # Remove MongoDB's _id field
-        if "_id" in player_dict:
-            del player_dict["_id"]
-        players.append(player_dict)
+        clean_player = clean_mongo_doc(player_doc)
+        players.append(clean_player)
     return players
 
 @app.post("/api/matches")
