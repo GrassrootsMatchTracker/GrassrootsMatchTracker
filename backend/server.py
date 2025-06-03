@@ -392,12 +392,8 @@ async def get_teams():
     """Get all teams"""
     teams = []
     async for team_doc in db.teams.find():
-        # Convert to dict and handle ObjectId properly
-        team_dict = dict(team_doc)
-        # Remove MongoDB's _id field
-        if "_id" in team_dict:
-            del team_dict["_id"]
-        teams.append(team_dict)
+        clean_team = clean_mongo_doc(team_doc)
+        teams.append(clean_team)
     return teams
 
 @app.get("/api/teams/{team_id}")
