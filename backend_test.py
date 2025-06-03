@@ -278,4 +278,8 @@ def run_tests():
     runner.run(suite)
 
 if __name__ == "__main__":
+    print("\n🔍 STARTING BACKEND API TESTS 🔍")
+    print("=" * 50)
     run_tests()
+    print("=" * 50)
+    print("🔍 BACKEND API TESTS COMPLETED 🔍\n")
