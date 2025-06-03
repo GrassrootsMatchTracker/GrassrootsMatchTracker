@@ -445,21 +445,25 @@ async def get_matches():
     """Get all matches"""
     matches = []
     async for match_doc in db.matches.find():
-        # Skip the MongoDB _id field entirely
-        match_data = {
+        # Clean match data without MongoDB _id
+        match = {
             "id": match_doc.get("id"),
             "home_team_id": match_doc.get("home_team_id"),
             "away_team_id": match_doc.get("away_team_id"),
             "date": match_doc.get("date"),
+            "venue": match_doc.get("venue"),
             "home_formation": match_doc.get("home_formation"),
             "away_formation": match_doc.get("away_formation"),
-            "home_players": match_doc.get("home_players", []),
-            "away_players": match_doc.get("away_players", []),
+            "home_lineup": match_doc.get("home_lineup", []),
+            "away_lineup": match_doc.get("away_lineup", []),
             "home_substitutes": match_doc.get("home_substitutes", []),
-            "away_substitutes": match_doc.get("away_substitutes", [])
+            "away_substitutes": match_doc.get("away_substitutes", []),
+            "score_home": match_doc.get("score_home", 0),
+            "score_away": match_doc.get("score_away", 0),
+            "status": match_doc.get("status", "scheduled")
         }
-        matches.append(match_data)
-    return {"matches": matches}
+        matches.append(match)
+    return matches
 
 @app.get("/api/matches/{match_id}")
 async def get_match(match_id: str):
