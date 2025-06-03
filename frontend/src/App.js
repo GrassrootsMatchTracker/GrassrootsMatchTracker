@@ -93,82 +93,325 @@ const CookieModal = ({ isOpen, onClose, onAccept }) => {
   );
 };
 
+// Modern Dashboard Component
+const DashboardView = ({ teams, onNavigate }) => {
+  const totalPlayers = teams.reduce((total, team) => total + (team.players?.length || 0), 0);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="relative overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Cpath d="m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div className="relative z-10 p-8">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center mb-6">
+              <img 
+                src="/grassroots-logo.svg" 
+                alt="Grassroots Match Tracker" 
+                className="h-20 w-auto filter drop-shadow-2xl"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'block';
+                }}
+              />
+              <div style={{display: 'none'}} className="h-20 w-40 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl">
+                <span className="text-white font-bold text-2xl">GMT</span>
+              </div>
+            </div>
+            <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 mb-4">
+              GRASSROOTS MATCH TRACKER
+            </h1>
+            <p className="text-xl text-gray-300 font-light tracking-wide">
+              The Future of Football Management
+            </p>
+          </div>
+
+          {/* Stats Dashboard */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+            <div className="bg-gradient-to-br from-cyan-500/20 to-blue-600/20 backdrop-blur-lg rounded-2xl p-6 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-300 hover:scale-105">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-cyan-400 text-sm font-medium uppercase tracking-wider">Teams</p>
+                  <p className="text-3xl font-bold text-white mt-2">{teams.length}</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-500/20 to-pink-600/20 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400 transition-all duration-300 hover:scale-105">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-400 text-sm font-medium uppercase tracking-wider">Players</p>
+                  <p className="text-3xl font-bold text-white mt-2">{totalPlayers}</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-500/20 to-emerald-600/20 backdrop-blur-lg rounded-2xl p-6 border border-green-500/30 hover:border-green-400 transition-all duration-300 hover:scale-105">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-400 text-sm font-medium uppercase tracking-wider">Matches</p>
+                  <p className="text-3xl font-bold text-white mt-2">0</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v5a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L10 9.586V5z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-yellow-500/20 to-orange-600/20 backdrop-blur-lg rounded-2xl p-6 border border-yellow-500/30 hover:border-yellow-400 transition-all duration-300 hover:scale-105">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-yellow-400 text-sm font-medium uppercase tracking-wider">Leagues</p>
+                  <p className="text-3xl font-bold text-white mt-2">0</p>
+                </div>
+                <div className="p-3 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Action Buttons - Futuristic Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Team Management */}
+            <div 
+              onClick={() => onNavigate('teams')}
+              className="group relative bg-gradient-to-br from-cyan-500/10 to-blue-600/10 backdrop-blur-lg rounded-3xl p-8 border border-cyan-500/20 hover:border-cyan-400/50 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 to-blue-600/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors">Team Management</h3>
+                <p className="text-gray-400 mb-6">Create and manage your football teams with advanced squad management tools</p>
+                <div className="flex items-center text-cyan-400 font-medium">
+                  <span>Manage Teams</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Match Creation */}
+            <div 
+              onClick={() => onNavigate('matches')}
+              className="group relative bg-gradient-to-br from-purple-500/10 to-pink-600/10 backdrop-blur-lg rounded-3xl p-8 border border-purple-500/20 hover:border-purple-400/50 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-600/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v5a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L10 9.586V5z"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-purple-300 transition-colors">Match Creation</h3>
+                <p className="text-gray-400 mb-6">Schedule matches with interactive formations and advanced squad selection</p>
+                <div className="flex items-center text-purple-400 font-medium">
+                  <span>Create Matches</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Statistics */}
+            <div 
+              onClick={() => onNavigate('statistics')}
+              className="group relative bg-gradient-to-br from-green-500/10 to-emerald-600/10 backdrop-blur-lg rounded-3xl p-8 border border-green-500/20 hover:border-green-400/50 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-600/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-green-300 transition-colors">Statistics</h3>
+                <p className="text-gray-400 mb-6">Advanced analytics and performance tracking for teams and players</p>
+                <div className="flex items-center text-green-400 font-medium">
+                  <span>View Stats</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Players */}
+            <div 
+              onClick={() => onNavigate('players')}
+              className="group relative bg-gradient-to-br from-yellow-500/10 to-orange-600/10 backdrop-blur-lg rounded-3xl p-8 border border-yellow-500/20 hover:border-yellow-400/50 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/25"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-orange-600/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-yellow-300 transition-colors">Players</h3>
+                <p className="text-gray-400 mb-6">Comprehensive player database and performance management</p>
+                <div className="flex items-center text-yellow-400 font-medium">
+                  <span>Manage Players</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Fixtures */}
+            <div 
+              onClick={() => onNavigate('fixtures')}
+              className="group relative bg-gradient-to-br from-indigo-500/10 to-purple-600/10 backdrop-blur-lg rounded-3xl p-8 border border-indigo-500/20 hover:border-indigo-400/50 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-indigo-500/25"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-600/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-indigo-300 transition-colors">Fixtures</h3>
+                <p className="text-gray-400 mb-6">Schedule management and match results tracking</p>
+                <div className="flex items-center text-indigo-400 font-medium">
+                  <span>View Fixtures</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Leagues */}
+            <div 
+              onClick={() => onNavigate('leagues')}
+              className="group relative bg-gradient-to-br from-rose-500/10 to-pink-600/10 backdrop-blur-lg rounded-3xl p-8 border border-rose-500/20 hover:border-rose-400/50 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-rose-500/25"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-500/5 to-pink-600/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-rose-300 transition-colors">Leagues</h3>
+                <p className="text-gray-400 mb-6">Tournament and league management with rankings</p>
+                <div className="flex items-center text-rose-400 font-medium">
+                  <span>Manage Leagues</span>
+                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Statistics View Component
 const StatisticsView = ({ teams, onBack }) => {
   return (
-    <div className="p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="flex items-center mb-8">
         <button 
           onClick={onBack}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
         >
-          ← Back
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+          </svg>
+          <span>Back</span>
         </button>
-        <h2 className="text-3xl font-bold text-gray-800">Statistics Dashboard</h2>
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Statistics Dashboard</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+        <div className="bg-gradient-to-br from-blue-500/20 to-cyan-600/20 backdrop-blur-lg rounded-2xl p-6 border border-blue-500/30">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
               📊
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-gray-800">Total Teams</h3>
-              <p className="text-2xl font-bold text-blue-600">{teams.length}</p>
+              <h3 className="text-lg font-semibold text-white">Total Teams</h3>
+              <p className="text-3xl font-bold text-blue-400">{teams.length}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+        <div className="bg-gradient-to-br from-green-500/20 to-emerald-600/20 backdrop-blur-lg rounded-2xl p-6 border border-green-500/30">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
               👥
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-gray-800">Total Players</h3>
-              <p className="text-2xl font-bold text-green-600">
+              <h3 className="text-lg font-semibold text-white">Total Players</h3>
+              <p className="text-3xl font-bold text-green-400">
                 {teams.reduce((total, team) => total + (team.players?.length || 0), 0)}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+        <div className="bg-gradient-to-br from-yellow-500/20 to-orange-600/20 backdrop-blur-lg rounded-2xl p-6 border border-yellow-500/30">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
               ⚽
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-gray-800">Total Matches</h3>
-              <p className="text-2xl font-bold text-yellow-600">0</p>
+              <h3 className="text-lg font-semibold text-white">Total Matches</h3>
+              <p className="text-3xl font-bold text-yellow-400">0</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+        <div className="bg-gradient-to-br from-purple-500/20 to-pink-600/20 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
               🏆
             </div>
             <div className="ml-4">
-              <h3 className="text-lg font-semibold text-gray-800">Active Leagues</h3>
-              <p className="text-2xl font-bold text-purple-600">0</p>
+              <h3 className="text-lg font-semibold text-white">Active Leagues</h3>
+              <p className="text-3xl font-bold text-purple-400">0</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-          <h3 className="text-xl font-semibold mb-4">Teams by Age Group</h3>
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50">
+          <h3 className="text-xl font-semibold mb-4 text-white">Teams by Age Group</h3>
           <div className="space-y-3">
             {['U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18'].map(ageGroup => {
               const count = teams.filter(team => team.age_group === ageGroup).length;
               return (
                 <div key={ageGroup} className="flex justify-between items-center">
-                  <span className="font-medium">{ageGroup}</span>
-                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="font-medium text-gray-300">{ageGroup}</span>
+                  <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                     {count} teams
                   </span>
                 </div>
@@ -177,14 +420,14 @@ const StatisticsView = ({ teams, onBack }) => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-          <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50">
+          <h3 className="text-xl font-semibold mb-4 text-white">Recent Activity</h3>
           <div className="space-y-4">
-            <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center p-3 bg-gradient-to-r from-green-500/20 to-emerald-600/20 rounded-lg border border-green-500/30">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
               <div>
-                <p className="font-medium">System Ready</p>
-                <p className="text-sm text-gray-600">Grassroots Match Tracker is operational</p>
+                <p className="font-medium text-white">System Ready</p>
+                <p className="text-sm text-gray-300">Grassroots Match Tracker is operational</p>
               </div>
             </div>
           </div>
@@ -205,50 +448,51 @@ const PlayersView = ({ teams, onBack }) => {
   );
 
   return (
-    <div className="p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="flex items-center mb-8">
         <button 
           onClick={onBack}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
         >
-          ← Back
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+          </svg>
+          <span>Back</span>
         </button>
-        <h2 className="text-3xl font-bold text-gray-800">All Players</h2>
-        <span className="ml-4 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">All Players</h2>
+        <span className="ml-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium">
           {allPlayers.length} players
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {allPlayers.map((player) => (
-          <div key={player.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200">
-            <div className="p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                  {player.squad_number}
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {player.first_name} {player.last_name}
-                  </h3>
-                  <p className="text-blue-600 font-medium">{player.position}</p>
-                  <p className="text-gray-500 text-sm">Age: {player.age}</p>
-                </div>
+          <div key={player.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:scale-105">
+            <div className="flex items-center mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                {player.squad_number}
               </div>
-              <div className="mt-4">
-                <p className="text-sm text-gray-600">Team: {player.teamName}</p>
-                <p className="text-sm text-gray-600">Age Group: {player.teamAgeGroup}</p>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-white">
+                  {player.first_name} {player.last_name}
+                </h3>
+                <p className="text-blue-400 font-medium">{player.position}</p>
+                <p className="text-gray-400 text-sm">Age: {player.age}</p>
               </div>
+            </div>
+            <div className="mt-4">
+              <p className="text-sm text-gray-300">Team: {player.teamName}</p>
+              <p className="text-sm text-gray-300">Age Group: {player.teamAgeGroup}</p>
             </div>
           </div>
         ))}
         
         {allPlayers.length === 0 && (
           <div className="col-span-full text-center py-12">
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-gray-400 text-2xl">👥</span>
+            <div className="w-20 h-20 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-gray-300 text-3xl">👥</span>
             </div>
-            <h3 className="text-lg font-medium text-gray-500 mb-2">No Players Found</h3>
+            <h3 className="text-lg font-medium text-gray-300 mb-2">No Players Found</h3>
             <p className="text-gray-400">Add teams and players to see them here</p>
           </div>
         )}
@@ -260,29 +504,32 @@ const PlayersView = ({ teams, onBack }) => {
 // Fixtures View Component  
 const FixturesView = ({ onBack }) => {
   return (
-    <div className="p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="flex items-center mb-8">
         <button 
           onClick={onBack}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
         >
-          ← Back
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+          </svg>
+          <span>Back</span>
         </button>
-        <h2 className="text-3xl font-bold text-gray-800">Fixtures & Results</h2>
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">Fixtures & Results</h2>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200 text-center">
-        <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-white text-3xl">📅</span>
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-3xl p-12 border border-slate-700/50 text-center">
+        <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-8">
+          <span className="text-white text-4xl">📅</span>
         </div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">Fixtures Coming Soon</h3>
-        <p className="text-gray-600 mb-6">
+        <h3 className="text-2xl font-semibold text-white mb-6">Fixtures Coming Soon</h3>
+        <p className="text-gray-300 mb-8 max-w-md mx-auto">
           Create matches to see upcoming fixtures and results here. 
           Use the Match Creation feature to schedule games between your teams.
         </p>
         <button 
           onClick={() => window.location.reload()}
-          className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700"
+          className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 font-medium"
         >
           Create Your First Match
         </button>
@@ -294,29 +541,32 @@ const FixturesView = ({ onBack }) => {
 // Leagues View Component
 const LeaguesView = ({ onBack }) => {
   return (
-    <div className="p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="flex items-center mb-8">
         <button 
           onClick={onBack}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
         >
-          ← Back
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+          </svg>
+          <span>Back</span>
         </button>
-        <h2 className="text-3xl font-bold text-gray-800">Leagues & Tournaments</h2>
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-pink-500">Leagues & Tournaments</h2>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200 text-center">
-        <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-white text-3xl">🏆</span>
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-3xl p-12 border border-slate-700/50 text-center">
+        <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-8">
+          <span className="text-white text-4xl">🏆</span>
         </div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">League Management Coming Soon</h3>
-        <p className="text-gray-600 mb-6">
+        <h3 className="text-2xl font-semibold text-white mb-6">League Management Coming Soon</h3>
+        <p className="text-gray-300 mb-8 max-w-md mx-auto">
           Create and manage leagues and tournaments for your grassroots teams. 
           Track standings, manage fixtures, and celebrate victories!
         </p>
         <button 
           onClick={() => window.location.reload()}
-          className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700"
+          className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-4 rounded-xl hover:from-purple-600 hover:to-pink-700 transition-all duration-300 font-medium"
         >
           Coming Soon
         </button>
@@ -326,7 +576,7 @@ const LeaguesView = ({ onBack }) => {
 };
 
 // Team View Component
-const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches }) => {
+const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTeam, setNewTeam] = useState({
     name: '',
@@ -337,25 +587,41 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await onAddTeam(newTeam);
-    setNewTeam({ name: '', age_group: 'U13' });
-    setShowAddForm(false);
+    try {
+      await onAddTeam(newTeam);
+      setNewTeam({ name: '', age_group: 'U13' });
+      setShowAddForm(false);
+    } catch (error) {
+      console.error('Error adding team:', error);
+      alert('Error adding team. Please try again.');
+    }
   };
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800">Team Management</h2>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center">
+          <button 
+            onClick={onBack}
+            className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+            </svg>
+            <span>Back</span>
+          </button>
+          <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Team Management</h2>
+        </div>
         <div className="space-x-4">
           <button 
             onClick={() => setShowAddForm(true)}
-            className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+            className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium"
           >
             ➕ Add New Team
           </button>
           <button 
             onClick={onViewMatches}
-            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium"
           >
             📅 View Matches
           </button>
@@ -363,25 +629,26 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches }) => {
       </div>
 
       {showAddForm && (
-        <div className="bg-white rounded-xl shadow-xl p-6 mb-8 border border-gray-200">
-          <h3 className="text-xl font-semibold mb-4">Add New Team</h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-slate-700/50">
+          <h3 className="text-2xl font-semibold mb-6 text-white">Add New Team</h3>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Team Name</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Team Name</label>
               <input
                 type="text"
                 value={newTeam.name}
                 onChange={(e) => setNewTeam({...newTeam, name: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                placeholder="Enter team name..."
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Age Group</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Age Group</label>
               <select
                 value={newTeam.age_group}
                 onChange={(e) => setNewTeam({...newTeam, age_group: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                 required
               >
                 {ageGroups.map(age => (
@@ -392,14 +659,14 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches }) => {
             <div className="flex space-x-4">
               <button 
                 type="submit"
-                className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all font-medium"
               >
                 Create Team
               </button>
               <button 
                 type="button"
                 onClick={() => setShowAddForm(false)}
-                className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+                className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-medium"
               >
                 Cancel
               </button>
@@ -410,27 +677,25 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {teams.map((team) => (
-          <div key={team.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200">
-            <div className="p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                  {team.name.charAt(0)}
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-xl font-semibold text-gray-800">{team.name}</h3>
-                  <p className="text-green-600 font-medium">{team.age_group}</p>
-                </div>
+          <div key={team.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                {team.name.charAt(0)}
               </div>
-              <div className="mb-4">
-                <p className="text-gray-600">Players: {team.players?.length || 0}</p>
+              <div className="ml-4">
+                <h3 className="text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">{team.name}</h3>
+                <p className="text-cyan-400 font-medium">{team.age_group}</p>
               </div>
-              <button 
-                onClick={() => onTeamSelect(team)}
-                className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-2 rounded-lg hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-200"
-              >
-                Manage Team
-              </button>
             </div>
+            <div className="mb-4">
+              <p className="text-gray-300">Players: {team.players?.length || 0}</p>
+            </div>
+            <button 
+              onClick={() => onTeamSelect(team)}
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-xl hover:from-cyan-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 font-medium"
+            >
+              Manage Team
+            </button>
           </div>
         ))}
       </div>
@@ -455,29 +720,37 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await onPlayerAdd(newPlayer);
-    setNewPlayer({
-      first_name: '',
-      last_name: '',
-      age: 16,
-      position: 'MID',
-      squad_number: 1,
-      photo_url: ''
-    });
-    setShowAddForm(false);
+    try {
+      await onPlayerAdd(newPlayer);
+      setNewPlayer({
+        first_name: '',
+        last_name: '',
+        age: 16,
+        position: 'MID',
+        squad_number: 1,
+        photo_url: ''
+      });
+      setShowAddForm(false);
+    } catch (error) {
+      console.error('Error adding player:', error);
+      alert('Error adding player. Please try again.');
+    }
   };
 
   return (
-    <div className="p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="flex items-center mb-8">
         <button 
           onClick={onBack}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
         >
-          ← Back
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+          </svg>
+          <span>Back</span>
         </button>
-        <h2 className="text-3xl font-bold text-gray-800">{team.name} Squad</h2>
-        <span className="ml-4 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+        <h2 className="text-4xl font-bold text-white">{team.name} Squad</h2>
+        <span className="ml-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-medium">
           {team.age_group}
         </span>
       </div>
@@ -485,42 +758,44 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
       <div className="mb-8">
         <button 
           onClick={() => setShowAddForm(true)}
-          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+          className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium"
         >
           ➕ Add New Player
         </button>
       </div>
 
       {showAddForm && (
-        <div className="bg-white rounded-xl shadow-xl p-6 mb-8 border border-gray-200">
-          <h3 className="text-xl font-semibold mb-4">Add New Player</h3>
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-slate-700/50">
+          <h3 className="text-2xl font-semibold mb-6 text-white">Add New Player</h3>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
               <input
                 type="text"
                 value={newPlayer.first_name}
                 onChange={(e) => setNewPlayer({...newPlayer, first_name: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                placeholder="First name..."
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
               <input
                 type="text"
                 value={newPlayer.last_name}
                 onChange={(e) => setNewPlayer({...newPlayer, last_name: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                placeholder="Last name..."
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Age</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Age</label>
               <select
                 value={newPlayer.age}
                 onChange={(e) => setNewPlayer({...newPlayer, age: parseInt(e.target.value)})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 required
               >
                 {ages.map(age => (
@@ -529,11 +804,11 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Position</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Position</label>
               <select
                 value={newPlayer.position}
                 onChange={(e) => setNewPlayer({...newPlayer, position: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 required
               >
                 {positions.map(pos => (
@@ -542,37 +817,38 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Squad Number</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Squad Number</label>
               <input
                 type="number"
                 min="1"
                 max="99"
                 value={newPlayer.squad_number}
                 onChange={(e) => setNewPlayer({...newPlayer, squad_number: parseInt(e.target.value)})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Photo URL (Optional)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Photo URL (Optional)</label>
               <input
                 type="url"
                 value={newPlayer.photo_url}
                 onChange={(e) => setNewPlayer({...newPlayer, photo_url: e.target.value})}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                placeholder="https://..."
               />
             </div>
             <div className="md:col-span-2 flex space-x-4">
               <button 
                 type="submit"
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all font-medium"
               >
                 Add Player
               </button>
               <button 
                 type="button"
                 onClick={() => setShowAddForm(false)}
-                className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+                className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-medium"
               >
                 Cancel
               </button>
@@ -583,19 +859,17 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {team.players?.map((player) => (
-          <div key={player.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200">
-            <div className="p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                  {player.squad_number}
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {player.first_name} {player.last_name}
-                  </h3>
-                  <p className="text-blue-600 font-medium">{player.position}</p>
-                  <p className="text-gray-500 text-sm">Age: {player.age}</p>
-                </div>
+          <div key={player.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:scale-105">
+            <div className="flex items-center mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                {player.squad_number}
+              </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-semibold text-white">
+                  {player.first_name} {player.last_name}
+                </h3>
+                <p className="text-blue-400 font-medium">{player.position}</p>
+                <p className="text-gray-400 text-sm">Age: {player.age}</p>
               </div>
             </div>
           </div>
@@ -605,7 +879,7 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
   );
 };
 
-// Formation Pitch Component
+// Formation Pitch Component (keeping the same as it works)
 const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, substitutes, onSubstituteSelect }) => {
   const [selectedPosition, setSelectedPosition] = useState(null);
   
@@ -687,8 +961,8 @@ const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, s
 
         {/* Player Selection Dropdown */}
         {selectedPosition && (
-          <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 w-64 z-10">
-            <h4 className="font-semibold mb-2">
+          <div className="absolute top-4 right-4 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-lg p-4 w-64 z-10 border border-slate-700">
+            <h4 className="font-semibold mb-2 text-white">
               Select Player for {formation.positions.find(p => p.id === selectedPosition)?.label}
             </h4>
             <div className="max-h-40 overflow-y-auto space-y-2">
@@ -696,24 +970,24 @@ const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, s
                 <button
                   key={player.id}
                   onClick={() => handlePlayerSelection(player.id, selectedPosition)}
-                  className="w-full text-left p-2 hover:bg-gray-100 rounded flex items-center"
+                  className="w-full text-left p-2 hover:bg-slate-700 rounded flex items-center text-white"
                 >
                   <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-2">
                     {player.squad_number}
                   </span>
                   <div>
                     <div className="font-medium">{player.first_name} {player.last_name}</div>
-                    <div className="text-sm text-gray-500">{player.position}</div>
+                    <div className="text-sm text-gray-400">{player.position}</div>
                   </div>
                 </button>
               ))}
               {availablePlayers.length === 0 && (
-                <p className="text-gray-500 text-sm">No available players</p>
+                <p className="text-gray-400 text-sm">No available players</p>
               )}
             </div>
             <button
               onClick={() => setSelectedPosition(null)}
-              className="mt-2 w-full bg-gray-200 text-gray-800 py-1 rounded hover:bg-gray-300"
+              className="mt-2 w-full bg-gray-600 text-white py-1 rounded hover:bg-gray-700"
             >
               Cancel
             </button>
@@ -722,8 +996,8 @@ const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, s
       </div>
 
       {/* Substitutes Bench */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-xl p-6 border border-slate-700/50">
+        <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
           <span className="mr-2">🪑</span>
           Substitutes Bench ({substitutes.length}/6)
         </h3>
@@ -734,7 +1008,7 @@ const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, s
               <div
                 key={index}
                 className={`border-2 border-dashed rounded-lg p-4 h-24 flex flex-col items-center justify-center cursor-pointer transition-colors ${
-                  substitute ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+                  substitute ? 'border-blue-500 bg-blue-500/20' : 'border-gray-600 hover:border-gray-500'
                 }`}
                 onClick={() => {
                   if (!substitute && availablePlayers.length > 0) {
@@ -749,7 +1023,7 @@ const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, s
                     <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm">
                       {substitute.squad_number}
                     </div>
-                    <div className="text-xs text-center mt-1">
+                    <div className="text-xs text-center mt-1 text-white">
                       {substitute.first_name}
                     </div>
                   </>
@@ -766,13 +1040,13 @@ const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, s
         {/* Available players for substitutes */}
         {availablePlayers.length > 0 && (
           <div className="mt-4">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Available Players:</h4>
+            <h4 className="text-sm font-medium text-gray-300 mb-2">Available Players:</h4>
             <div className="flex flex-wrap gap-2">
               {availablePlayers.slice(0, 6 - substitutes.length).map(player => (
                 <button
                   key={player.id}
                   onClick={() => onSubstituteSelect(player)}
-                  className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center"
+                  className="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-full text-sm flex items-center text-white"
                 >
                   <span className="w-5 h-5 bg-gray-500 text-white rounded-full flex items-center justify-center text-xs mr-1">
                     {player.squad_number}
@@ -788,7 +1062,7 @@ const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, s
   );
 };
 
-// Match View Component
+// Match View Component (keeping similar structure but with futuristic styling)
 const MatchView = ({ teams, onBack }) => {
   const [step, setStep] = useState(1);
   const [matchData, setMatchData] = useState({
@@ -946,25 +1220,28 @@ const MatchView = ({ teams, onBack }) => {
   };
 
   return (
-    <div className="p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="flex items-center mb-8">
         <button 
           onClick={onBack}
-          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
         >
-          ← Back
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+          </svg>
+          <span>Back</span>
         </button>
-        <h2 className="text-3xl font-bold text-gray-800">Create Match</h2>
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Create Match</h2>
         <div className="ml-6 flex items-center space-x-4">
-          <div className={`flex items-center ${step >= 1 ? 'text-green-600' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-green-600 text-white' : 'bg-gray-300'}`}>
+          <div className={`flex items-center ${step >= 1 ? 'text-green-400' : 'text-gray-500'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-green-500 text-white' : 'bg-gray-600'}`}>
               1
             </div>
             <span className="ml-2">Match Details</span>
           </div>
-          <div className="w-8 h-0.5 bg-gray-300"></div>
-          <div className={`flex items-center ${step >= 2 ? 'text-green-600' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-green-600 text-white' : 'bg-gray-300'}`}>
+          <div className="w-8 h-0.5 bg-gray-600"></div>
+          <div className={`flex items-center ${step >= 2 ? 'text-green-400' : 'text-gray-500'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-green-500 text-white' : 'bg-gray-600'}`}>
               2
             </div>
             <span className="ml-2">Squad Selection</span>
@@ -973,16 +1250,16 @@ const MatchView = ({ teams, onBack }) => {
       </div>
 
       {step === 1 && (
-        <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-200">
-          <h3 className="text-xl font-semibold mb-6">Match Details</h3>
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50">
+          <h3 className="text-2xl font-semibold mb-6 text-white">Match Details</h3>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Home Team</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Home Team</label>
                 <select
                   value={matchData.home_team_id}
                   onChange={(e) => setMatchData({...matchData, home_team_id: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
                 >
                   <option value="">Select Home Team</option>
@@ -992,11 +1269,11 @@ const MatchView = ({ teams, onBack }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Away Team</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Away Team</label>
                 <select
                   value={matchData.away_team_id}
                   onChange={(e) => setMatchData({...matchData, away_team_id: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
                 >
                   <option value="">Select Away Team</option>
@@ -1006,29 +1283,30 @@ const MatchView = ({ teams, onBack }) => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Date & Time</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Date & Time</label>
                 <input
                   type="datetime-local"
                   value={matchData.date}
                   onChange={(e) => setMatchData({...matchData, date: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Venue</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Venue</label>
                 <input
                   type="text"
                   value={matchData.venue}
                   onChange={(e) => setMatchData({...matchData, venue: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  placeholder="Enter venue..."
                   required
                 />
               </div>
             </div>
             <button 
               type="submit"
-              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium"
             >
               Next: Squad Selection →
             </button>
@@ -1038,22 +1316,22 @@ const MatchView = ({ teams, onBack }) => {
 
       {step === 2 && (
         <div className="space-y-8">
-          <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-200">
-            <h3 className="text-xl font-semibold mb-6">Squad Selection & Formation</h3>
+          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50">
+            <h3 className="text-2xl font-semibold mb-6 text-white">Squad Selection & Formation</h3>
             
             {/* Formation Selection */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
               <div>
-                <h4 className="text-lg font-medium mb-4">Home Team Formation</h4>
+                <h4 className="text-lg font-medium mb-4 text-blue-400">Home Team Formation</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.keys(availableFormations.home || {}).map(formation => (
                     <button
                       key={formation}
                       onClick={() => handleFormationChange('home', formation)}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`p-3 rounded-xl border-2 transition-all font-medium ${
                         matchData.home_formation === formation
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-300 hover:border-gray-400'
+                          ? 'border-blue-500 bg-blue-500/20 text-blue-300'
+                          : 'border-slate-600 hover:border-slate-500 text-gray-300'
                       }`}
                     >
                       {formation}
@@ -1062,16 +1340,16 @@ const MatchView = ({ teams, onBack }) => {
                 </div>
               </div>
               <div>
-                <h4 className="text-lg font-medium mb-4">Away Team Formation</h4>
+                <h4 className="text-lg font-medium mb-4 text-red-400">Away Team Formation</h4>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.keys(availableFormations.away || {}).map(formation => (
                     <button
                       key={formation}
                       onClick={() => handleFormationChange('away', formation)}
-                      className={`p-3 rounded-lg border-2 transition-all ${
+                      className={`p-3 rounded-xl border-2 transition-all font-medium ${
                         matchData.away_formation === formation
-                          ? 'border-red-500 bg-red-50 text-red-700'
-                          : 'border-gray-300 hover:border-gray-400'
+                          ? 'border-red-500 bg-red-500/20 text-red-300'
+                          : 'border-slate-600 hover:border-slate-500 text-gray-300'
                       }`}
                     >
                       {formation}
@@ -1085,9 +1363,9 @@ const MatchView = ({ teams, onBack }) => {
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
               {/* Home Team */}
               <div>
-                <h4 className="text-lg font-medium mb-4 text-blue-600">
+                <h4 className="text-lg font-medium mb-4 text-blue-400">
                   Home Team: {teams.find(t => t.id === matchData.home_team_id)?.name}
-                  <span className="ml-2 text-sm">({selectedHomePlayers.length}/{availableFormations.home?.[matchData.home_formation]?.positions?.length || 0})</span>
+                  <span className="ml-2 text-sm text-gray-400">({selectedHomePlayers.length}/{availableFormations.home?.[matchData.home_formation]?.positions?.length || 0})</span>
                 </h4>
                 {availableFormations.home?.[matchData.home_formation] && (
                   <FormationPitch
@@ -1103,9 +1381,9 @@ const MatchView = ({ teams, onBack }) => {
 
               {/* Away Team */}
               <div>
-                <h4 className="text-lg font-medium mb-4 text-red-600">
+                <h4 className="text-lg font-medium mb-4 text-red-400">
                   Away Team: {teams.find(t => t.id === matchData.away_team_id)?.name}
-                  <span className="ml-2 text-sm">({selectedAwayPlayers.length}/{availableFormations.away?.[matchData.away_formation]?.positions?.length || 0})</span>
+                  <span className="ml-2 text-sm text-gray-400">({selectedAwayPlayers.length}/{availableFormations.away?.[matchData.away_formation]?.positions?.length || 0})</span>
                 </h4>
                 {availableFormations.away?.[matchData.away_formation] && (
                   <FormationPitch
@@ -1123,17 +1401,17 @@ const MatchView = ({ teams, onBack }) => {
             <div className="mt-8 flex justify-between">
               <button 
                 onClick={() => setStep(1)}
-                className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600"
+                className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-medium"
               >
                 ← Previous
               </button>
               <button 
                 onClick={handleSubmit}
                 disabled={!canCreateMatch()}
-                className={`px-8 py-3 rounded-lg font-medium transition-all ${
+                className={`px-8 py-3 rounded-xl font-medium transition-all ${
                   canCreateMatch()
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transform hover:scale-105 shadow-lg'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 shadow-lg'
+                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                 }`}
               >
                 Create Match ⚽
@@ -1148,7 +1426,7 @@ const MatchView = ({ teams, onBack }) => {
 
 // Main App Component
 function App() {
-  const [currentView, setCurrentView] = useState('teams');
+  const [currentView, setCurrentView] = useState('dashboard');
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1173,10 +1451,12 @@ function App() {
 
   const handleTeamAdd = async (teamData) => {
     try {
-      await axios.post(`${API_BASE_URL}/api/teams`, teamData);
-      fetchTeams();
+      const response = await axios.post(`${API_BASE_URL}/api/teams`, teamData);
+      console.log('Team creation response:', response.data);
+      await fetchTeams(); // Refresh teams list
     } catch (error) {
       console.error('Error creating team:', error);
+      throw error;
     }
   };
 
@@ -1192,190 +1472,119 @@ function App() {
       });
     } catch (error) {
       console.error('Error adding player:', error);
+      throw error;
     }
+  };
+
+  const handleNavigate = (view) => {
+    setCurrentView(view);
+    setSelectedTeam(null);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading Grassroots Match Tracker...</p>
+          <div className="animate-spin rounded-full h-20 w-20 border-4 border-cyan-500 border-t-transparent mx-auto mb-8"></div>
+          <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 mb-4">
+            Loading Grassroots Match Tracker
+          </h2>
+          <p className="text-gray-400">Initializing the future of football management...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      {/* Header */}
-      <header className="bg-white shadow-lg border-b-4 border-green-500">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <img 
-                src="/grassroots-logo.svg" 
-                alt="Grassroots Match Tracker" 
-                className="h-16 w-auto"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'block';
-                }}
-              />
-              <div style={{display: 'none'}} className="h-16 w-32 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">GMT</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800">Grassroots Match Tracker</h1>
-                <p className="text-green-600 font-medium">Football Management System</p>
-              </div>
-            </div>
-            <nav className="hidden md:flex space-x-6">
-              <button 
-                onClick={() => setCurrentView('teams')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currentView === 'teams' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'text-gray-600 hover:text-green-600'
-                }`}
-              >
-                Team Management
-              </button>
-              <button 
-                onClick={() => setCurrentView('matches')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currentView === 'matches' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'text-gray-600 hover:text-green-600'
-                }`}
-              >
-                Matches
-              </button>
-              <button 
-                onClick={() => setCurrentView('statistics')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currentView === 'statistics' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'text-gray-600 hover:text-green-600'
-                }`}
-              >
-                Statistics
-              </button>
-              <button 
-                onClick={() => setCurrentView('players')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currentView === 'players' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'text-gray-600 hover:text-green-600'
-                }`}
-              >
-                Players
-              </button>
-              <button 
-                onClick={() => setCurrentView('fixtures')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currentView === 'fixtures' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'text-gray-600 hover:text-green-600'
-                }`}
-              >
-                Fixtures
-              </button>
-              <button 
-                onClick={() => setCurrentView('leagues')}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  currentView === 'leagues' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'text-gray-600 hover:text-green-600'
-                }`}
-              >
-                Leagues
-              </button>
-            </nav>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen">
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {currentView === 'teams' && !selectedTeam && (
-          <TeamView 
-            teams={teams}
-            onTeamSelect={setSelectedTeam}
-            onAddTeam={handleTeamAdd}
-            onViewMatches={() => setCurrentView('matches')}
-          />
-        )}
+      {currentView === 'dashboard' && (
+        <DashboardView 
+          teams={teams}
+          onNavigate={handleNavigate}
+        />
+      )}
 
-        {selectedTeam && (
-          <SquadView 
-            team={selectedTeam}
-            onBack={() => setSelectedTeam(null)}
-            onPlayerAdd={handlePlayerAdd}
-          />
-        )}
+      {currentView === 'teams' && !selectedTeam && (
+        <TeamView 
+          teams={teams}
+          onTeamSelect={setSelectedTeam}
+          onAddTeam={handleTeamAdd}
+          onViewMatches={() => setCurrentView('matches')}
+          onBack={() => setCurrentView('dashboard')}
+        />
+      )}
 
-        {currentView === 'matches' && (
-          <MatchView 
-            teams={teams}
-            onBack={() => setCurrentView('teams')}
-          />
-        )}
+      {selectedTeam && (
+        <SquadView 
+          team={selectedTeam}
+          onBack={() => setSelectedTeam(null)}
+          onPlayerAdd={handlePlayerAdd}
+        />
+      )}
 
-        {currentView === 'statistics' && (
-          <StatisticsView 
-            teams={teams}
-            onBack={() => setCurrentView('teams')}
-          />
-        )}
+      {currentView === 'matches' && (
+        <MatchView 
+          teams={teams}
+          onBack={() => setCurrentView('dashboard')}
+        />
+      )}
 
-        {currentView === 'players' && (
-          <PlayersView 
-            teams={teams}
-            onBack={() => setCurrentView('teams')}
-          />
-        )}
+      {currentView === 'statistics' && (
+        <StatisticsView 
+          teams={teams}
+          onBack={() => setCurrentView('dashboard')}
+        />
+      )}
 
-        {currentView === 'fixtures' && (
-          <FixturesView 
-            onBack={() => setCurrentView('teams')}
-          />
-        )}
+      {currentView === 'players' && (
+        <PlayersView 
+          teams={teams}
+          onBack={() => setCurrentView('dashboard')}
+        />
+      )}
 
-        {currentView === 'leagues' && (
-          <LeaguesView 
-            onBack={() => setCurrentView('teams')}
-          />
-        )}
-      </main>
+      {currentView === 'fixtures' && (
+        <FixturesView 
+          onBack={() => setCurrentView('dashboard')}
+        />
+      )}
 
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div>
-              <p>&copy; 2025 Grassroots Match Tracker. All rights reserved.</p>
-            </div>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <button 
-                onClick={() => setShowPrivacyModal(true)}
-                className="hover:text-green-400 transition-colors"
-              >
-                Privacy Policy
-              </button>
-              <button 
-                onClick={() => setShowTermsModal(true)}
-                className="hover:text-green-400 transition-colors"
-              >
-                Terms & Conditions
-              </button>
-              <a href="#" className="hover:text-green-400 transition-colors">
-                Contact
-              </a>
+      {currentView === 'leagues' && (
+        <LeaguesView 
+          onBack={() => setCurrentView('dashboard')}
+        />
+      )}
+
+      {/* Footer - only show on dashboard */}
+      {currentView === 'dashboard' && (
+        <footer className="bg-gradient-to-r from-slate-900 to-slate-800 text-white py-8 border-t border-slate-700">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <div>
+                <p>&copy; 2025 Grassroots Match Tracker. All rights reserved.</p>
+              </div>
+              <div className="flex space-x-6 mt-4 md:mt-0">
+                <button 
+                  onClick={() => setShowPrivacyModal(true)}
+                  className="hover:text-cyan-400 transition-colors"
+                >
+                  Privacy Policy
+                </button>
+                <button 
+                  onClick={() => setShowTermsModal(true)}
+                  className="hover:text-cyan-400 transition-colors"
+                >
+                  Terms & Conditions
+                </button>
+                <a href="#" className="hover:text-cyan-400 transition-colors">
+                  Contact
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
 
       {/* Modals */}
       <PrivacyPolicyModal 
