@@ -364,13 +364,21 @@ async def create_team(team: Team):
     result = await db.teams.insert_one(team_dict)
     return {"message": "Team created", "team_id": team.id}
 
-@app.get("/api/teams", response_class=CustomJSONResponse)
+@app.get("/api/teams")
 async def get_teams():
     """Get all teams"""
     teams = []
-    async for team in db.teams.find():
-        teams.append(doc_to_dict(team))
-    return {"teams": teams}
+    async for team_doc in db.teams.find():
+        # Convert ObjectId to string and return clean data
+        team = {
+            "id": team_doc.get("id"),
+            "name": team_doc.get("name"),
+            "age_group": team_doc.get("age_group"),
+            "logo_url": team_doc.get("logo_url"),
+            "players": team_doc.get("players", [])
+        }
+        teams.append(team)
+    return teams
 
 @app.get("/api/teams/{team_id}")
 async def get_team(team_id: str):
