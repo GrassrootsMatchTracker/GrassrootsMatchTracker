@@ -451,12 +451,8 @@ async def get_matches():
     """Get all matches"""
     matches = []
     async for match_doc in db.matches.find():
-        # Convert to dict and handle ObjectId properly
-        match_dict = dict(match_doc)
-        # Remove MongoDB's _id field
-        if "_id" in match_dict:
-            del match_dict["_id"]
-        matches.append(match_dict)
+        clean_match = clean_mongo_doc(match_doc)
+        matches.append(clean_match)
     return matches
 
 @app.get("/api/matches/{match_id}")
