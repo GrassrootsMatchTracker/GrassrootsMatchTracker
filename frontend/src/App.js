@@ -503,6 +503,456 @@ const App = () => {
     );
   };
 
+  // Match Creation View - 2-Step Process
+  const MatchView = () => {
+    const [showPlayerModal, setShowPlayerModal] = useState(false);
+    const [selectedPositionIndex, setSelectedPositionIndex] = useState(null);
+    const [homeTeamPlayers, setHomeTeamPlayers] = useState([]);
+
+    const resetMatch = () => {
+      setMatchStep(1);
+      setNewMatch({
+        home_team_id: '',
+        away_team_id: '',
+        match_date: '',
+        venue: '',
+        match_type: 'Friendly'
+      });
+      setSelectedFormation('4-4-2');
+      setSelectedPlayers({ starting: [], substitutes: [] });
+      setHomeTeamPlayers([]);
+    };
+
+    const handleMatchDetailsSubmit = async (e) => {
+      e.preventDefault();
+      if (newMatch.home_team_id === newMatch.away_team_id) {
+        alert('Home and away teams must be different');
+        return;
+      }
+      
+      // Fetch players for the home team
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/teams/${newMatch.home_team_id}/players`);
+        const players = await response.json();
+        setHomeTeamPlayers(players);
+        setMatchStep(2);
+      } catch (error) {
+        console.error('Error fetching team players:', error);
+        alert('Error loading team players. Please try again.');
+      }
+    };
+
+    const handlePlayerSelect = (positionIndex) => {
+      setSelectedPositionIndex(positionIndex);
+      setShowPlayerModal(true);
+    };
+
+    const handlePlayerAssign = (player, positionIndex) => {
+      const formationData = formations[selectedFormation];
+      if (!formationData) return;
+
+      // Remove player from any existing position
+      const updatedStarting = selectedPlayers.starting.filter(p => p.id !== player.id);
+      
+      // Add player to new position
+      const playerWithPosition = {
+        ...player,
+        positionIndex: positionIndex,
+        formationRole: formationData.positions[positionIndex].role
+      };
+      
+      updatedStarting.push(playerWithPosition);
+      
+      setSelectedPlayers({
+        ...selectedPlayers,
+        starting: updatedStarting
+      });
+    };
+
+    const handleRemovePlayer = (playerId) => {
+      const updatedStarting = selectedPlayers.starting.filter(p => p.id !== playerId);
+      setSelectedPlayers({
+        ...selectedPlayers,
+        starting: updatedStarting
+      });
+    };
+
+    const getValidationErrors = () => {
+      const errors = [];
+      const formationData = formations[selectedFormation];
+      
+      if (!formationData) {
+        errors.push('Invalid formation selected');
+        return errors;
+      }
+
+      const requiredPositions = formationData.positions.length;
+      const selectedCount = selectedPlayers.starting.length;
+      
+      if (selectedCount === 0) {
+        errors.push('No players selected');
+      } else if (selectedCount < 11) {
+        errors.push(`Select ${11 - selectedCount} more players (${selectedCount}/11)`);
+      } else if (selectedCount > 11) {
+        errors.push(`Too many players selected (${selectedCount}/11)`);
+      }
+
+      // Check for goalkeeper
+      const hasGoalkeeper = selectedPlayers.starting.some(p => 
+        p.formationRole === 'GK' || p.position === 'GK'
+      );
+      
+      if (selectedCount > 0 && !hasGoalkeeper) {
+        errors.push('Must select a goalkeeper');
+      }
+
+      return errors;
+    };
+
+    const handleMatchCreate = async () => {
+      const errors = getValidationErrors();
+      
+      if (errors.length > 0) {
+        alert('Please fix the following issues:\n' + errors.join('\n'));
+        return;
+      }
+
+      const matchData = {
+        ...newMatch,
+        match_date: new Date(newMatch.match_date).toISOString(),
+        home_formation: selectedFormation,
+        home_lineup: selectedPlayers.starting.map(p => p.id),
+        home_substitutes: selectedPlayers.substitutes.map(p => p.id),
+        status: 'scheduled'
+      };
+      
+      const match = await createMatch(matchData);
+      if (match) {
+        alert('🎉 Match created successfully!');
+        resetMatch();
+        setCurrentView('home');
+      }
+    };
+
+    if (matchStep === 1) {
+      return (
+        <div className="min-h-screen bg-gray-50 py-8">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold mb-2">Create Match</h1>
+              <p className="text-gray-600">Step 1: Match Details</p>
+              <div className="flex justify-center mt-4">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+                    <span className="ml-2 font-medium">Match Details</span>
+                  </div>
+                  <div className="w-8 h-0.5 bg-gray-300"></div>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center">2</div>
+                    <span className="ml-2 text-gray-500">Squad Selection</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="feature-card max-w-2xl mx-auto">
+              <form onSubmit={handleMatchDetailsSubmit} className="space-y-6">
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Home Team</label>
+                    <select
+                      value={newMatch.home_team_id}
+                      onChange={(e) => setNewMatch({...newMatch, home_team_id: e.target.value})}
+                      className="input-field"
+                      required
+                    >
+                      <option value="">Select Home Team</option>
+                      {teams.map(team => (
+                        <option key={team.id} value={team.id}>{team.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Away Team</label>
+                    <select
+                      value={newMatch.away_team_id}
+                      onChange={(e) => setNewMatch({...newMatch, away_team_id: e.target.value})}
+                      className="input-field"
+                      required
+                    >
+                      <option value="">Select Away Team</option>
+                      {teams.map(team => (
+                        <option key={team.id} value={team.id}>{team.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Match Type</label>
+                  <select
+                    value={newMatch.match_type}
+                    onChange={(e) => setNewMatch({...newMatch, match_type: e.target.value})}
+                    className="input-field"
+                  >
+                    <option value="Friendly">Friendly</option>
+                    <option value="League">League</option>
+                    <option value="Cup">Cup</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Match Date & Time</label>
+                  <input
+                    type="datetime-local"
+                    value={newMatch.match_date}
+                    onChange={(e) => setNewMatch({...newMatch, match_date: e.target.value})}
+                    className="input-field"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Venue</label>
+                  <input
+                    type="text"
+                    value={newMatch.venue}
+                    onChange={(e) => setNewMatch({...newMatch, venue: e.target.value})}
+                    className="input-field"
+                    placeholder="Stadium or ground name"
+                    required
+                  />
+                </div>
+
+                <div className="flex space-x-4 pt-4">
+                  <button type="submit" className="primary-button flex-1">
+                    Next: Squad Selection ➡️
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => setCurrentView('home')}
+                    className="secondary-button"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Step 2: Squad Selection
+    const homeTeam = teams.find(t => t.id === newMatch.home_team_id);
+    const awayTeam = teams.find(t => t.id === newMatch.away_team_id);
+    const formationData = formations[selectedFormation];
+    const validationErrors = getValidationErrors();
+
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold mb-2">Squad Selection</h1>
+            <p className="text-gray-600">Step 2: Choose formation and select your starting XI</p>
+            <div className="flex justify-center mt-4">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center">
+                  <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center">✓</div>
+                  <span className="ml-2 text-gray-500">Match Details</span>
+                </div>
+                <div className="w-8 h-0.5 bg-gray-300"></div>
+                <div className="flex items-center">
+                  <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+                  <span className="ml-2 font-medium">Squad Selection</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Match Info */}
+          <div className="feature-card mb-8">
+            <div className="flex items-center justify-between">
+              <div className="text-center">
+                <h3 className="text-xl font-bold">{homeTeam?.name}</h3>
+                <p className="text-gray-600">Home</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm text-gray-500">{newMatch.match_type}</p>
+                <p className="text-lg font-bold">VS</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(newMatch.match_date).toLocaleDateString()} at{' '}
+                  {new Date(newMatch.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+                <p className="text-xs text-gray-400">{newMatch.venue}</p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-xl font-bold">{awayTeam?.name}</h3>
+                <p className="text-gray-600">Away</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Formation Selection */}
+          <div className="feature-card mb-8">
+            <h3 className="text-xl font-bold mb-4">Choose Formation</h3>
+            <div className="grid grid-cols-5 gap-4">
+              {Object.keys(formations).map(formation => (
+                <button
+                  key={formation}
+                  onClick={() => {
+                    setSelectedFormation(formation);
+                    setSelectedPlayers({ starting: [], substitutes: [] });
+                  }}
+                  className={`p-4 rounded-lg border-2 transition ${
+                    selectedFormation === formation 
+                      ? 'border-red-600 bg-red-50' 
+                      : 'border-gray-300 hover:border-gray-400'
+                  }`}
+                >
+                  <div className="text-lg font-bold">{formation}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Formation Pitch */}
+          <div className="feature-card mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">Formation: {selectedFormation}</h3>
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600">
+                  Selected: {selectedPlayers.starting.length}/11 players
+                </span>
+                {validationErrors.length > 0 && (
+                  <div className="text-sm text-red-600">
+                    ⚠️ {validationErrors[0]}
+                  </div>
+                )}
+              </div>
+            </div>
+            <FormationPitch 
+              formation={selectedFormation}
+              players={homeTeamPlayers}
+              onPlayerSelect={handlePlayerSelect}
+              selectedPlayers={selectedPlayers}
+              homeTeam={homeTeam}
+            />
+            <div className="text-center text-sm text-gray-600 mt-4">
+              <p>💡 Click on any position to assign a player</p>
+            </div>
+          </div>
+
+          {/* Selected Players Summary */}
+          {selectedPlayers.starting.length > 0 && (
+            <div className="feature-card mb-8">
+              <h3 className="text-xl font-bold mb-4">Selected Starting XI</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {selectedPlayers.starting.map(player => (
+                  <div key={`${player.id}-${player.positionIndex}`} className="border rounded-lg p-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-bold">#{player.squad_number}</div>
+                        <div className="text-sm">{player.name}</div>
+                        <div className="text-xs text-gray-600">{player.formationRole} ({player.position})</div>
+                      </div>
+                      <button
+                        onClick={() => handleRemovePlayer(player.id)}
+                        className="text-red-600 hover:text-red-800 text-xs"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Available Players */}
+          <div className="feature-card mb-8">
+            <h3 className="text-xl font-bold mb-4">
+              Available Players ({homeTeamPlayers.length} total)
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              {homeTeamPlayers.map(player => {
+                const isSelected = selectedPlayers.starting.some(p => p.id === player.id);
+                return (
+                  <div 
+                    key={player.id} 
+                    className={`border-2 rounded-lg p-3 text-center transition ${
+                      isSelected 
+                        ? 'border-green-500 bg-green-50' 
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="font-bold">#{player.squad_number}</div>
+                    <div className="text-sm">{player.name}</div>
+                    <div className="text-xs text-gray-600">{player.position}</div>
+                    {isSelected && (
+                      <div className="text-xs text-green-600 mt-1">✓ Selected</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            
+            {homeTeamPlayers.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                <p>No players found for this team.</p>
+                <button 
+                  onClick={() => {
+                    setSelectedTeam(homeTeam);
+                    setCurrentView('squad');
+                  }}
+                  className="primary-button mt-4"
+                >
+                  Add Players to Squad
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex space-x-4">
+            <button 
+              onClick={() => setMatchStep(1)}
+              className="secondary-button"
+            >
+              ⬅️ Back to Match Details
+            </button>
+            <button 
+              onClick={handleMatchCreate}
+              disabled={validationErrors.length > 0}
+              className={`flex-1 ${
+                validationErrors.length > 0 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'primary-button'
+              }`}
+            >
+              {validationErrors.length > 0 
+                ? `Fix Issues: ${validationErrors[0]}` 
+                : '🎉 Create Match'
+              }
+            </button>
+          </div>
+
+          {/* Player Selection Modal */}
+          <PlayerSelectionModal
+            isOpen={showPlayerModal}
+            onClose={() => setShowPlayerModal(false)}
+            availablePlayers={homeTeamPlayers}
+            positionIndex={selectedPositionIndex}
+            formationPosition={formationData?.positions[selectedPositionIndex]}
+            onPlayerAssign={handlePlayerAssign}
+            assignedPlayers={selectedPlayers}
+          />
+        </div>
+      </div>
+    );
+  };
+
   // Navigation
   const NavigationBar = () => (
     <nav className="bg-gray-900 text-white p-4 shadow-lg">
