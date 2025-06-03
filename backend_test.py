@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 
 class GrassrootsMatchTrackerAPITest(unittest.TestCase):
     def setUp(self):
-        # Use the public endpoint from frontend/.env
-        self.base_url = "https://cd383368-5be3-438a-8b06-4a1311095d02.preview.emergentagent.com"
+        # Use localhost for testing
+        self.base_url = "http://localhost:8001"
         self.api_url = f"{self.base_url}/api"
         print(f"Testing API at: {self.api_url}")
         
