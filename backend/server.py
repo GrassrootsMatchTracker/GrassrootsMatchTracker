@@ -462,12 +462,8 @@ async def get_match(match_id: str):
     if not match_doc:
         raise HTTPException(status_code=404, detail="Match not found")
     
-    # Convert to dict and handle ObjectId properly
-    match_dict = dict(match_doc)
-    # Remove MongoDB's _id field
-    if "_id" in match_dict:
-        del match_dict["_id"]
-    return match_dict
+    clean_match = clean_mongo_doc(match_doc)
+    return clean_match
 
 @app.put("/api/matches/{match_id}")
 async def update_match(match_id: str, match_data: dict):
