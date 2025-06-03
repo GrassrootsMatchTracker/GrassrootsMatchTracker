@@ -111,10 +111,11 @@ const DashboardView = ({ teams, onNavigate }) => {
           <div className="text-center mb-12">
             <div className="flex items-center justify-center mb-6">
               <img 
-                src="/grassroots-logo.svg" 
+                src="/grassroots-logo.png" 
                 alt="Grassroots Match Tracker" 
                 className="h-20 w-auto filter drop-shadow-2xl"
                 onError={(e) => {
+                  console.log('Logo failed to load, using fallback');
                   e.target.style.display = 'none';
                   e.target.nextSibling.style.display = 'block';
                 }}
