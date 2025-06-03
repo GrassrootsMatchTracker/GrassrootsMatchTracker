@@ -93,6 +93,238 @@ const CookieModal = ({ isOpen, onClose, onAccept }) => {
   );
 };
 
+// Statistics View Component
+const StatisticsView = ({ teams, onBack }) => {
+  return (
+    <div className="p-8">
+      <div className="flex items-center mb-8">
+        <button 
+          onClick={onBack}
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+        >
+          ← Back
+        </button>
+        <h2 className="text-3xl font-bold text-gray-800">Statistics Dashboard</h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              📊
+            </div>
+            <div className="ml-4">
+              <h3 className="text-lg font-semibold text-gray-800">Total Teams</h3>
+              <p className="text-2xl font-bold text-blue-600">{teams.length}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              👥
+            </div>
+            <div className="ml-4">
+              <h3 className="text-lg font-semibold text-gray-800">Total Players</h3>
+              <p className="text-2xl font-bold text-green-600">
+                {teams.reduce((total, team) => total + (team.players?.length || 0), 0)}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              ⚽
+            </div>
+            <div className="ml-4">
+              <h3 className="text-lg font-semibold text-gray-800">Total Matches</h3>
+              <p className="text-2xl font-bold text-yellow-600">0</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+              🏆
+            </div>
+            <div className="ml-4">
+              <h3 className="text-lg font-semibold text-gray-800">Active Leagues</h3>
+              <p className="text-2xl font-bold text-purple-600">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <h3 className="text-xl font-semibold mb-4">Teams by Age Group</h3>
+          <div className="space-y-3">
+            {['U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18'].map(ageGroup => {
+              const count = teams.filter(team => team.age_group === ageGroup).length;
+              return (
+                <div key={ageGroup} className="flex justify-between items-center">
+                  <span className="font-medium">{ageGroup}</span>
+                  <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                    {count} teams
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
+          <div className="space-y-4">
+            <div className="flex items-center p-3 bg-gray-50 rounded-lg">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+              <div>
+                <p className="font-medium">System Ready</p>
+                <p className="text-sm text-gray-600">Grassroots Match Tracker is operational</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Players View Component
+const PlayersView = ({ teams, onBack }) => {
+  const allPlayers = teams.flatMap(team => 
+    (team.players || []).map(player => ({
+      ...player,
+      teamName: team.name,
+      teamAgeGroup: team.age_group
+    }))
+  );
+
+  return (
+    <div className="p-8">
+      <div className="flex items-center mb-8">
+        <button 
+          onClick={onBack}
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+        >
+          ← Back
+        </button>
+        <h2 className="text-3xl font-bold text-gray-800">All Players</h2>
+        <span className="ml-4 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+          {allPlayers.length} players
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {allPlayers.map((player) => (
+          <div key={player.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200">
+            <div className="p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                  {player.squad_number}
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {player.first_name} {player.last_name}
+                  </h3>
+                  <p className="text-blue-600 font-medium">{player.position}</p>
+                  <p className="text-gray-500 text-sm">Age: {player.age}</p>
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="text-sm text-gray-600">Team: {player.teamName}</p>
+                <p className="text-sm text-gray-600">Age Group: {player.teamAgeGroup}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+        
+        {allPlayers.length === 0 && (
+          <div className="col-span-full text-center py-12">
+            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-gray-400 text-2xl">👥</span>
+            </div>
+            <h3 className="text-lg font-medium text-gray-500 mb-2">No Players Found</h3>
+            <p className="text-gray-400">Add teams and players to see them here</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Fixtures View Component  
+const FixturesView = ({ onBack }) => {
+  return (
+    <div className="p-8">
+      <div className="flex items-center mb-8">
+        <button 
+          onClick={onBack}
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+        >
+          ← Back
+        </button>
+        <h2 className="text-3xl font-bold text-gray-800">Fixtures & Results</h2>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200 text-center">
+        <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="text-white text-3xl">📅</span>
+        </div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">Fixtures Coming Soon</h3>
+        <p className="text-gray-600 mb-6">
+          Create matches to see upcoming fixtures and results here. 
+          Use the Match Creation feature to schedule games between your teams.
+        </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-green-700"
+        >
+          Create Your First Match
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Leagues View Component
+const LeaguesView = ({ onBack }) => {
+  return (
+    <div className="p-8">
+      <div className="flex items-center mb-8">
+        <button 
+          onClick={onBack}
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4"
+        >
+          ← Back
+        </button>
+        <h2 className="text-3xl font-bold text-gray-800">Leagues & Tournaments</h2>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-200 text-center">
+        <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+          <span className="text-white text-3xl">🏆</span>
+        </div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">League Management Coming Soon</h3>
+        <p className="text-gray-600 mb-6">
+          Create and manage leagues and tournaments for your grassroots teams. 
+          Track standings, manage fixtures, and celebrate victories!
+        </p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700"
+        >
+          Coming Soon
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // Team View Component
 const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches }) => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -1086,6 +1318,32 @@ function App() {
         {currentView === 'matches' && (
           <MatchView 
             teams={teams}
+            onBack={() => setCurrentView('teams')}
+          />
+        )}
+
+        {currentView === 'statistics' && (
+          <StatisticsView 
+            teams={teams}
+            onBack={() => setCurrentView('teams')}
+          />
+        )}
+
+        {currentView === 'players' && (
+          <PlayersView 
+            teams={teams}
+            onBack={() => setCurrentView('teams')}
+          />
+        )}
+
+        {currentView === 'fixtures' && (
+          <FixturesView 
+            onBack={() => setCurrentView('teams')}
+          />
+        )}
+
+        {currentView === 'leagues' && (
+          <LeaguesView 
             onBack={() => setCurrentView('teams')}
           />
         )}
