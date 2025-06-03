@@ -1007,7 +1007,7 @@ function App() {
                     : 'text-gray-600 hover:text-green-600'
                 }`}
               >
-                Teams
+                Team Management
               </button>
               <button 
                 onClick={() => setCurrentView('matches')}
@@ -1018,6 +1018,46 @@ function App() {
                 }`}
               >
                 Matches
+              </button>
+              <button 
+                onClick={() => setCurrentView('statistics')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentView === 'statistics' 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'text-gray-600 hover:text-green-600'
+                }`}
+              >
+                Statistics
+              </button>
+              <button 
+                onClick={() => setCurrentView('players')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentView === 'players' 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'text-gray-600 hover:text-green-600'
+                }`}
+              >
+                Players
+              </button>
+              <button 
+                onClick={() => setCurrentView('fixtures')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentView === 'fixtures' 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'text-gray-600 hover:text-green-600'
+                }`}
+              >
+                Fixtures
+              </button>
+              <button 
+                onClick={() => setCurrentView('leagues')}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  currentView === 'leagues' 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'text-gray-600 hover:text-green-600'
+                }`}
+              >
+                Leagues
               </button>
             </nav>
           </div>
