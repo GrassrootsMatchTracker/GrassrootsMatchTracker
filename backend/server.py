@@ -436,11 +436,24 @@ async def get_matches():
 @app.get("/api/matches/{match_id}")
 async def get_match(match_id: str):
     """Get specific match"""
-    match = await db.matches.find_one({"id": match_id})
-    if not match:
+    match_doc = await db.matches.find_one({"id": match_id})
+    if not match_doc:
         raise HTTPException(status_code=404, detail="Match not found")
-    match["_id"] = str(match["_id"])
-    return match
+    
+    # Skip the MongoDB _id field entirely
+    match_data = {
+        "id": match_doc.get("id"),
+        "home_team_id": match_doc.get("home_team_id"),
+        "away_team_id": match_doc.get("away_team_id"),
+        "date": match_doc.get("date"),
+        "home_formation": match_doc.get("home_formation"),
+        "away_formation": match_doc.get("away_formation"),
+        "home_players": match_doc.get("home_players", []),
+        "away_players": match_doc.get("away_players", []),
+        "home_substitutes": match_doc.get("home_substitutes", []),
+        "away_substitutes": match_doc.get("away_substitutes", [])
+    }
+    return match_data
 
 @app.put("/api/matches/{match_id}")
 async def update_match(match_id: str, match_data: dict):
