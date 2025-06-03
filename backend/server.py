@@ -8,6 +8,22 @@ import os
 from datetime import datetime
 import json
 import uuid
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+
+# Custom JSON encoder to handle MongoDB ObjectId
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
+# Custom JSONResponse class
+class CustomJSONResponse(JSONResponse):
+    def render(self, content):
+        return json.dumps(content, cls=CustomJSONEncoder).encode("utf-8")
 
 app = FastAPI()
 
@@ -24,6 +40,16 @@ app.add_middleware(
 MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 client = AsyncIOMotorClient(MONGO_URL)
 db = client.grassroots_tracker
+
+# Helper function to convert MongoDB document to dict
+def doc_to_dict(doc):
+    if doc is None:
+        return None
+    doc_dict = dict(doc)
+    # Convert ObjectId to string
+    if "_id" in doc_dict:
+        doc_dict["_id"] = str(doc_dict["_id"])
+    return doc_dict
 
 # Pydantic models
 class Player(BaseModel):
