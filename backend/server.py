@@ -357,11 +357,19 @@ async def get_teams():
 @app.get("/api/teams/{team_id}")
 async def get_team(team_id: str):
     """Get specific team"""
-    team = await db.teams.find_one({"id": team_id})
-    if not team:
+    team_doc = await db.teams.find_one({"id": team_id})
+    if not team_doc:
         raise HTTPException(status_code=404, detail="Team not found")
-    team["_id"] = str(team["_id"])
-    return team
+    
+    # Skip the MongoDB _id field entirely
+    team_data = {
+        "id": team_doc.get("id"),
+        "name": team_doc.get("name"),
+        "age_group": team_doc.get("age_group"),
+        "logo_url": team_doc.get("logo_url"),
+        "players": team_doc.get("players", [])
+    }
+    return team_data
 
 @app.post("/api/teams/{team_id}/players")
 async def add_player(team_id: str, player: Player):
