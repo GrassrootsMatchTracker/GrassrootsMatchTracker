@@ -1,0 +1,22 @@
+<svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield outline -->
+  <path d="M100 10 L170 30 L170 70 Q170 90 100 110 Q30 90 30 70 L30 30 Z" 
+        fill="#1a5f3f" stroke="#ffffff" stroke-width="2"/>
+  
+  <!-- Football in center -->
+  <circle cx="100" cy="55" r="15" fill="#ffffff"/>
+  <path d="M85 55 Q100 45 115 55 Q100 65 85 55" fill="#000000"/>
+  <path d="M100 40 Q110 55 100 70 Q90 55 100 40" fill="#000000"/>
+  
+  <!-- EST. 2025 text -->
+  <text x="60" y="35" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#ffffff">EST.</text>
+  <text x="135" y="35" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#ffffff">2025</text>
+  
+  <!-- Main title -->
+  <text x="100" y="95" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">
+    GRASSROOTS MATCH TRACKER
+  </text>
+  <text x="100" y="107" font-family="Arial, sans-serif" font-size="8" fill="#ffffff" text-anchor="middle">
+    FOR THE PEOPLE
+  </text>
+</svg>
