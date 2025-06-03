@@ -585,24 +585,37 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
     name: '',
     age_group: 'U13'
   });
+  const [isCreating, setIsCreating] = useState(false);
 
   const ageGroups = ['U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!newTeam.name.trim()) {
+      alert('Please enter a team name');
+      return;
+    }
+
+    setIsCreating(true);
     try {
+      console.log('Creating team:', newTeam);
       await onAddTeam(newTeam);
+      console.log('Team created successfully');
       setNewTeam({ name: '', age_group: 'U13' });
       setShowAddForm(false);
+      alert('Team created successfully!');
     } catch (error) {
       console.error('Error adding team:', error);
       alert('Error adding team. Please try again.');
+    } finally {
+      setIsCreating(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 space-y-4 lg:space-y-0">
         <div className="flex items-center">
           <button 
             onClick={onBack}
@@ -615,16 +628,16 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
           </button>
           <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Team Management</h2>
         </div>
-        <div className="space-x-4">
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
           <button 
             onClick={() => setShowAddForm(true)}
-            className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium"
+            className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium text-center"
           >
             ➕ Add New Team
           </button>
           <button 
             onClick={onViewMatches}
-            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium"
+            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium text-center"
           >
             📅 View Matches
           </button>
@@ -636,7 +649,7 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
           <h3 className="text-2xl font-semibold mb-6 text-white">Add New Team</h3>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Team Name</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Team Name *</label>
               <input
                 type="text"
                 value={newTeam.name}
@@ -644,6 +657,7 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
                 className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                 placeholder="Enter team name..."
                 required
+                disabled={isCreating}
               />
             </div>
             <div>
@@ -653,22 +667,29 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
                 onChange={(e) => setNewTeam({...newTeam, age_group: e.target.value})}
                 className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                 required
+                disabled={isCreating}
               >
                 {ageGroups.map(age => (
                   <option key={age} value={age}>{age}</option>
                 ))}
               </select>
             </div>
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
               <button 
                 type="submit"
-                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all font-medium"
+                disabled={isCreating}
+                className={`px-8 py-3 rounded-xl font-medium transition-all ${
+                  isCreating 
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700'
+                }`}
               >
-                Create Team
+                {isCreating ? 'Creating...' : 'Create Team'}
               </button>
               <button 
                 type="button"
                 onClick={() => setShowAddForm(false)}
+                disabled={isCreating}
                 className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-medium"
               >
                 Cancel
