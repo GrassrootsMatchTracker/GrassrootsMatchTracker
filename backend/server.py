@@ -343,9 +343,18 @@ async def get_teams():
     """Get all teams"""
     teams = []
     async for team in db.teams.find():
+        # Convert ObjectId to string
         team["_id"] = str(team["_id"])
-        teams.append(team)
-    return teams
+        # Create a clean dict without MongoDB-specific fields
+        clean_team = {
+            "id": team.get("id"),
+            "name": team.get("name"),
+            "age_group": team.get("age_group"),
+            "logo_url": team.get("logo_url"),
+            "players": team.get("players", [])
+        }
+        teams.append(clean_team)
+    return {"teams": teams}
 
 @app.get("/api/teams/{team_id}")
 async def get_team(team_id: str):
