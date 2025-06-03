@@ -41,6 +41,29 @@ MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 client = AsyncIOMotorClient(MONGO_URL)
 db = client.grassroots_tracker
 
+# Helper function to convert MongoDB documents
+def clean_mongo_doc(doc):
+    """Convert MongoDB document to clean dict without ObjectId"""
+    if doc is None:
+        return None
+    if isinstance(doc, list):
+        return [clean_mongo_doc(item) for item in doc]
+    if isinstance(doc, dict):
+        clean_doc = {}
+        for key, value in doc.items():
+            if key == "_id":
+                continue  # Skip MongoDB's _id field
+            elif isinstance(value, ObjectId):
+                clean_doc[key] = str(value)
+            elif isinstance(value, dict):
+                clean_doc[key] = clean_mongo_doc(value)
+            elif isinstance(value, list):
+                clean_doc[key] = clean_mongo_doc(value)
+            else:
+                clean_doc[key] = value
+        return clean_doc
+    return doc
+
 # Helper function to convert MongoDB document to dict
 def doc_to_dict(doc):
     if doc is None:
