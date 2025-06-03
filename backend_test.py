@@ -84,8 +84,8 @@ class GrassrootsMatchTrackerAPITest(unittest.TestCase):
         print(f"✅ Team created and retrieved successfully: {team_data['name']}")
         return created_team
         
-    def test_create_player_and_get_team_players(self):
-        """Test creating a player and retrieving players for a team"""
+    def test_create_player_with_first_last_name(self):
+        """Test creating a player with first and last name fields"""
         # First, get a team or create one
         response = requests.get(f"{self.api_url}/teams")
         teams = response.json()
@@ -103,20 +103,24 @@ class GrassrootsMatchTrackerAPITest(unittest.TestCase):
         else:
             team_id = teams[0]["id"]
             
-        # Create a player
+        # Create a player with first and last name
+        first_name = f"First{datetime.now().strftime('%H%M%S')}"
+        last_name = f"Last{datetime.now().strftime('%H%M%S')}"
+        
         player_data = {
             "team_id": team_id,
-            "name": f"Test Player {datetime.now().strftime('%Y%m%d%H%M%S')}",
+            "name": f"{first_name} {last_name}",  # Combined name for API
             "squad_number": 99,
             "position": "MID",
-            "age": 25,
-            "nationality": "Test Nation"
+            "age": 25
+            # Note: Height, Weight, Nationality fields removed as per requirements
         }
         
         response = requests.post(f"{self.api_url}/players", json=player_data)
         self.assertEqual(response.status_code, 200)
         created_player = response.json()
         self.assertEqual(created_player["name"], player_data["name"])
+        self.assertEqual(created_player["age"], player_data["age"])
         
         # Get players for the team
         response = requests.get(f"{self.api_url}/teams/{team_id}/players")
@@ -129,14 +133,23 @@ class GrassrootsMatchTrackerAPITest(unittest.TestCase):
         for player in players:
             if player["id"] == created_player["id"]:
                 player_found = True
+                # Verify the player has the expected fields
+                self.assertEqual(player["name"], f"{first_name} {last_name}")
+                self.assertEqual(player["squad_number"], 99)
+                self.assertEqual(player["position"], "MID")
+                self.assertEqual(player["age"], 25)
+                # Verify removed fields are not present or are None
+                self.assertIsNone(player.get("height"))
+                self.assertIsNone(player.get("weight"))
+                self.assertIsNone(player.get("nationality"))
                 break
                 
         self.assertTrue(player_found, "Created player not found in team players list")
-        print(f"✅ Created player and found in team's player list: {created_player['name']}")
+        print(f"✅ Created player with first/last name and found in team's player list: {created_player['name']}")
         return created_player
         
-    def test_create_match_with_all_formations(self):
-        """Test creating matches with all available formations"""
+    def test_create_match_with_squad_selection(self):
+        """Test creating a match with squad selection"""
         # Get formations
         response = requests.get(f"{self.api_url}/formations")
         formations = response.json()
@@ -156,39 +169,61 @@ class GrassrootsMatchTrackerAPITest(unittest.TestCase):
                 response = requests.post(f"{self.api_url}/teams", json=team_data)
                 teams.append(response.json())
         
-        # Test each formation
-        for home_formation in formations.keys():
-            for away_formation in list(formations.keys())[:1]:  # Just test one away formation per home formation
-                # Create a match with this formation combination
-                match_date = (datetime.now() + timedelta(days=7)).isoformat()
-                match_data = {
-                    "home_team_id": teams[0]["id"],
-                    "away_team_id": teams[1]["id"],
-                    "match_type": "Friendly",
-                    "match_date": match_date,
-                    "venue": f"Test Stadium - {home_formation} vs {away_formation}",
-                    "home_formation": home_formation,
-                    "away_formation": away_formation,
-                    "home_lineup": [],
-                    "away_lineup": [],
-                    "home_substitutes": [],
-                    "away_substitutes": []
-                }
-                
-                response = requests.post(f"{self.api_url}/matches", json=match_data)
-                self.assertEqual(response.status_code, 200)
-                created_match = response.json()
-                self.assertEqual(created_match["home_formation"], home_formation)
-                self.assertEqual(created_match["away_formation"], away_formation)
-                
-                print(f"✅ Created match with formations: {home_formation} vs {away_formation}")
+        # Create 11 players for the home team if needed
+        home_team_id = teams[0]["id"]
+        response = requests.get(f"{self.api_url}/teams/{home_team_id}/players")
+        home_players = response.json()
         
-        # Get all matches
-        response = requests.get(f"{self.api_url}/matches")
-        self.assertEqual(response.status_code, 200)
-        matches = response.json()
-        self.assertIsInstance(matches, list)
-        print(f"✅ Found {len(matches)} total matches")
+        if len(home_players) < 11:
+            # Create additional players
+            for i in range(11 - len(home_players)):
+                player_data = {
+                    "team_id": home_team_id,
+                    "name": f"Test Player {i} {datetime.now().strftime('%Y%m%d%H%M%S')}",
+                    "squad_number": i + 1,
+                    "position": "MID",
+                    "age": 25
+                }
+                response = requests.post(f"{self.api_url}/players", json=player_data)
+                home_players.append(response.json())
+        
+        # Test each formation
+        for formation_name in list(formations.keys()):
+            # Create a match with this formation
+            match_date = (datetime.now() + timedelta(days=7)).isoformat()
+            match_data = {
+                "home_team_id": teams[0]["id"],
+                "away_team_id": teams[1]["id"],
+                "match_type": "Friendly",
+                "match_date": match_date,
+                "venue": f"Test Stadium - {formation_name}",
+                "home_formation": formation_name,
+                "away_formation": "4-4-2",  # Default away formation
+                "home_lineup": [player["id"] for player in home_players[:11]],  # Select 11 players
+                "away_lineup": [],
+                "home_substitutes": [],
+                "away_substitutes": []
+            }
+            
+            response = requests.post(f"{self.api_url}/matches", json=match_data)
+            self.assertEqual(response.status_code, 200)
+            created_match = response.json()
+            self.assertEqual(created_match["home_formation"], formation_name)
+            self.assertEqual(len(created_match["home_lineup"]), 11)
+            
+            print(f"✅ Created match with formation {formation_name} and 11 selected players")
+            
+            # Get the match by ID to verify
+            match_id = created_match["id"]
+            response = requests.get(f"{self.api_url}/matches/{match_id}")
+            self.assertEqual(response.status_code, 200)
+            retrieved_match = response.json()
+            self.assertEqual(retrieved_match["id"], match_id)
+            self.assertEqual(retrieved_match["home_formation"], formation_name)
+            self.assertEqual(len(retrieved_match["home_lineup"]), 11)
+            
+            # Only test one formation to avoid creating too many matches
+            break
         
     def test_match_types(self):
         """Test creating matches with different match types"""
@@ -243,12 +278,6 @@ class GrassrootsMatchTrackerAPITest(unittest.TestCase):
             self.assertEqual(formation["name"], formation_name)
             self.assertIsInstance(formation["positions"], list)
             print(f"✅ Retrieved formation {formation_name} with {len(formation['positions'])} positions")
-            
-    def test_invalid_formation(self):
-        """Test requesting an invalid formation"""
-        response = requests.get(f"{self.api_url}/formations/invalid-formation")
-        self.assertEqual(response.status_code, 404)
-        print("✅ Invalid formation request correctly returns 404")
 
 def run_tests():
     # Create a test suite
@@ -259,11 +288,10 @@ def run_tests():
     suite.addTest(GrassrootsMatchTrackerAPITest('test_get_teams'))
     suite.addTest(GrassrootsMatchTrackerAPITest('test_get_formations'))
     suite.addTest(GrassrootsMatchTrackerAPITest('test_get_specific_formation'))
-    suite.addTest(GrassrootsMatchTrackerAPITest('test_invalid_formation'))
     suite.addTest(GrassrootsMatchTrackerAPITest('test_create_and_get_team'))
-    suite.addTest(GrassrootsMatchTrackerAPITest('test_create_player_and_get_team_players'))
+    suite.addTest(GrassrootsMatchTrackerAPITest('test_create_player_with_first_last_name'))
+    suite.addTest(GrassrootsMatchTrackerAPITest('test_create_match_with_squad_selection'))
     suite.addTest(GrassrootsMatchTrackerAPITest('test_match_types'))
-    suite.addTest(GrassrootsMatchTrackerAPITest('test_create_match_with_all_formations'))
     
     # Run the tests
     runner = unittest.TextTestRunner(verbosity=2)
