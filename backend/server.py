@@ -123,7 +123,7 @@ class PlayerStats(BaseModel):
     red_cards: int = 0
     minutes_played: int = 0
 
-# Formations data
+# Formations data with comprehensive list from PFSA
 FORMATIONS = {
     "4-4-2": {
         "name": "4-4-2",
@@ -136,6 +136,17 @@ FORMATIONS = {
             {"role": "ST", "x": 60, "y": 85}, {"role": "ST", "x": 40, "y": 85}
         ]
     },
+    "4-5-1": {
+        "name": "4-5-1",
+        "positions": [
+            {"role": "GK", "x": 50, "y": 10},
+            {"role": "RB", "x": 80, "y": 30}, {"role": "CB", "x": 60, "y": 30},
+            {"role": "CB", "x": 40, "y": 30}, {"role": "LB", "x": 20, "y": 30},
+            {"role": "RM", "x": 85, "y": 55}, {"role": "CM", "x": 65, "y": 55}, 
+            {"role": "CM", "x": 50, "y": 50}, {"role": "CM", "x": 35, "y": 55}, {"role": "LM", "x": 15, "y": 55},
+            {"role": "ST", "x": 50, "y": 85}
+        ]
+    },
     "4-3-3": {
         "name": "4-3-3",
         "positions": [
@@ -146,6 +157,51 @@ FORMATIONS = {
             {"role": "RW", "x": 80, "y": 85}, {"role": "ST", "x": 50, "y": 85}, {"role": "LW", "x": 20, "y": 85}
         ]
     },
+    "4-3-2-1": {
+        "name": "4-3-2-1",
+        "positions": [
+            {"role": "GK", "x": 50, "y": 10},
+            {"role": "RB", "x": 80, "y": 30}, {"role": "CB", "x": 60, "y": 30},
+            {"role": "CB", "x": 40, "y": 30}, {"role": "LB", "x": 20, "y": 30},
+            {"role": "CM", "x": 70, "y": 50}, {"role": "CM", "x": 50, "y": 45}, {"role": "CM", "x": 30, "y": 50},
+            {"role": "CAM", "x": 60, "y": 70}, {"role": "CAM", "x": 40, "y": 70},
+            {"role": "ST", "x": 50, "y": 85}
+        ]
+    },
+    "4-1-3-2": {
+        "name": "4-1-3-2",
+        "positions": [
+            {"role": "GK", "x": 50, "y": 10},
+            {"role": "RB", "x": 80, "y": 30}, {"role": "CB", "x": 60, "y": 30},
+            {"role": "CB", "x": 40, "y": 30}, {"role": "LB", "x": 20, "y": 30},
+            {"role": "CDM", "x": 50, "y": 45},
+            {"role": "CM", "x": 70, "y": 60}, {"role": "CM", "x": 50, "y": 65}, {"role": "CM", "x": 30, "y": 60},
+            {"role": "ST", "x": 60, "y": 85}, {"role": "ST", "x": 40, "y": 85}
+        ]
+    },
+    "5-4-1": {
+        "name": "5-4-1",
+        "positions": [
+            {"role": "GK", "x": 50, "y": 10},
+            {"role": "RWB", "x": 85, "y": 30}, {"role": "CB", "x": 65, "y": 25}, {"role": "CB", "x": 50, "y": 20},
+            {"role": "CB", "x": 35, "y": 25}, {"role": "LWB", "x": 15, "y": 30},
+            {"role": "RM", "x": 75, "y": 60}, {"role": "CM", "x": 60, "y": 55}, 
+            {"role": "CM", "x": 40, "y": 55}, {"role": "LM", "x": 25, "y": 60},
+            {"role": "ST", "x": 50, "y": 85}
+        ]
+    },
+    "4-1-2-1-2": {
+        "name": "4-1-2-1-2 Diamond",
+        "positions": [
+            {"role": "GK", "x": 50, "y": 10},
+            {"role": "RB", "x": 80, "y": 30}, {"role": "CB", "x": 60, "y": 30},
+            {"role": "CB", "x": 40, "y": 30}, {"role": "LB", "x": 20, "y": 30},
+            {"role": "CDM", "x": 50, "y": 45},
+            {"role": "CM", "x": 65, "y": 60}, {"role": "CM", "x": 35, "y": 60},
+            {"role": "CAM", "x": 50, "y": 75},
+            {"role": "ST", "x": 60, "y": 85}, {"role": "ST", "x": 40, "y": 85}
+        ]
+    },
     "3-5-2": {
         "name": "3-5-2",
         "positions": [
@@ -153,6 +209,16 @@ FORMATIONS = {
             {"role": "CB", "x": 70, "y": 30}, {"role": "CB", "x": 50, "y": 30}, {"role": "CB", "x": 30, "y": 30},
             {"role": "RWB", "x": 85, "y": 55}, {"role": "CM", "x": 65, "y": 55}, {"role": "CM", "x": 50, "y": 50},
             {"role": "CM", "x": 35, "y": 55}, {"role": "LWB", "x": 15, "y": 55},
+            {"role": "ST", "x": 60, "y": 85}, {"role": "ST", "x": 40, "y": 85}
+        ]
+    },
+    "5-3-2": {
+        "name": "5-3-2",
+        "positions": [
+            {"role": "GK", "x": 50, "y": 10},
+            {"role": "RWB", "x": 85, "y": 30}, {"role": "CB", "x": 65, "y": 30}, {"role": "CB", "x": 50, "y": 30},
+            {"role": "CB", "x": 35, "y": 30}, {"role": "LWB", "x": 15, "y": 30},
+            {"role": "CM", "x": 65, "y": 60}, {"role": "CM", "x": 50, "y": 55}, {"role": "CM", "x": 35, "y": 60},
             {"role": "ST", "x": 60, "y": 85}, {"role": "ST", "x": 40, "y": 85}
         ]
     },
@@ -167,14 +233,36 @@ FORMATIONS = {
             {"role": "ST", "x": 50, "y": 85}
         ]
     },
-    "5-3-2": {
-        "name": "5-3-2",
+    "3-2-4-1": {
+        "name": "3-2-4-1",
         "positions": [
             {"role": "GK", "x": 50, "y": 10},
-            {"role": "RWB", "x": 85, "y": 30}, {"role": "CB", "x": 65, "y": 30}, {"role": "CB", "x": 50, "y": 30},
-            {"role": "CB", "x": 35, "y": 30}, {"role": "LWB", "x": 15, "y": 30},
-            {"role": "CM", "x": 65, "y": 60}, {"role": "CM", "x": 50, "y": 55}, {"role": "CM", "x": 35, "y": 60},
-            {"role": "ST", "x": 60, "y": 85}, {"role": "ST", "x": 40, "y": 85}
+            {"role": "CB", "x": 70, "y": 30}, {"role": "CB", "x": 50, "y": 30}, {"role": "CB", "x": 30, "y": 30},
+            {"role": "CDM", "x": 60, "y": 50}, {"role": "CDM", "x": 40, "y": 50},
+            {"role": "RW", "x": 85, "y": 70}, {"role": "RAM", "x": 65, "y": 70},
+            {"role": "LAM", "x": 35, "y": 70}, {"role": "LW", "x": 15, "y": 70},
+            {"role": "ST", "x": 50, "y": 85}
+        ]
+    },
+    "2-3-5": {
+        "name": "2-3-5",
+        "positions": [
+            {"role": "GK", "x": 50, "y": 10},
+            {"role": "RB", "x": 70, "y": 30}, {"role": "LB", "x": 30, "y": 30},
+            {"role": "RH", "x": 70, "y": 50}, {"role": "CH", "x": 50, "y": 45}, {"role": "LH", "x": 30, "y": 50},
+            {"role": "RW", "x": 85, "y": 75}, {"role": "IR", "x": 65, "y": 80}, {"role": "CF", "x": 50, "y": 85},
+            {"role": "IL", "x": 35, "y": 80}, {"role": "LW", "x": 15, "y": 75}
+        ]
+    },
+    "4-2-4": {
+        "name": "4-2-4",
+        "positions": [
+            {"role": "GK", "x": 50, "y": 10},
+            {"role": "RB", "x": 80, "y": 30}, {"role": "CB", "x": 60, "y": 30},
+            {"role": "CB", "x": 40, "y": 30}, {"role": "LB", "x": 20, "y": 30},
+            {"role": "CM", "x": 60, "y": 55}, {"role": "CM", "x": 40, "y": 55},
+            {"role": "RW", "x": 80, "y": 85}, {"role": "RS", "x": 60, "y": 85},
+            {"role": "LS", "x": 40, "y": 85}, {"role": "LW", "x": 20, "y": 85}
         ]
     }
 }
