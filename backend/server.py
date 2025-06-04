@@ -628,7 +628,17 @@ async def get_live_match_state(match_id: str):
     clean_match = clean_mongo_doc(match_doc)
     return clean_match
 
-@app.get("/api/teams/{team_id}/statistics")
+@app.delete("/api/matches/{match_id}")
+async def delete_match(match_id: str):
+    """Delete a match"""
+    result = await db.matches.delete_one({"id": match_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Match not found")
+    
+    # Also delete any events for this match
+    await db.match_events.delete_many({"match_id": match_id})
+    
+    return {"message": "Match deleted successfully"}
 async def get_team_statistics(team_id: str):
     """Get detailed team statistics including player stats"""
     team_doc = await db.teams.find_one({"id": team_id})
