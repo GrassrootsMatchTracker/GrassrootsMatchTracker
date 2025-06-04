@@ -553,6 +553,127 @@ async def update_match(match_id: str, match_data: dict):
         raise HTTPException(status_code=404, detail="Match not found")
     return {"message": "Match updated"}
 
+@app.post("/api/matches/{match_id}/start")
+async def start_match(match_id: str):
+    """Start a live match"""
+    match_doc = await db.matches.find_one({"id": match_id})
+    if not match_doc:
+        raise HTTPException(status_code=404, detail="Match not found")
+    
+    # Update match status to live
+    await db.matches.update_one(
+        {"id": match_id},
+        {"$set": {
+            "status": "live",
+            "timer_started_at": datetime.now().isoformat()
+        }}
+    )
+    
+    return {"message": "Match started", "match_id": match_id}
+
+@app.post("/api/matches/{match_id}/events")
+async def add_match_event(match_id: str, event: MatchEvent):
+    """Add an event to a live match"""
+    event_dict = event.dict()
+    
+    # Add event to events collection
+    await db.match_events.insert_one(event_dict)
+    
+    # Update match with the event
+    await db.matches.update_one(
+        {"id": match_id},
+        {"$push": {"events": event_dict}}
+    )
+    
+    # Update player statistics
+    if event.event_type == "goal":
+        await db.players.update_one(
+            {"id": event.player_id},
+            {"$inc": {"stats.goals": 1}}
+        )
+    elif event.event_type == "assist":
+        await db.players.update_one(
+            {"id": event.player_id},
+            {"$inc": {"stats.assists": 1}}
+        )
+    elif event.event_type == "yellow_card":
+        await db.players.update_one(
+            {"id": event.player_id},
+            {"$inc": {"stats.yellow_cards": 1}}
+        )
+    elif event.event_type == "red_card":
+        await db.players.update_one(
+            {"id": event.player_id},
+            {"$inc": {"stats.red_cards": 1}}
+        )
+    
+    return {"message": "Event added", "event_id": event.id}
+
+@app.get("/api/matches/{match_id}/live")
+async def get_live_match_state(match_id: str):
+    """Get live match state"""
+    match_doc = await db.matches.find_one({"id": match_id})
+    if not match_doc:
+        raise HTTPException(status_code=404, detail="Match not found")
+    
+    clean_match = clean_mongo_doc(match_doc)
+    return clean_match
+
+@app.get("/api/teams/{team_id}/statistics")
+async def get_team_statistics(team_id: str):
+    """Get detailed team statistics including player stats"""
+    team_doc = await db.teams.find_one({"id": team_id})
+    if not team_doc:
+        raise HTTPException(status_code=404, detail="Team not found")
+    
+    # Get all players with their statistics
+    players = []
+    async for player_doc in db.players.find({"team_id": team_id}):
+        clean_player = clean_mongo_doc(player_doc)
+        players.append(clean_player)
+    
+    # Get team's match statistics
+    team_matches = []
+    async for match_doc in db.matches.find({
+        "$or": [
+            {"home_team_id": team_id},
+            {"away_team_id": team_id}
+        ]
+    }):
+        clean_match = clean_mongo_doc(match_doc)
+        team_matches.append(clean_match)
+    
+    # Calculate team statistics
+    matches_played = len([m for m in team_matches if m.get("status") == "completed"])
+    matches_won = 0
+    goals_for = 0
+    goals_against = 0
+    
+    for match in team_matches:
+        if match.get("status") == "completed":
+            if match.get("home_team_id") == team_id:
+                goals_for += match.get("score_home", 0)
+                goals_against += match.get("score_away", 0)
+                if match.get("score_home", 0) > match.get("score_away", 0):
+                    matches_won += 1
+            else:
+                goals_for += match.get("score_away", 0)
+                goals_against += match.get("score_home", 0)
+                if match.get("score_away", 0) > match.get("score_home", 0):
+                    matches_won += 1
+    
+    return {
+        "team": clean_mongo_doc(team_doc),
+        "players": players,
+        "statistics": {
+            "matches_played": matches_played,
+            "matches_won": matches_won,
+            "goals_for": goals_for,
+            "goals_against": goals_against,
+            "win_percentage": (matches_won / matches_played * 100) if matches_played > 0 else 0
+        }
+    }
+
 # WebSocket manager for real-time updates
 class ConnectionManager:
     def __init__(self):
