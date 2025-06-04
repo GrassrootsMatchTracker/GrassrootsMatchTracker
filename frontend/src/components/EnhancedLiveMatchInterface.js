@@ -151,8 +151,16 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
   };
 
   const handleAddEvent = async (isUserTeam = true) => {
+    const selectedPlayer = isUserTeam ? selectedUserPlayer : selectedOppositionPlayer;
+    
     if (!selectedPlayer || !selectedEventType) {
       alert('Please select a player and event type');
+      return;
+    }
+
+    // Prevent adding events if match is completed
+    if (matchPhase === 'full_time') {
+      alert('Cannot add events after full time');
       return;
     }
 
@@ -206,7 +214,11 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
       }
 
       // Reset form
-      setSelectedPlayer('');
+      if (isUserTeam) {
+        setSelectedUserPlayer('');
+      } else {
+        setSelectedOppositionPlayer('');
+      }
       setSelectedEventType('goal');
     } catch (error) {
       console.error('Error adding event:', error);
