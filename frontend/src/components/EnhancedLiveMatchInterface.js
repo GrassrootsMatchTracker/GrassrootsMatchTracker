@@ -7,16 +7,18 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001
 const EnhancedLiveMatchInterface = ({ match, onBack }) => {
   const [matchState, setMatchState] = useState(match);
   const [currentMinute, setCurrentMinute] = useState(0);
+  const [currentSecond, setCurrentSecond] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [matchPhase, setMatchPhase] = useState('first_half'); // 'first_half', 'half_time', 'second_half', 'full_time'
   const [events, setEvents] = useState([]);
   const [selectedEventType, setSelectedEventType] = useState('goal');
-  const [selectedPlayer, setSelectedPlayer] = useState('');
-  const [homeTeamPlayers, setHomeTeamPlayers] = useState([]);
-  const [awayTeamPlayers, setAwayTeamPlayers] = useState([]);
+  const [selectedUserPlayer, setSelectedUserPlayer] = useState('');
+  const [selectedOppositionPlayer, setSelectedOppositionPlayer] = useState('');
   const [userTeamPlayers, setUserTeamPlayers] = useState([]);
-  const [oppositionName, setOppositionName] = useState('');
   const [homeTeamName, setHomeTeamName] = useState('');
   const [awayTeamName, setAwayTeamName] = useState('');
+  const [userTeamName, setUserTeamName] = useState('');
+  const [oppositionTeamName, setOppositionTeamName] = useState('');
   const [playerEventIndicators, setPlayerEventIndicators] = useState({});
 
   useEffect(() => {
