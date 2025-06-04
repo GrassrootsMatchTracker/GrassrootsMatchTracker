@@ -162,6 +162,18 @@ class GrassrootsMatchTrackerTester:
             if len(response) > 0:
                 print(f"First player: {json.dumps(response[0], indent=2)}")
         return success, response
+        
+    def test_get_team_statistics(self, team_id):
+        """Test getting team statistics"""
+        success, response = self.run_test(
+            "Get Team Statistics",
+            "GET",
+            f"api/teams/{team_id}/statistics",
+            200
+        )
+        if success:
+            print(f"Team statistics: {json.dumps(response, indent=2)}")
+        return success, response
 
     def test_update_player(self, team_id, player_id, update_data):
         """Test updating player information"""
