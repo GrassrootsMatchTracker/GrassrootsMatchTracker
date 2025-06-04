@@ -886,7 +886,7 @@ function App() {
         );
       
       case 'fixtures':
-        return <FixturesView onBack={() => setCurrentView('dashboard')} />;
+        return <EnhancedFixturesView teams={teams} onBack={() => setCurrentView('dashboard')} />;
       
       case 'leagues':
         return <LeaguesView onBack={() => setCurrentView('dashboard')} />;
