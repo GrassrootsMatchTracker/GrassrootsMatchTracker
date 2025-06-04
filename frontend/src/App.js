@@ -266,7 +266,7 @@ const PlayerEditModal = ({ isOpen, onClose, player, onSave, onDelete }) => {
             <img 
               src={editedPlayer.photo_base64} 
               alt="Player photo" 
-              className="w-20 h-20 rounded-full object-cover border-2 border-slate-600"
+              className="w-16 h-16 rounded-full object-cover border-2 border-slate-600"
             />
           </div>
         )}
