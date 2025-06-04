@@ -872,13 +872,6 @@ function App() {
         return <DashboardView teams={teams} onNavigate={handleNavigate} />;
     }
   };
-          <div>Select a team first</div>
-        );
-      
-      default:
-        return <DashboardView teams={teams} onNavigate={handleNavigate} />;
-    }
-  };
 
   return (
     <div className="App">
