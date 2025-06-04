@@ -3,7 +3,7 @@ import axios from 'axios';
 import './App.css';
 import PitchVisualization from './components/PitchVisualization';
 import PlayerSelectionModal from './components/PlayerSelectionModal';
-import LiveMatchInterface from './components/LiveMatchInterface';
+import EnhancedLiveMatchInterface from './components/EnhancedLiveMatchInterface';
 import SquadView from './components/SquadView';
 import EnhancedMatchView from './components/EnhancedMatchView';
 import { FixturesView, LeaguesView } from './components/SimpleViews';
