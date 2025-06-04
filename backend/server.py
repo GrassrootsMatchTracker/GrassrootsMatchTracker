@@ -416,6 +416,7 @@ async def get_team(team_id: str):
 @app.post("/api/teams/{team_id}/players")
 async def add_player(team_id: str, player: Player):
     """Add player to team"""
+    # Set the team_id from the URL parameter
     player.team_id = team_id
     player_dict = player.dict()
     
@@ -429,6 +430,54 @@ async def add_player(team_id: str, player: Player):
     )
     
     return {"message": "Player added", "player_id": player.id}
+
+@app.delete("/api/teams/{team_id}")
+async def delete_team(team_id: str):
+    """Delete a team and all its players"""
+    # Delete all players for this team
+    await db.players.delete_many({"team_id": team_id})
+    
+    # Delete the team
+    result = await db.teams.delete_one({"id": team_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Team not found")
+    
+    return {"message": "Team deleted successfully"}
+
+@app.delete("/api/teams/{team_id}/players/{player_id}")
+async def delete_player(team_id: str, player_id: str):
+    """Delete a player from a team"""
+    # Delete player from database
+    result = await db.players.delete_one({"id": player_id, "team_id": team_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Player not found")
+    
+    # Remove player from team's player list
+    await db.teams.update_one(
+        {"id": team_id},
+        {"$pull": {"players": {"id": player_id}}}
+    )
+    
+    return {"message": "Player deleted successfully"}
+
+@app.put("/api/teams/{team_id}/players/{player_id}")
+async def update_player(team_id: str, player_id: str, player_data: dict):
+    """Update player information"""
+    # Update player in database
+    result = await db.players.update_one(
+        {"id": player_id, "team_id": team_id},
+        {"$set": player_data}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Player not found")
+    
+    # Update player in team's player list
+    await db.teams.update_one(
+        {"id": team_id, "players.id": player_id},
+        {"$set": {"players.$": {**player_data, "id": player_id, "team_id": team_id}}}
+    )
+    
+    return {"message": "Player updated successfully"}
 
 @app.get("/api/teams/{team_id}/players")
 async def get_team_players(team_id: str):
