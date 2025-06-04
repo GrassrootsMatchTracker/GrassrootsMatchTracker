@@ -1,0 +1,44 @@
+<svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#DC2626;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7F1D1D;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1F2937;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Shield background -->
+  <path d="M200 20 L320 60 L320 140 L200 180 L80 140 L80 60 Z" fill="url(#grad1)" stroke="url(#grad2)" stroke-width="4"/>
+  
+  <!-- Inner shield -->
+  <path d="M200 35 L300 65 L300 125 L200 165 L100 125 L100 65 Z" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+  
+  <!-- Soccer ball -->
+  <circle cx="200" cy="100" r="25" fill="#FFFFFF" stroke="#000000" stroke-width="2"/>
+  
+  <!-- Soccer ball pattern -->
+  <path d="M200 75 L215 85 L210 105 L190 105 L185 85 Z" fill="#000000"/>
+  <path d="M215 85 L230 95 L225 115 L210 105 Z" fill="#000000"/>
+  <path d="M185 85 L170 95 L175 115 L190 105 Z" fill="#000000"/>
+  <path d="M225 115 L210 125 L190 125 L175 115" fill="none" stroke="#000000" stroke-width="1"/>
+  
+  <!-- Year banners -->
+  <rect x="60" y="45" width="60" height="20" fill="#DC2626" stroke="#FFFFFF" stroke-width="1"/>
+  <text x="90" y="58" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="12" font-weight="bold">EST.</text>
+  
+  <rect x="280" y="45" width="60" height="20" fill="#DC2626" stroke="#FFFFFF" stroke-width="1"/>
+  <text x="310" y="58" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="12" font-weight="bold">2025</text>
+  
+  <!-- Star -->
+  <path d="M200 55 L205 65 L215 65 L207.5 72.5 L210 82.5 L200 77.5 L190 82.5 L192.5 72.5 L185 65 L195 65 Z" fill="#FFFFFF"/>
+  
+  <!-- Main text -->
+  <text x="200" y="135" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="20" font-weight="bold">GRASSROOTS</text>
+  <text x="200" y="155" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="18" font-weight="bold">MATCH TRACKER</text>
+  
+  <!-- Bottom text -->
+  <text x="200" y="175" text-anchor="middle" fill="#CCCCCC" font-family="Arial, sans-serif" font-size="10">FOR THE PEOPLE</text>
+</svg>
