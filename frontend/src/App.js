@@ -715,10 +715,7 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack, onDel
               Manage Team & Players
             </button>
             <button 
-              onClick={() => {
-                setSelectedTeam(team);
-                setCurrentView('statistics');
-              }}
+              onClick={() => onViewStatistics(team)}
               className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-2 rounded-xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 font-medium text-sm"
             >
               📊 View Statistics
