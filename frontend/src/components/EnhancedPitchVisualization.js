@@ -153,29 +153,6 @@ const EnhancedPitchVisualization = ({
           ]
         }
       },
-        "2-3-1": {
-          positions: [
-            { id: "GK", x: 50, y: 85, label: "GK" },
-            { id: "LB", x: 30, y: 70, label: "LB" },
-            { id: "RB", x: 70, y: 70, label: "RB" },
-            { id: "LM", x: 25, y: 45, label: "LM" },
-            { id: "CM", x: 50, y: 50, label: "CM" },
-            { id: "RM", x: 75, y: 45, label: "RM" },
-            { id: "ST", x: 50, y: 25, label: "ST" }
-          ]
-        },
-        "3-2-1": {
-          positions: [
-            { id: "GK", x: 50, y: 85, label: "GK" },
-            { id: "LB", x: 30, y: 70, label: "LB" },
-            { id: "CB", x: 50, y: 70, label: "CB" },
-            { id: "RB", x: 70, y: 70, label: "RB" },
-            { id: "LM", x: 35, y: 45, label: "LM" },
-            { id: "RM", x: 65, y: 45, label: "RM" },
-            { id: "ST", x: 50, y: 25, label: "ST" }
-          ]
-        }
-      },
       9: { // 9v9 formations
         "3-4-1": {
           positions: [
