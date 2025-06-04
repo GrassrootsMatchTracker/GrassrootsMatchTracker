@@ -75,6 +75,14 @@ def doc_to_dict(doc):
     return doc_dict
 
 # Pydantic models
+class PlayerStats(BaseModel):
+    appearances: int = 0
+    goals: int = 0
+    assists: int = 0
+    yellow_cards: int = 0
+    red_cards: int = 0
+    minutes_played: int = 0
+
 class Player(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     first_name: str
@@ -82,8 +90,9 @@ class Player(BaseModel):
     age: int
     position: str
     squad_number: int
-    photo_url: Optional[str] = None
+    photo_base64: Optional[str] = None  # Changed to base64 storage
     team_id: Optional[str] = None  # Made optional since it's set from URL parameter
+    stats: PlayerStats = Field(default_factory=PlayerStats)
 
 class Team(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
