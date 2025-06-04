@@ -387,9 +387,9 @@ frontend:
 
   - task: "Player position selection"
     implemented: true
-    working: false
-    file: "/app/frontend/src/components/PitchVisualization.js"
-    stuck_count: 1
+    working: true
+    file: "/app/frontend/src/components/EnhancedPitchVisualization.js"
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -399,6 +399,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "The player position selection feature is still not visible in the match creation interface. The PitchVisualization component exists in the code but doesn't appear to be rendered when teams are selected. This feature needs further investigation."
+      - working: true
+        agent: "testing"
+        comment: "The player position selection feature is now fully implemented and working correctly. The match creation interface uses the EnhancedPitchVisualization component which displays clickable positions on the pitch. When a position is clicked, a player selection modal opens allowing users to assign players to positions. The pitch visualization also updates based on the selected formation and match format. Substitutes are shown to the right of the pitch as requested."
 
 metadata:
   created_by: "main_agent"
