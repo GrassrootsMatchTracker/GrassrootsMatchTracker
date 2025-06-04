@@ -218,6 +218,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "Live Match Features are working correctly. Successfully tested match creation with new fields (home_positions, away_positions, home_substitutes, away_substitutes), starting a match via POST /api/matches/{match_id}/start, adding match events via POST /api/matches/{match_id}/events, and getting live match state via GET /api/matches/{match_id}/live. All endpoints return the expected data and update the match state correctly."
+      - working: true
+        agent: "testing"
+        comment: "Comprehensive live match workflow testing completed. Successfully tested the entire match lifecycle from creation to completion, including: 1) Team loading with proper names, 2) Match creation with lineups and positions, 3) Match phase controls (start match, half time, second half, full time), 4) Event recording for both teams (goals, cards, assists), 5) Player statistics updates. The only minor issue is that the score_home and score_away fields are not automatically updated when goal events are added - they need to be manually updated via the PUT /api/matches/{match_id} endpoint."
         
   - task: "Enhanced Statistics"
     implemented: true
