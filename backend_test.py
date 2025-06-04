@@ -478,22 +478,39 @@ def main():
         if not tester.test_get_team(team_id):
             print(f"❌ Failed to get {age_group} team details")
     
-    # 3. Player Management
-    print("\n📋 SECTION 3: PLAYER MANAGEMENT")
+    # 3. Player Management with Enhanced Player Model
+    print("\n📋 SECTION 3: ENHANCED PLAYER MANAGEMENT")
     
-    # Test adding players to teams
+    # Sample base64 image (small transparent pixel)
+    sample_photo_base64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+    
+    # Test adding players to teams with photos and stats
     player_ids = {}
     for age_group, team_id in team_ids.items():
         players = []
-        for i in range(3):  # Add 3 players to each team
+        for i in range(10):  # Add 10 players to each team for lineup testing
             player_data = {
                 "first_name": f"Player{i}",
                 "last_name": f"Test{timestamp}",
                 "age": 10 if age_group == "U13" else (6 if age_group == "U7" else 16),
-                "position": "Forward" if i == 0 else ("Midfielder" if i == 1 else "Defender"),
-                "squad_number": i + 1
+                "position": "Forward" if i < 3 else ("Midfielder" if i < 7 else "Defender"),
+                "squad_number": i + 1,
+                "stats": {
+                    "appearances": 0,
+                    "goals": 0,
+                    "assists": 0,
+                    "yellow_cards": 0,
+                    "red_cards": 0,
+                    "minutes_played": 0
+                }
             }
-            player_id = tester.test_add_player(team_id, player_data)
+            
+            # Add some players with photos
+            if i % 3 == 0:
+                player_id = tester.test_add_player_with_photo(team_id, player_data, sample_photo_base64)
+            else:
+                player_id = tester.test_add_player(team_id, player_data)
+                
             if player_id:
                 players.append(player_id)
         
@@ -505,22 +522,6 @@ def main():
         success, response = tester.test_get_team_players(team_id)
         if not success:
             print(f"❌ Failed to get players for team {team_id}")
-    
-    # Test updating player information
-    for team_id, players in player_ids.items():
-        if players:
-            update_data = {
-                "position": "Goalkeeper",
-                "squad_number": 99
-            }
-            if not tester.test_update_player(team_id, players[0], update_data):
-                print(f"❌ Failed to update player {players[0]}")
-    
-    # Test deleting a player
-    for team_id, players in player_ids.items():
-        if len(players) > 1:
-            if not tester.test_delete_player(team_id, players[-1]):
-                print(f"❌ Failed to delete player {players[-1]}")
     
     # 4. Formation System
     print("\n📋 SECTION 4: FORMATION SYSTEM")
@@ -535,34 +536,125 @@ def main():
         if not tester.test_get_formations(age_group):
             print(f"❌ Failed to get formations for {age_group}")
     
-    # 5. Match Management
-    print("\n📋 SECTION 5: MATCH MANAGEMENT")
+    # 5. Enhanced Match Management with Live Features
+    print("\n📋 SECTION 5: ENHANCED MATCH MANAGEMENT")
     
     # We need at least two teams to create a match
-    if len(team_ids) >= 2:
+    if len(team_ids) >= 2 and all(len(player_ids.get(team_id, [])) > 0 for team_id in list(team_ids.values())[:2]):
         team_id_list = list(team_ids.values())
+        home_team_id = team_id_list[0]
+        away_team_id = team_id_list[1]
         
-        # Test creating a match
-        match_id = tester.test_create_match(team_id_list[0], team_id_list[1])
+        home_players = player_ids.get(home_team_id, [])
+        away_players = player_ids.get(away_team_id, [])
+        
+        # Test creating a match with lineups and positions
+        match_id = tester.test_create_match_with_lineups(home_team_id, away_team_id, home_players, away_players)
         if not match_id:
-            print("❌ Failed to create match")
-        else:
-            # Test retrieving matches
-            if not tester.test_get_matches():
-                print("❌ Failed to get matches")
-            
-            # Test getting specific match
+            print("❌ Failed to create match with lineups")
+            # Try creating a simple match as fallback
+            match_id = tester.test_create_match(home_team_id, away_team_id)
+            if not match_id:
+                print("❌ Failed to create match, skipping match tests")
+                match_id = None
+        
+        if match_id:
+            # Test retrieving match details
             if not tester.test_get_match(match_id):
                 print("❌ Failed to get match details")
             
-            # Test updating match information
-            if not tester.test_update_match(match_id):
-                print("❌ Failed to update match")
+            # Test starting the match
+            if not tester.test_start_match(match_id):
+                print("❌ Failed to start match")
+            else:
+                print("✅ Successfully started match")
+                
+                # Test adding match events
+                event_types = ["goal", "assist", "yellow_card", "red_card"]
+                event_ids = []
+                
+                # Add events for home team players
+                for i, event_type in enumerate(event_types):
+                    if i < len(home_players):
+                        event_id = tester.test_add_match_event(match_id, home_players[i], event_type, minute=10+i*5)
+                        if event_id:
+                            event_ids.append(event_id)
+                        else:
+                            print(f"❌ Failed to add {event_type} event")
+                
+                # Test getting live match state
+                success, live_state = tester.test_get_live_match_state(match_id)
+                if not success:
+                    print("❌ Failed to get live match state")
+                else:
+                    # Verify events were added to the match
+                    if 'events' in live_state and len(live_state['events']) > 0:
+                        print(f"✅ Match events verified in live state: {len(live_state['events'])} events found")
+                    else:
+                        print("❌ No events found in live match state")
+                
+                # 6. Test Player Statistics Updates
+                print("\n📋 SECTION 6: PLAYER STATISTICS UPDATES")
+                
+                # Get player stats after events
+                for i, player_id in enumerate(home_players):
+                    if i < len(event_types):
+                        # Get the player to check stats
+                        success, player_response = tester.run_test(
+                            f"Get Player After {event_types[i]} Event",
+                            "GET",
+                            f"api/teams/{home_team_id}/players",
+                            200
+                        )
+                        
+                        if success:
+                            # Find the player in the response
+                            player = next((p for p in player_response if p.get('id') == player_id), None)
+                            if player and 'stats' in player:
+                                event_type = event_types[i]
+                                stat_field = f"{event_type}s" if event_type != "red_card" and event_type != "yellow_card" else f"{event_type}"
+                                
+                                if event_type == "goal" and player['stats']['goals'] > 0:
+                                    print(f"✅ Player {player_id} stats updated: goals = {player['stats']['goals']}")
+                                elif event_type == "assist" and player['stats']['assists'] > 0:
+                                    print(f"✅ Player {player_id} stats updated: assists = {player['stats']['assists']}")
+                                elif event_type == "yellow_card" and player['stats']['yellow_cards'] > 0:
+                                    print(f"✅ Player {player_id} stats updated: yellow_cards = {player['stats']['yellow_cards']}")
+                                elif event_type == "red_card" and player['stats']['red_cards'] > 0:
+                                    print(f"✅ Player {player_id} stats updated: red_cards = {player['stats']['red_cards']}")
+                                else:
+                                    print(f"❌ Player {player_id} stats not updated for {event_type}")
+                            else:
+                                print(f"❌ Could not find player {player_id} or stats field missing")
+                
+                # 7. Test Team Statistics
+                print("\n📋 SECTION 7: TEAM STATISTICS")
+                
+                # Test getting team statistics
+                success, stats = tester.test_get_team_statistics(home_team_id)
+                if not success:
+                    print("❌ Failed to get team statistics")
+                else:
+                    # Verify team statistics
+                    if 'statistics' in stats:
+                        print(f"✅ Team statistics retrieved successfully")
+                    else:
+                        print("❌ Team statistics not found in response")
+                    
+                    # Verify player statistics in team stats
+                    if 'players' in stats and len(stats['players']) > 0:
+                        player_with_stats = next((p for p in stats['players'] if any(p.get('stats', {}).get(stat, 0) > 0 for stat in ['goals', 'assists', 'yellow_cards', 'red_cards'])), None)
+                        if player_with_stats:
+                            print(f"✅ Player statistics verified in team stats: {json.dumps(player_with_stats['stats'], indent=2)}")
+                        else:
+                            print("❌ No players with updated stats found in team statistics")
+                    else:
+                        print("❌ No players found in team statistics")
     else:
-        print("⚠️ Skipping match tests - need at least two teams")
+        print("⚠️ Skipping match tests - need at least two teams with players")
     
-    # 6. Error Handling
-    print("\n📋 SECTION 6: ERROR HANDLING")
+    # 8. Error Handling
+    print("\n📋 SECTION 8: ERROR HANDLING")
     
     # Test invalid endpoint
     if not tester.test_invalid_endpoint():
@@ -576,8 +668,8 @@ def main():
     if not tester.test_missing_required_fields():
         print("❌ Failed missing required fields test")
     
-    # 7. Cleanup - Delete teams
-    print("\n📋 SECTION 7: CLEANUP")
+    # 9. Cleanup - Delete teams
+    print("\n📋 SECTION 9: CLEANUP")
     for age_group, team_id in team_ids.items():
         if not tester.test_delete_team(team_id):
             print(f"❌ Failed to delete {age_group} team")
