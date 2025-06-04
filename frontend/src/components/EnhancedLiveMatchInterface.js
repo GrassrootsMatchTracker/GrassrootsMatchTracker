@@ -52,43 +52,67 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
     try {
       console.log('Match state:', matchState); // Debug log
       
+      // Initialize team names with fallbacks
+      let homeTeam = 'Home Team';
+      let awayTeam = 'Away Team';
+      let opposition = 'Opposition';
+      
       // Determine team names based on match structure
       if (matchState.user_team_id) {
-        const userTeamResponse = await axios.get(`${API_BASE_URL}/api/teams/${matchState.user_team_id}`);
-        const userTeamName = userTeamResponse.data.name;
-        setUserTeamPlayers(userTeamResponse.data.players || []);
-        
-        if (matchState.user_team_type === 'home') {
-          setHomeTeamName(userTeamName);
-          setAwayTeamName(matchState.opposition_name || 'Opposition');
-          setHomeTeamPlayers(userTeamResponse.data.players || []);
-        } else {
-          setAwayTeamName(userTeamName);
-          setHomeTeamName(matchState.opposition_name || 'Opposition');
-          setAwayTeamPlayers(userTeamResponse.data.players || []);
+        try {
+          const userTeamResponse = await axios.get(`${API_BASE_URL}/api/teams/${matchState.user_team_id}`);
+          const userTeam = userTeamResponse.data;
+          setUserTeamPlayers(userTeam.players || []);
+          
+          if (matchState.user_team_type === 'home') {
+            homeTeam = userTeam.name;
+            awayTeam = matchState.opposition_name || 'Opposition';
+          } else {
+            awayTeam = userTeam.name;
+            homeTeam = matchState.opposition_name || 'Opposition';
+          }
+          opposition = matchState.opposition_name || 'Opposition';
+        } catch (teamError) {
+          console.error('Error loading user team:', teamError);
         }
       } else {
-        // Handle legacy format
+        // Handle legacy format with both home and away team IDs
         if (matchState.home_team_id) {
-          const homeTeamResponse = await axios.get(`${API_BASE_URL}/api/teams/${matchState.home_team_id}`);
-          setHomeTeamName(homeTeamResponse.data.name);
-          setHomeTeamPlayers(homeTeamResponse.data.players || []);
+          try {
+            const homeTeamResponse = await axios.get(`${API_BASE_URL}/api/teams/${matchState.home_team_id}`);
+            homeTeam = homeTeamResponse.data.name;
+            setUserTeamPlayers(homeTeamResponse.data.players || []);
+          } catch (homeError) {
+            console.error('Error loading home team:', homeError);
+          }
         }
         
         if (matchState.away_team_id) {
-          const awayTeamResponse = await axios.get(`${API_BASE_URL}/api/teams/${matchState.away_team_id}`);
-          setAwayTeamName(awayTeamResponse.data.name);
-          setAwayTeamPlayers(awayTeamResponse.data.players || []);
+          try {
+            const awayTeamResponse = await axios.get(`${API_BASE_URL}/api/teams/${matchState.away_team_id}`);
+            awayTeam = awayTeamResponse.data.name;
+            if (!matchState.home_team_id) {
+              setUserTeamPlayers(awayTeamResponse.data.players || []);
+            }
+          } catch (awayError) {
+            console.error('Error loading away team:', awayError);
+          }
         }
+        
+        opposition = matchState.opposition_name || 'Opposition';
       }
 
-      setOppositionName(matchState.opposition_name || 'Opposition');
+      // Set all team names
+      setHomeTeamName(homeTeam);
+      setAwayTeamName(awayTeam);
+      setOppositionName(opposition);
+      
     } catch (error) {
       console.error('Error loading match data:', error);
-      // Fallback to match data
-      setHomeTeamName(matchState.home_team_name || 'Home Team');
-      setAwayTeamName(matchState.away_team_name || 'Away Team');
-      setOppositionName(matchState.opposition_name || 'Opposition');
+      // Set fallback values
+      setHomeTeamName('Home Team');
+      setAwayTeamName('Away Team');
+      setOppositionName('Opposition');
     }
   };
 
