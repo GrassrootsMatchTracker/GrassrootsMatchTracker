@@ -207,14 +207,17 @@ backend:
         agent: "testing"
         comment: "Enhanced Player Model with photo_base64 field and stats tracking is working correctly. Successfully tested creating players with photos (base64 encoded) and verified that the stats fields (appearances, goals, assists, yellow_cards, red_cards, minutes_played) are properly initialized and stored."
         
-  - task: "Live Match Features"
+  - task: "Enhanced Live Match Interface"
     implemented: true
     working: true
-    file: "/app/backend/server.py"
+    file: "/app/frontend/src/components/EnhancedLiveMatchInterface.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
+      - working: true
+        agent: "main"
+        comment: "Fixed live match interface issues: team names display properly, added LCD-style timer with MM:SS format, implemented Half Time/Full Time buttons, fixed event recording with proper player selection, added match phase management, prevented events after full time, improved layout and responsive design"
       - working: true
         agent: "testing"
         comment: "Live Match Features are working correctly. Successfully tested match creation with new fields (home_positions, away_positions, home_substitutes, away_substitutes), starting a match via POST /api/matches/{match_id}/start, adding match events via POST /api/matches/{match_id}/events, and getting live match state via GET /api/matches/{match_id}/live. All endpoints return the expected data and update the match state correctly."
