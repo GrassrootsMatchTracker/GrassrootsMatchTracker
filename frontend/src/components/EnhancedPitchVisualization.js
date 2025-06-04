@@ -123,36 +123,6 @@ const EnhancedPitchVisualization = ({
           ]
         }
       },
-      10: { // 10v10 formations
-        "3-4-2": {
-          positions: [
-            { id: "GK", x: 50, y: 85, label: "GK" },
-            { id: "LB", x: 25, y: 70, label: "LB" },
-            { id: "CB", x: 50, y: 70, label: "CB" },
-            { id: "RB", x: 75, y: 70, label: "RB" },
-            { id: "LM", x: 20, y: 45, label: "LM" },
-            { id: "LCM", x: 40, y: 50, label: "CM" },
-            { id: "RCM", x: 60, y: 50, label: "CM" },
-            { id: "RM", x: 80, y: 45, label: "RM" },
-            { id: "LST", x: 40, y: 25, label: "ST" },
-            { id: "RST", x: 60, y: 25, label: "ST" }
-          ]
-        },
-        "4-3-2": {
-          positions: [
-            { id: "GK", x: 50, y: 85, label: "GK" },
-            { id: "LB", x: 20, y: 70, label: "LB" },
-            { id: "CB1", x: 40, y: 70, label: "CB" },
-            { id: "CB2", x: 60, y: 70, label: "CB" },
-            { id: "RB", x: 80, y: 70, label: "RB" },
-            { id: "LCM", x: 35, y: 50, label: "CM" },
-            { id: "CM", x: 50, y: 45, label: "CM" },
-            { id: "RCM", x: 65, y: 50, label: "CM" },
-            { id: "LST", x: 40, y: 25, label: "ST" },
-            { id: "RST", x: 60, y: 25, label: "ST" }
-          ]
-        }
-      },
       9: { // 9v9 formations
         "3-4-1": {
           positions: [
