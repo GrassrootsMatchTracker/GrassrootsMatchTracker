@@ -437,6 +437,363 @@ class GrassrootsMatchTrackerTester:
         )
         return success
 
+def test_live_match_workflow(tester, timestamp):
+    """Test the complete live match workflow from creation to completion"""
+    print("\n" + "=" * 80)
+    print("🔍 TESTING LIVE MATCH WORKFLOW 🔍")
+    print("=" * 80)
+    
+    # 1. Create teams for home and away
+    home_team_name = f"Home Team {timestamp}"
+    away_team_name = f"Away Team {timestamp}"
+    
+    home_team_id = tester.test_create_team(home_team_name, "U13")
+    away_team_id = tester.test_create_team(away_team_name, "U13")
+    
+    if not home_team_id or not away_team_id:
+        print("❌ Failed to create teams for live match test")
+        return False
+    
+    # 2. Add players to both teams
+    home_players = []
+    away_players = []
+    
+    # Add players to home team
+    for i in range(11):  # 11 players for starting lineup
+        player_data = {
+            "first_name": f"Home{i}",
+            "last_name": f"Player{timestamp}",
+            "age": 12,
+            "position": "Forward" if i < 3 else ("Midfielder" if i < 7 else "Defender"),
+            "squad_number": i + 1
+        }
+        player_id = tester.test_add_player(home_team_id, player_data)
+        if player_id:
+            home_players.append(player_id)
+    
+    # Add substitutes to home team
+    for i in range(5):  # 5 substitutes
+        player_data = {
+            "first_name": f"HomeSub{i}",
+            "last_name": f"Player{timestamp}",
+            "age": 12,
+            "position": "Forward" if i < 2 else ("Midfielder" if i < 3 else "Defender"),
+            "squad_number": i + 12
+        }
+        player_id = tester.test_add_player(home_team_id, player_data)
+        if player_id:
+            home_players.append(player_id)
+    
+    # Add players to away team
+    for i in range(11):  # 11 players for starting lineup
+        player_data = {
+            "first_name": f"Away{i}",
+            "last_name": f"Player{timestamp}",
+            "age": 12,
+            "position": "Forward" if i < 3 else ("Midfielder" if i < 7 else "Defender"),
+            "squad_number": i + 1
+        }
+        player_id = tester.test_add_player(away_team_id, player_data)
+        if player_id:
+            away_players.append(player_id)
+    
+    # Add substitutes to away team
+    for i in range(5):  # 5 substitutes
+        player_data = {
+            "first_name": f"AwaySub{i}",
+            "last_name": f"Player{timestamp}",
+            "age": 12,
+            "position": "Forward" if i < 2 else ("Midfielder" if i < 3 else "Defender"),
+            "squad_number": i + 12
+        }
+        player_id = tester.test_add_player(away_team_id, player_data)
+        if player_id:
+            away_players.append(player_id)
+    
+    if len(home_players) < 11 or len(away_players) < 11:
+        print("❌ Failed to create enough players for live match test")
+        return False
+    
+    # 3. Create a match with lineups and positions
+    # Create position mappings for 4-4-2 formation
+    home_positions = {}
+    positions = ["GK", "LB", "CB1", "CB2", "RB", "LM", "CM1", "CM2", "RM", "ST1", "ST2"]
+    for i, player_id in enumerate(home_players[:11]):
+        if i < len(positions):
+            home_positions[positions[i]] = player_id
+    
+    # Create position mappings for 4-3-3 formation
+    away_positions = {}
+    positions = ["GK", "LB", "CB1", "CB2", "RB", "CM1", "CM2", "CM3", "LW", "ST", "RW"]
+    for i, player_id in enumerate(away_players[:11]):
+        if i < len(positions):
+            away_positions[positions[i]] = player_id
+    
+    match_date = (datetime.now() + timedelta(days=1)).isoformat()
+    match_data = {
+        "home_team_id": home_team_id,
+        "away_team_id": away_team_id,
+        "date": match_date,
+        "venue": "Live Match Test Stadium",
+        "home_formation": "4-4-2",
+        "away_formation": "4-3-3",
+        "match_format": "11v11",
+        "match_type": "League",
+        "home_lineup": home_players[:11],
+        "away_lineup": away_players[:11],
+        "home_substitutes": home_players[11:16],
+        "away_substitutes": away_players[11:16],
+        "home_positions": home_positions,
+        "away_positions": away_positions,
+        "score_home": 0,
+        "score_away": 0,
+        "status": "scheduled"
+    }
+    
+    success, response = tester.run_test(
+        "Create Live Match",
+        "POST",
+        "api/matches",
+        200,
+        data=match_data
+    )
+    
+    if not success or 'match_id' not in response:
+        print("❌ Failed to create match for live match test")
+        return False
+    
+    match_id = response['match_id']
+    print(f"✅ Created match with ID: {match_id}")
+    
+    # 4. Start the match
+    if not tester.test_start_match(match_id):
+        print("❌ Failed to start match")
+        return False
+    
+    print("✅ Successfully started match")
+    
+    # 5. Test match phase controls and event recording
+    
+    # First half events
+    print("\n📋 FIRST HALF EVENTS")
+    
+    # Home team goal at minute 15
+    goal_event_id = tester.test_add_match_event(match_id, home_players[9], "goal", minute=15)
+    if not goal_event_id:
+        print("❌ Failed to add goal event for home team")
+    
+    # Away team yellow card at minute 20
+    yellow_card_event_id = tester.test_add_match_event(match_id, away_players[5], "yellow_card", minute=20)
+    if not yellow_card_event_id:
+        print("❌ Failed to add yellow card event for away team")
+    
+    # Home team assist at minute 25
+    assist_event_id = tester.test_add_match_event(match_id, home_players[7], "assist", minute=25)
+    if not assist_event_id:
+        print("❌ Failed to add assist event for home team")
+    
+    # Away team goal at minute 30
+    away_goal_event_id = tester.test_add_match_event(match_id, away_players[9], "goal", minute=30)
+    if not away_goal_event_id:
+        print("❌ Failed to add goal event for away team")
+    
+    # Check live match state after first half events
+    success, first_half_state = tester.test_get_live_match_state(match_id)
+    if not success:
+        print("❌ Failed to get live match state after first half events")
+    else:
+        # Verify events were added to the match
+        if 'events' in first_half_state and len(first_half_state['events']) >= 4:
+            print(f"✅ First half events verified in live state: {len(first_half_state['events'])} events found")
+        else:
+            print("❌ First half events not found in live match state")
+        
+        # Verify score updates
+        home_score = first_half_state.get('score_home', 0)
+        away_score = first_half_state.get('score_away', 0)
+        if home_score == 1 and away_score == 1:
+            print(f"✅ Score correctly updated: Home {home_score} - {away_score} Away")
+        else:
+            print(f"❌ Score not correctly updated: Home {home_score} - {away_score} Away")
+    
+    # Half time - Update match status
+    half_time_data = {
+        "status": "half_time"
+    }
+    
+    success, response = tester.run_test(
+        "Set Half Time",
+        "PUT",
+        f"api/matches/{match_id}",
+        200,
+        data=half_time_data
+    )
+    
+    if not success:
+        print("❌ Failed to set match to half time")
+    else:
+        print("✅ Successfully set match to half time")
+    
+    # Second half - Update match status
+    second_half_data = {
+        "status": "live"
+    }
+    
+    success, response = tester.run_test(
+        "Start Second Half",
+        "PUT",
+        f"api/matches/{match_id}",
+        200,
+        data=second_half_data
+    )
+    
+    if not success:
+        print("❌ Failed to start second half")
+    else:
+        print("✅ Successfully started second half")
+    
+    # Second half events
+    print("\n📋 SECOND HALF EVENTS")
+    
+    # Home team red card at minute 55
+    red_card_event_id = tester.test_add_match_event(match_id, home_players[3], "red_card", minute=55)
+    if not red_card_event_id:
+        print("❌ Failed to add red card event for home team")
+    
+    # Away team goal at minute 70
+    away_goal_event_id = tester.test_add_match_event(match_id, away_players[8], "goal", minute=70)
+    if not away_goal_event_id:
+        print("❌ Failed to add second goal event for away team")
+    
+    # Home team goal at minute 85
+    home_goal_event_id = tester.test_add_match_event(match_id, home_players[10], "goal", minute=85)
+    if not home_goal_event_id:
+        print("❌ Failed to add second goal event for home team")
+    
+    # Check live match state after second half events
+    success, second_half_state = tester.test_get_live_match_state(match_id)
+    if not success:
+        print("❌ Failed to get live match state after second half events")
+    else:
+        # Verify events were added to the match
+        if 'events' in second_half_state and len(second_half_state['events']) >= 7:
+            print(f"✅ Second half events verified in live state: {len(second_half_state['events'])} events found")
+        else:
+            print("❌ Second half events not found in live match state")
+        
+        # Verify score updates
+        home_score = second_half_state.get('score_home', 0)
+        away_score = second_half_state.get('score_away', 0)
+        if home_score == 2 and away_score == 2:
+            print(f"✅ Score correctly updated: Home {home_score} - {away_score} Away")
+        else:
+            print(f"❌ Score not correctly updated: Home {home_score} - {away_score} Away")
+    
+    # Full time - Update match status
+    full_time_data = {
+        "status": "completed"
+    }
+    
+    success, response = tester.run_test(
+        "Set Full Time",
+        "PUT",
+        f"api/matches/{match_id}",
+        200,
+        data=full_time_data
+    )
+    
+    if not success:
+        print("❌ Failed to set match to full time")
+    else:
+        print("✅ Successfully set match to full time")
+    
+    # 6. Verify match data persistence
+    success, final_match_state = tester.run_test(
+        "Get Final Match State",
+        "GET",
+        f"api/matches/{match_id}",
+        200
+    )
+    
+    if not success:
+        print("❌ Failed to get final match state")
+        return False
+    
+    # Verify final match state
+    if final_match_state.get('status') == 'completed':
+        print("✅ Match status correctly set to completed")
+    else:
+        print(f"❌ Match status not correctly set to completed: {final_match_state.get('status')}")
+    
+    if 'events' in final_match_state and len(final_match_state['events']) >= 7:
+        print(f"✅ All match events persisted: {len(final_match_state['events'])} events found")
+    else:
+        print("❌ Match events not correctly persisted")
+    
+    # 7. Verify player statistics updates
+    print("\n📋 VERIFYING PLAYER STATISTICS UPDATES")
+    
+    # Check home team goal scorer stats
+    success, home_players_response = tester.run_test(
+        "Get Home Team Players After Match",
+        "GET",
+        f"api/teams/{home_team_id}/players",
+        200
+    )
+    
+    if success:
+        # Find the goal scorers
+        home_scorer1 = next((p for p in home_players_response if p.get('id') == home_players[9]), None)
+        home_scorer2 = next((p for p in home_players_response if p.get('id') == home_players[10]), None)
+        
+        if home_scorer1 and 'stats' in home_scorer1 and home_scorer1['stats'].get('goals', 0) > 0:
+            print(f"✅ Home player 1 stats updated: goals = {home_scorer1['stats']['goals']}")
+        else:
+            print("❌ Home player 1 goal stats not updated")
+            
+        if home_scorer2 and 'stats' in home_scorer2 and home_scorer2['stats'].get('goals', 0) > 0:
+            print(f"✅ Home player 2 stats updated: goals = {home_scorer2['stats']['goals']}")
+        else:
+            print("❌ Home player 2 goal stats not updated")
+    
+    # Check away team goal scorer stats
+    success, away_players_response = tester.run_test(
+        "Get Away Team Players After Match",
+        "GET",
+        f"api/teams/{away_team_id}/players",
+        200
+    )
+    
+    if success:
+        # Find the goal scorers
+        away_scorer1 = next((p for p in away_players_response if p.get('id') == away_players[9]), None)
+        away_scorer2 = next((p for p in away_players_response if p.get('id') == away_players[8]), None)
+        
+        if away_scorer1 and 'stats' in away_scorer1 and away_scorer1['stats'].get('goals', 0) > 0:
+            print(f"✅ Away player 1 stats updated: goals = {away_scorer1['stats']['goals']}")
+        else:
+            print("❌ Away player 1 goal stats not updated")
+            
+        if away_scorer2 and 'stats' in away_scorer2 and away_scorer2['stats'].get('goals', 0) > 0:
+            print(f"✅ Away player 2 stats updated: goals = {away_scorer2['stats']['goals']}")
+        else:
+            print("❌ Away player 2 goal stats not updated")
+    
+    # 8. Clean up - Delete teams
+    print("\n📋 CLEANING UP TEST DATA")
+    
+    if not tester.test_delete_team(home_team_id):
+        print(f"❌ Failed to delete home team")
+    
+    if not tester.test_delete_team(away_team_id):
+        print(f"❌ Failed to delete away team")
+    
+    print("\n" + "=" * 80)
+    print("🔍 LIVE MATCH WORKFLOW TEST COMPLETED 🔍")
+    print("=" * 80)
+    
+    return True
+
 def main():
     # Setup
     tester = GrassrootsMatchTrackerTester()
