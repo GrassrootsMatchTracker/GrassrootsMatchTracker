@@ -466,6 +466,176 @@ const DashboardView = ({ teams, onNavigate }) => {
 // Read and include App_Part2.js content here
 // This is where SquadView, MatchView, and other components are defined
 
+// Enhanced Team View Component with Fixed Delete
+const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack, onDeleteTeam }) => {
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTeam, setNewTeam] = useState({
+    name: '',
+    age_group: 'U13'
+  });
+  const [isCreating, setIsCreating] = useState(false);
+
+  const ageGroups = ['U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18'];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!newTeam.name.trim()) {
+      alert('Please enter a team name');
+      return;
+    }
+
+    setIsCreating(true);
+    try {
+      await onAddTeam(newTeam);
+      setNewTeam({ name: '', age_group: 'U13' });
+      setShowAddForm(false);
+      alert('Team created successfully!');
+    } catch (error) {
+      console.error('Error adding team:', error);
+      alert('Error adding team. Please try again.');
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleDeleteTeam = async (teamId, teamName) => {
+    if (window.confirm(`Are you sure you want to delete "${teamName}" and all its players? This action cannot be undone.`)) {
+      try {
+        await onDeleteTeam(teamId);
+        alert('Team deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting team:', error);
+        alert('Error deleting team. Please try again.');
+      }
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 space-y-4 lg:space-y-0">
+        <div className="flex items-center">
+          <button 
+            onClick={onBack}
+            className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
+          >
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+            </svg>
+            <span>Back</span>
+          </button>
+          <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Team Management</h2>
+        </div>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+          <button 
+            onClick={() => setShowAddForm(true)}
+            className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium text-center"
+          >
+            ➕ Add New Team
+          </button>
+          <button 
+            onClick={onViewMatches}
+            className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium text-center"
+          >
+            📅 Create Match
+          </button>
+        </div>
+      </div>
+
+      {showAddForm && (
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 mb-8 border border-slate-700/50">
+          <h3 className="text-2xl font-semibold mb-6 text-white">Add New Team</h3>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Team Name *</label>
+              <input
+                type="text"
+                value={newTeam.name}
+                onChange={(e) => setNewTeam({...newTeam, name: e.target.value})}
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                placeholder="Enter team name..."
+                required
+                disabled={isCreating}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Age Group</label>
+              <select
+                value={newTeam.age_group}
+                onChange={(e) => setNewTeam({...newTeam, age_group: e.target.value})}
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                required
+                disabled={isCreating}
+              >
+                {ageGroups.map(age => (
+                  <option key={age} value={age}>{age}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+              <button 
+                type="submit"
+                disabled={isCreating}
+                className={`px-8 py-3 rounded-xl font-medium transition-all ${
+                  isCreating 
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700'
+                }`}
+              >
+                {isCreating ? 'Creating...' : 'Create Team'}
+              </button>
+              <button 
+                type="button"
+                onClick={() => setShowAddForm(false)}
+                disabled={isCreating}
+                className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-medium"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {teams.map((team) => (
+          <div key={team.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  {team.name.charAt(0)}
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">{team.name}</h3>
+                  <p className="text-cyan-400 font-medium">{team.age_group}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => handleDeleteTeam(team.id, team.name)}
+                className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/20 transition-all"
+                title="Delete Team"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                </svg>
+              </button>
+            </div>
+            <div className="mb-4">
+              <p className="text-gray-300">Players: {team.players?.length || 0}</p>
+            </div>
+            <button 
+              onClick={() => onTeamSelect(team)}
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-xl hover:from-cyan-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 font-medium"
+            >
+              Manage Team & Players
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [teams, setTeams] = useState([]);
