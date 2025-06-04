@@ -872,32 +872,6 @@ function App() {
         return <DashboardView teams={teams} onNavigate={handleNavigate} />;
     }
   };
-          />
-        ) : (
-          <div>Loading...</div>
-        );
-      
-      case 'matches':
-        return (
-          <MatchView
-            teams={teams}
-            onBack={() => setCurrentView('dashboard')}
-          />
-        );
-      
-      case 'fixtures':
-        return <FixturesView onBack={() => setCurrentView('dashboard')} />;
-      
-      case 'leagues':
-        return <LeaguesView onBack={() => setCurrentView('dashboard')} />;
-      
-      case 'statistics':
-        return selectedTeam ? (
-          <TeamStatsView
-            team={selectedTeam}
-            onBack={() => setCurrentView('teams')}
-          />
-        ) : (
           <div>Select a team first</div>
         );
       
