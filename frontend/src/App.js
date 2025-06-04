@@ -849,6 +849,7 @@ function App() {
             onDeleteTeam={handleDeleteTeam}
             onViewMatches={() => setCurrentView('matches')}
             onBack={() => setCurrentView('dashboard')}
+            onViewStatistics={handleViewStatistics}
           />
         );
       
