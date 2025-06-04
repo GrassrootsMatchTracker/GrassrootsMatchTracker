@@ -6,7 +6,8 @@ import PlayerSelectionModal from './components/PlayerSelectionModal';
 import EnhancedLiveMatchInterface from './components/EnhancedLiveMatchInterface';
 import SquadView from './components/SquadView';
 import EnhancedMatchView from './components/EnhancedMatchView';
-import { FixturesView, LeaguesView } from './components/SimpleViews';
+import EnhancedFixturesView from './components/EnhancedFixturesView';
+import { LeaguesView } from './components/SimpleViews';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
