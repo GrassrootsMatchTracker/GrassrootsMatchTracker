@@ -436,7 +436,7 @@ const EnhancedPitchVisualization = ({
       <div className="w-20">
         <h4 className="text-sm font-semibold text-white mb-2">Subs</h4>
         <div className="space-y-2">
-          {[1, 2, 3, 4, 5].map((subNumber) => {
+          {[1, 2, 3, 4, 5, 6].map((subNumber) => {
             const playerId = substitutes[subNumber - 1];
             const player = teamPlayers.find(p => p.id === playerId);
             const isAssigned = !!playerId;
