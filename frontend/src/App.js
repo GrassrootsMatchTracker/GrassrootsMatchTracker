@@ -816,19 +816,6 @@ function App() {
     }
   };
 
-  const handleAddPlayer = async (playerData) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players`, playerData);
-      // Reload the selected team
-      const teamResponse = await axios.get(`${API_BASE_URL}/api/teams/${selectedTeam.id}`);
-      setSelectedTeam(teamResponse.data);
-      await loadTeams(); // Reload all teams
-      return response.data;
-    } catch (error) {
-      console.error('Error adding player:', error);
-      throw error;
-    }
-  };
 
   const handleUpdatePlayer = async (playerData) => {
     try {
