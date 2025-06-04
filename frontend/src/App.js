@@ -817,31 +817,6 @@ function App() {
   };
 
 
-  const handleUpdatePlayer = async (playerData) => {
-    try {
-      await axios.put(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players/${playerData.id}`, playerData);
-      // Reload the selected team
-      const teamResponse = await axios.get(`${API_BASE_URL}/api/teams/${selectedTeam.id}`);
-      setSelectedTeam(teamResponse.data);
-      await loadTeams(); // Reload all teams
-    } catch (error) {
-      console.error('Error updating player:', error);
-      throw error;
-    }
-  };
-
-  const handleDeletePlayer = async (playerId) => {
-    try {
-      await axios.delete(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players/${playerId}`);
-      // Reload the selected team
-      const teamResponse = await axios.get(`${API_BASE_URL}/api/teams/${selectedTeam.id}`);
-      setSelectedTeam(teamResponse.data);
-      await loadTeams(); // Reload all teams
-    } catch (error) {
-      console.error('Error deleting player:', error);
-      throw error;
-    }
-  };
 
   const handleNavigate = (view) => {
     setCurrentView(view);
