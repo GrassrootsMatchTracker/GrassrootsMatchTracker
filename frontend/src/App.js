@@ -93,6 +93,159 @@ const CookieModal = ({ isOpen, onClose, onAccept }) => {
   );
 };
 
+// Player Edit Modal Component
+const PlayerEditModal = ({ isOpen, onClose, player, onSave, onDelete }) => {
+  const [editedPlayer, setEditedPlayer] = useState(player || {});
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (player) {
+      setEditedPlayer(player);
+    }
+  }, [player]);
+
+  if (!isOpen || !player) return null;
+
+  const positions = ['GK', 'DEF', 'MID', 'FWD'];
+  const ages = Array.from({length: 98}, (_, i) => i + 3);
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      await onSave(editedPlayer);
+      onClose();
+    } catch (error) {
+      alert('Error updating player');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm(`Are you sure you want to delete ${player.first_name} ${player.last_name}?`)) {
+      setIsLoading(true);
+      try {
+        await onDelete(player.id);
+        onClose();
+      } catch (error) {
+        alert('Error deleting player');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 max-w-2xl w-full mx-4 border border-slate-700">
+        <h3 className="text-2xl font-semibold mb-6 text-white">Edit Player</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+            <input
+              type="text"
+              value={editedPlayer.first_name || ''}
+              onChange={(e) => setEditedPlayer({...editedPlayer, first_name: e.target.value})}
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-xl text-white"
+              disabled={isLoading}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+            <input
+              type="text"
+              value={editedPlayer.last_name || ''}
+              onChange={(e) => setEditedPlayer({...editedPlayer, last_name: e.target.value})}
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-xl text-white"
+              disabled={isLoading}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Age</label>
+            <select
+              value={editedPlayer.age || 16}
+              onChange={(e) => setEditedPlayer({...editedPlayer, age: parseInt(e.target.value)})}
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-xl text-white"
+              disabled={isLoading}
+            >
+              {ages.map(age => (
+                <option key={age} value={age}>{age}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Position</label>
+            <select
+              value={editedPlayer.position || 'MID'}
+              onChange={(e) => setEditedPlayer({...editedPlayer, position: e.target.value})}
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-xl text-white"
+              disabled={isLoading}
+            >
+              {positions.map(pos => (
+                <option key={pos} value={pos}>{pos}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Squad Number</label>
+            <input
+              type="number"
+              min="1"
+              max="99"
+              value={editedPlayer.squad_number || 1}
+              onChange={(e) => setEditedPlayer({...editedPlayer, squad_number: parseInt(e.target.value)})}
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-xl text-white"
+              disabled={isLoading}
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Photo Upload</label>
+            <input
+              type="file"
+              accept="image/*"
+              className="w-full p-3 bg-slate-700 border border-slate-600 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white"
+              disabled={isLoading}
+            />
+          </div>
+        </div>
+        
+        <div className="flex justify-between">
+          <button
+            onClick={handleDelete}
+            disabled={isLoading}
+            className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-xl hover:from-red-600 hover:to-red-700 transition-all"
+          >
+            {isLoading ? 'Deleting...' : 'Delete Player'}
+          </button>
+          
+          <div className="space-x-4">
+            <button
+              onClick={onClose}
+              disabled={isLoading}
+              className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isLoading}
+              className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all"
+            >
+              {isLoading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Modern Dashboard Component
 const DashboardView = ({ teams, onNavigate }) => {
   const totalPlayers = teams.reduce((total, team) => total + (team.players?.length || 0), 0);
@@ -206,9 +359,9 @@ const DashboardView = ({ teams, onNavigate }) => {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors">Team Management</h3>
-                <p className="text-gray-400 mb-6">Create and manage your football teams with advanced squad management tools</p>
+                <p className="text-gray-400 mb-6">Create and manage your football teams with advanced squad and player management tools</p>
                 <div className="flex items-center text-cyan-400 font-medium">
-                  <span>Manage Teams</span>
+                  <span>Manage Teams & Players</span>
                   <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
                   </svg>
@@ -229,7 +382,7 @@ const DashboardView = ({ teams, onNavigate }) => {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-purple-300 transition-colors">Match Creation</h3>
-                <p className="text-gray-400 mb-6">Schedule matches with interactive formations and advanced squad selection</p>
+                <p className="text-gray-400 mb-6">Schedule matches with simplified opponent entry and advanced formation selection</p>
                 <div className="flex items-center text-purple-400 font-medium">
                   <span>Create Matches</span>
                   <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
@@ -252,32 +405,9 @@ const DashboardView = ({ teams, onNavigate }) => {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-green-300 transition-colors">Statistics</h3>
-                <p className="text-gray-400 mb-6">Advanced analytics and performance tracking for teams and players</p>
+                <p className="text-gray-400 mb-6">Advanced team and player analytics with detailed performance tracking</p>
                 <div className="flex items-center text-green-400 font-medium">
                   <span>View Stats</span>
-                  <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* Players */}
-            <div 
-              onClick={() => onNavigate('players')}
-              className="group relative bg-gradient-to-br from-yellow-500/10 to-orange-600/10 backdrop-blur-lg rounded-3xl p-8 border border-yellow-500/20 hover:border-yellow-400/50 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/25"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-orange-600/5 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-yellow-300 transition-colors">Players</h3>
-                <p className="text-gray-400 mb-6">Comprehensive player database and performance management</p>
-                <div className="flex items-center text-yellow-400 font-medium">
-                  <span>Manage Players</span>
                   <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd"></path>
                   </svg>
@@ -321,7 +451,7 @@ const DashboardView = ({ teams, onNavigate }) => {
                   </svg>
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-rose-300 transition-colors">Leagues</h3>
-                <p className="text-gray-400 mb-6">Tournament and league management with rankings</p>
+                <p className="text-gray-400 mb-6">Tournament and league management with web integration</p>
                 <div className="flex items-center text-rose-400 font-medium">
                   <span>Manage Leagues</span>
                   <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="currentColor" viewBox="0 0 20 20">
@@ -337,8 +467,8 @@ const DashboardView = ({ teams, onNavigate }) => {
   );
 };
 
-// Statistics View Component
-const StatisticsView = ({ teams, onBack }) => {
+// Enhanced Statistics View Component with Team Details
+const StatisticsView = ({ teams, onBack, onTeamSelect }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="flex items-center mb-8">
@@ -406,50 +536,56 @@ const StatisticsView = ({ teams, onBack }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50">
-          <h3 className="text-xl font-semibold mb-4 text-white">Teams by Age Group</h3>
-          <div className="space-y-3">
-            {['U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18'].map(ageGroup => {
-              const count = teams.filter(team => team.age_group === ageGroup).length;
-              return (
-                <div key={ageGroup} className="flex justify-between items-center">
-                  <span className="font-medium text-gray-300">{ageGroup}</span>
-                  <span className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {count} teams
-                  </span>
+      {/* Team Selection for Detailed Stats */}
+      <div className="mb-8">
+        <h3 className="text-2xl font-semibold text-white mb-6">Select Team for Detailed Statistics</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {teams.map((team) => (
+            <div 
+              key={team.id} 
+              onClick={() => onTeamSelect(team)}
+              className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-green-500/50 transition-all duration-300 hover:scale-105 cursor-pointer group"
+            >
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  {team.name.charAt(0)}
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50">
-          <h3 className="text-xl font-semibold mb-4 text-white">Recent Activity</h3>
-          <div className="space-y-4">
-            <div className="flex items-center p-3 bg-gradient-to-r from-green-500/20 to-emerald-600/20 rounded-lg border border-green-500/30">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-              <div>
-                <p className="font-medium text-white">System Ready</p>
-                <p className="text-sm text-gray-300">Grassroots Match Tracker is operational</p>
+                <div className="ml-4">
+                  <h4 className="text-xl font-semibold text-white group-hover:text-green-300 transition-colors">{team.name}</h4>
+                  <p className="text-green-400 font-medium">{team.age_group}</p>
+                </div>
+              </div>
+              <div className="text-gray-300">
+                <p>Players: {team.players?.length || 0}</p>
+                <p>Matches: 0</p>
+                <p>Points: 0</p>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-// Players View Component
-const PlayersView = ({ teams, onBack }) => {
-  const allPlayers = teams.flatMap(team => 
-    (team.players || []).map(player => ({
-      ...player,
-      teamName: team.name,
-      teamAgeGroup: team.age_group
-    }))
-  );
+// Team Detailed Statistics View
+const TeamStatsView = ({ team, onBack }) => {
+  // Mock data for demonstration - in real app this would come from API
+  const teamStats = {
+    matchesPlayed: 12,
+    matchesWon: 8,
+    matchesDrawn: 2,
+    matchesLost: 2,
+    goalsScored: 24,
+    goalsConceded: 12,
+    points: 26
+  };
+
+  const playerStats = [
+    { name: "John Smith", goals: 8, assists: 4, playerOfTheMatch: 3 },
+    { name: "Mike Johnson", goals: 5, assists: 6, playerOfTheMatch: 2 },
+    { name: "David Wilson", goals: 3, assists: 2, playerOfTheMatch: 1 },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
@@ -463,43 +599,391 @@ const PlayersView = ({ teams, onBack }) => {
           </svg>
           <span>Back</span>
         </button>
-        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">All Players</h2>
-        <span className="ml-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium">
-          {allPlayers.length} players
+        <h2 className="text-4xl font-bold text-white">{team.name} Statistics</h2>
+        <span className="ml-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+          {team.age_group}
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {allPlayers.map((player) => (
-          <div key={player.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:scale-105">
-            <div className="flex items-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
-                {player.squad_number}
-              </div>
-              <div className="ml-4">
-                <h3 className="text-lg font-semibold text-white">
-                  {player.first_name} {player.last_name}
-                </h3>
-                <p className="text-blue-400 font-medium">{player.position}</p>
-                <p className="text-gray-400 text-sm">Age: {player.age}</p>
-              </div>
+      {/* Team Statistics Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
+        <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-xl p-4 text-center border border-blue-500/30">
+          <p className="text-blue-400 text-sm font-medium">Played</p>
+          <p className="text-2xl font-bold text-white">{teamStats.matchesPlayed}</p>
+        </div>
+        <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-xl p-4 text-center border border-green-500/30">
+          <p className="text-green-400 text-sm font-medium">Won</p>
+          <p className="text-2xl font-bold text-white">{teamStats.matchesWon}</p>
+        </div>
+        <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-xl p-4 text-center border border-yellow-500/30">
+          <p className="text-yellow-400 text-sm font-medium">Drawn</p>
+          <p className="text-2xl font-bold text-white">{teamStats.matchesDrawn}</p>
+        </div>
+        <div className="bg-gradient-to-br from-red-500/20 to-red-600/20 rounded-xl p-4 text-center border border-red-500/30">
+          <p className="text-red-400 text-sm font-medium">Lost</p>
+          <p className="text-2xl font-bold text-white">{teamStats.matchesLost}</p>
+        </div>
+        <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-xl p-4 text-center border border-purple-500/30">
+          <p className="text-purple-400 text-sm font-medium">Goals For</p>
+          <p className="text-2xl font-bold text-white">{teamStats.goalsScored}</p>
+        </div>
+        <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-xl p-4 text-center border border-orange-500/30">
+          <p className="text-orange-400 text-sm font-medium">Goals Against</p>
+          <p className="text-2xl font-bold text-white">{teamStats.goalsConceded}</p>
+        </div>
+        <div className="bg-gradient-to-br from-cyan-500/20 to-cyan-600/20 rounded-xl p-4 text-center border border-cyan-500/30">
+          <p className="text-cyan-400 text-sm font-medium">Points</p>
+          <p className="text-2xl font-bold text-white">{teamStats.points}</p>
+        </div>
+      </div>
+
+      {/* Player Statistics */}
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50">
+        <h3 className="text-2xl font-semibold text-white mb-6">Player Statistics</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-white">
+            <thead>
+              <tr className="border-b border-slate-600">
+                <th className="text-left py-3 px-4">Player</th>
+                <th className="text-center py-3 px-4">Goals</th>
+                <th className="text-center py-3 px-4">Assists</th>
+                <th className="text-center py-3 px-4">POTM Awards</th>
+              </tr>
+            </thead>
+            <tbody>
+              {playerStats.map((player, index) => (
+                <tr key={index} className="border-b border-slate-700/50 hover:bg-slate-700/30">
+                  <td className="py-4 px-4 font-medium">{player.name}</td>
+                  <td className="py-4 px-4 text-center text-green-400">{player.goals}</td>
+                  <td className="py-4 px-4 text-center text-blue-400">{player.assists}</td>
+                  <td className="py-4 px-4 text-center text-yellow-400">{player.playerOfTheMatch}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Enhanced Leagues View with Web Link Integration
+const LeaguesView = ({ onBack }) => {
+  const [leagueUrl, setLeagueUrl] = useState('');
+  const [savedUrl, setSavedUrl] = useState('');
+
+  const handleSaveUrl = () => {
+    if (leagueUrl.trim()) {
+      setSavedUrl(leagueUrl);
+      alert('League URL saved successfully!');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
+      <div className="flex items-center mb-8">
+        <button 
+          onClick={onBack}
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+          </svg>
+          <span>Back</span>
+        </button>
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-pink-500">Leagues & Tournaments</h2>
+      </div>
+
+      <div className="space-y-8">
+        {/* League URL Configuration */}
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50">
+          <h3 className="text-2xl font-semibold text-white mb-6">League Web Integration</h3>
+          <p className="text-gray-300 mb-6">
+            Connect your league's website for automatic updates and live standings.
+          </p>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">League Website URL</label>
+              <input
+                type="url"
+                value={leagueUrl}
+                onChange={(e) => setLeagueUrl(e.target.value)}
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all"
+                placeholder="https://your-league-website.com"
+              />
             </div>
-            <div className="mt-4">
-              <p className="text-sm text-gray-300">Team: {player.teamName}</p>
-              <p className="text-sm text-gray-300">Age Group: {player.teamAgeGroup}</p>
-            </div>
+            
+            <button 
+              onClick={handleSaveUrl}
+              className="bg-gradient-to-r from-rose-500 to-pink-600 text-white px-8 py-3 rounded-xl hover:from-rose-600 hover:to-pink-700 transition-all font-medium"
+            >
+              Save League URL
+            </button>
           </div>
-        ))}
+
+          {savedUrl && (
+            <div className="mt-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl">
+              <p className="text-green-400 font-medium">✅ League URL Saved</p>
+              <p className="text-gray-300 text-sm">{savedUrl}</p>
+              <button 
+                onClick={() => window.open(savedUrl, '_blank')}
+                className="mt-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all"
+              >
+                Open League Website
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* League Features Coming Soon */}
+        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-3xl p-12 border border-slate-700/50 text-center">
+          <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-8">
+            <span className="text-white text-4xl">🏆</span>
+          </div>
+          <h3 className="text-2xl font-semibold text-white mb-6">Advanced League Management Coming Soon</h3>
+          <p className="text-gray-300 mb-8 max-w-md mx-auto">
+            Create and manage leagues and tournaments with automatic standings, fixture generation, and live updates from your league website.
+          </p>
+          <div className="text-gray-400 text-sm">
+            <p>• Automatic league table updates</p>
+            <p>• Live fixture integration</p>
+            <p>• Tournament brackets</p>
+            <p>• League statistics and reports</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Simplified Match Creation View
+const MatchView = ({ teams, onBack }) => {
+  const [matchData, setMatchData] = useState({
+    user_team_id: '',
+    opponent_name: '',
+    date: '',
+    venue: '',
+    is_home_game: true,
+    formation: ''
+  });
+  const [userTeam, setUserTeam] = useState(null);
+  const [availableFormations, setAvailableFormations] = useState({});
+
+  useEffect(() => {
+    const fetchFormations = async (ageGroup) => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/formations/${ageGroup}`);
+        return response.data.formations;
+      } catch (error) {
+        console.error('Error fetching formations:', error);
+        return {};
+      }
+    };
+
+    if (userTeam?.age_group) {
+      fetchFormations(userTeam.age_group).then(formations => {
+        setAvailableFormations(formations);
+        const formationNames = Object.keys(formations);
+        if (formationNames.length > 0) {
+          setMatchData(prev => ({...prev, formation: formationNames[0]}));
+        }
+      });
+    }
+  }, [userTeam]);
+
+  const handleTeamChange = (teamId) => {
+    const selectedTeam = teams.find(t => t.id === teamId);
+    setUserTeam(selectedTeam);
+    setMatchData(prev => ({...prev, user_team_id: teamId}));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Create simplified match data
+      const simpleMatchData = {
+        user_team: userTeam.name,
+        opponent_team: matchData.opponent_name,
+        date: matchData.date,
+        venue: matchData.venue,
+        is_home_game: matchData.is_home_game,
+        formation: matchData.formation,
+        status: 'scheduled'
+      };
+      
+      console.log('Creating simplified match:', simpleMatchData);
+      alert('Match created successfully!');
+      
+      // Reset form
+      setMatchData({
+        user_team_id: '',
+        opponent_name: '',
+        date: '',
+        venue: '',
+        is_home_game: true,
+        formation: ''
+      });
+      setUserTeam(null);
+    } catch (error) {
+      console.error('Error creating match:', error);
+      alert('Error creating match');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
+      <div className="flex items-center mb-8">
+        <button 
+          onClick={onBack}
+          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
+        >
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+          </svg>
+          <span>Back</span>
+        </button>
+        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Create Match</h2>
+      </div>
+
+      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50 max-w-4xl mx-auto">
+        <h3 className="text-2xl font-semibold mb-6 text-white">Match Details</h3>
         
-        {allPlayers.length === 0 && (
-          <div className="col-span-full text-center py-12">
-            <div className="w-20 h-20 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-gray-300 text-3xl">👥</span>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Your Team</label>
+              <select
+                value={matchData.user_team_id}
+                onChange={(e) => handleTeamChange(e.target.value)}
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                required
+              >
+                <option value="">Select Your Team</option>
+                {teams.map(team => (
+                  <option key={team.id} value={team.id}>{team.name} ({team.age_group})</option>
+                ))}
+              </select>
             </div>
-            <h3 className="text-lg font-medium text-gray-300 mb-2">No Players Found</h3>
-            <p className="text-gray-400">Add teams and players to see them here</p>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Opposition Team</label>
+              <input
+                type="text"
+                value={matchData.opponent_name}
+                onChange={(e) => setMatchData({...matchData, opponent_name: e.target.value})}
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                placeholder="Enter opponent team name..."
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Date & Time</label>
+              <input
+                type="datetime-local"
+                value={matchData.date}
+                onChange={(e) => setMatchData({...matchData, date: e.target.value})}
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                required
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Venue</label>
+              <input
+                type="text"
+                value={matchData.venue}
+                onChange={(e) => setMatchData({...matchData, venue: e.target.value})}
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                placeholder="Enter venue..."
+                required
+              />
+            </div>
           </div>
-        )}
+
+          {/* Home/Away Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-4">Match Type</label>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setMatchData({...matchData, is_home_game: true})}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  matchData.is_home_game
+                    ? 'border-green-500 bg-green-500/20 text-green-300'
+                    : 'border-slate-600 hover:border-slate-500 text-gray-300'
+                }`}
+              >
+                🏠 Home Game
+                <p className="text-sm mt-1">Your team plays at home venue</p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setMatchData({...matchData, is_home_game: false})}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  !matchData.is_home_game
+                    ? 'border-blue-500 bg-blue-500/20 text-blue-300'
+                    : 'border-slate-600 hover:border-slate-500 text-gray-300'
+                }`}
+              >
+                ✈️ Away Game
+                <p className="text-sm mt-1">Your team plays away</p>
+              </button>
+            </div>
+          </div>
+
+          {/* Formation Selection */}
+          {userTeam && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-4">Formation</label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {Object.keys(availableFormations).map(formation => (
+                  <button
+                    key={formation}
+                    type="button"
+                    onClick={() => setMatchData({...matchData, formation})}
+                    className={`p-3 rounded-xl border-2 transition-all font-medium ${
+                      matchData.formation === formation
+                        ? 'border-purple-500 bg-purple-500/20 text-purple-300'
+                        : 'border-slate-600 hover:border-slate-500 text-gray-300'
+                    }`}
+                  >
+                    {formation}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Match Preview */}
+          {matchData.user_team_id && matchData.opponent_name && (
+            <div className="bg-slate-700/30 rounded-xl p-6 border border-slate-600">
+              <h4 className="text-lg font-semibold text-white mb-4">Match Preview</h4>
+              <div className="flex items-center justify-between">
+                <div className={`text-center ${matchData.is_home_game ? 'order-1' : 'order-3'}`}>
+                  <p className="text-white font-semibold">{userTeam?.name}</p>
+                  <p className="text-sm text-gray-400">{matchData.is_home_game ? 'Home' : 'Away'}</p>
+                </div>
+                <div className="order-2 text-center">
+                  <p className="text-2xl font-bold text-white">VS</p>
+                  <p className="text-sm text-gray-400">{new Date(matchData.date).toLocaleDateString()}</p>
+                </div>
+                <div className={`text-center ${matchData.is_home_game ? 'order-3' : 'order-1'}`}>
+                  <p className="text-white font-semibold">{matchData.opponent_name}</p>
+                  <p className="text-sm text-gray-400">{matchData.is_home_game ? 'Away' : 'Home'}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <button 
+            type="submit"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-4 rounded-xl hover:from-purple-600 hover:to-pink-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium"
+          >
+            Create Match ⚽
+          </button>
+        </form>
       </div>
     </div>
   );
@@ -542,45 +1026,8 @@ const FixturesView = ({ onBack }) => {
   );
 };
 
-// Leagues View Component
-const LeaguesView = ({ onBack }) => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
-      <div className="flex items-center mb-8">
-        <button 
-          onClick={onBack}
-          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
-        >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
-          </svg>
-          <span>Back</span>
-        </button>
-        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-pink-500">Leagues & Tournaments</h2>
-      </div>
-
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-3xl p-12 border border-slate-700/50 text-center">
-        <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-8">
-          <span className="text-white text-4xl">🏆</span>
-        </div>
-        <h3 className="text-2xl font-semibold text-white mb-6">League Management Coming Soon</h3>
-        <p className="text-gray-300 mb-8 max-w-md mx-auto">
-          Create and manage leagues and tournaments for your grassroots teams. 
-          Track standings, manage fixtures, and celebrate victories!
-        </p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-4 rounded-xl hover:from-purple-600 hover:to-pink-700 transition-all duration-300 font-medium"
-        >
-          Coming Soon
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// Team View Component
-const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => {
+// Enhanced Team View Component with Player Management
+const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack, onDeleteTeam }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTeam, setNewTeam] = useState({
     name: '',
@@ -614,6 +1061,17 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
     }
   };
 
+  const handleDeleteTeam = async (teamId, teamName) => {
+    if (window.confirm(`Are you sure you want to delete "${teamName}" and all its players? This action cannot be undone.`)) {
+      try {
+        await onDeleteTeam(teamId);
+        alert('Team deleted successfully!');
+      } catch (error) {
+        alert('Error deleting team. Please try again.');
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 space-y-4 lg:space-y-0">
@@ -640,7 +1098,7 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
             onClick={onViewMatches}
             className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium text-center"
           >
-            📅 View Matches
+            📅 Create Match
           </button>
         </div>
       </div>
@@ -703,14 +1161,26 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {teams.map((team) => (
           <div key={team.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                {team.name.charAt(0)}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  {team.name.charAt(0)}
+                </div>
+                <div className="ml-4">
+                  <h3 className="text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">{team.name}</h3>
+                  <p className="text-cyan-400 font-medium">{team.age_group}</p>
+                </div>
               </div>
-              <div className="ml-4">
-                <h3 className="text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">{team.name}</h3>
-                <p className="text-cyan-400 font-medium">{team.age_group}</p>
-              </div>
+              <button
+                onClick={() => handleDeleteTeam(team.id, team.name)}
+                className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/20 transition-all"
+                title="Delete Team"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clipRule="evenodd"></path>
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path>
+                </svg>
+              </button>
             </div>
             <div className="mb-4">
               <p className="text-gray-300">Players: {team.players?.length || 0}</p>
@@ -719,7 +1189,7 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
               onClick={() => onTeamSelect(team)}
               className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 rounded-xl hover:from-cyan-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-200 font-medium"
             >
-              Manage Team
+              Manage Team & Players
             </button>
           </div>
         ))}
@@ -728,9 +1198,11 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack }) => 
   );
 };
 
-// Squad View Component
-const SquadView = ({ team, onBack, onPlayerAdd }) => {
+// Enhanced Squad View Component with Player Management
+const SquadView = ({ team, onBack, onPlayerAdd, onPlayerUpdate, onPlayerDelete }) => {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [showPlayerModal, setShowPlayerModal] = useState(false);
   const [newPlayer, setNewPlayer] = useState({
     first_name: '',
     last_name: '',
@@ -739,12 +1211,14 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
     squad_number: 1,
     photo_url: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const positions = ['GK', 'DEF', 'MID', 'FWD'];
   const ages = Array.from({length: 98}, (_, i) => i + 3);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await onPlayerAdd(newPlayer);
       setNewPlayer({
@@ -756,10 +1230,28 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
         photo_url: ''
       });
       setShowAddForm(false);
+      alert('Player added successfully!');
     } catch (error) {
       console.error('Error adding player:', error);
       alert('Error adding player. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handlePlayerClick = (player) => {
+    setSelectedPlayer(player);
+    setShowPlayerModal(true);
+  };
+
+  const handlePlayerUpdate = async (updatedPlayer) => {
+    await onPlayerUpdate(updatedPlayer);
+    // Refresh the team data would happen in parent component
+  };
+
+  const handlePlayerDelete = async (playerId) => {
+    await onPlayerDelete(playerId);
+    // Refresh the team data would happen in parent component
   };
 
   return (
@@ -802,6 +1294,7 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
                 className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 placeholder="First name..."
                 required
+                disabled={isLoading}
               />
             </div>
             <div>
@@ -813,6 +1306,7 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
                 className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 placeholder="Last name..."
                 required
+                disabled={isLoading}
               />
             </div>
             <div>
@@ -822,6 +1316,7 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
                 onChange={(e) => setNewPlayer({...newPlayer, age: parseInt(e.target.value)})}
                 className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 required
+                disabled={isLoading}
               >
                 {ages.map(age => (
                   <option key={age} value={age}>{age}</option>
@@ -835,6 +1330,7 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
                 onChange={(e) => setNewPlayer({...newPlayer, position: e.target.value})}
                 className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 required
+                disabled={isLoading}
               >
                 {positions.map(pos => (
                   <option key={pos} value={pos}>{pos}</option>
@@ -851,28 +1347,34 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
                 onChange={(e) => setNewPlayer({...newPlayer, squad_number: parseInt(e.target.value)})}
                 className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 required
+                disabled={isLoading}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Photo URL (Optional)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Photo Upload</label>
               <input
-                type="url"
-                value={newPlayer.photo_url}
-                onChange={(e) => setNewPlayer({...newPlayer, photo_url: e.target.value})}
-                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                placeholder="https://..."
+                type="file"
+                accept="image/*"
+                className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white"
+                disabled={isLoading}
               />
             </div>
             <div className="md:col-span-2 flex space-x-4">
               <button 
                 type="submit"
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all font-medium"
+                disabled={isLoading}
+                className={`px-8 py-3 rounded-xl font-medium transition-all ${
+                  isLoading 
+                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
+                }`}
               >
-                Add Player
+                {isLoading ? 'Adding...' : 'Add Player'}
               </button>
               <button 
                 type="button"
                 onClick={() => setShowAddForm(false)}
+                disabled={isLoading}
                 className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-medium"
               >
                 Cancel
@@ -884,567 +1386,38 @@ const SquadView = ({ team, onBack, onPlayerAdd }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {team.players?.map((player) => (
-          <div key={player.id} className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:scale-105">
+          <div 
+            key={player.id} 
+            onClick={() => handlePlayerClick(player)}
+            className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-6 border border-slate-700/50 hover:border-blue-500/50 transition-all duration-300 hover:scale-105 cursor-pointer group"
+          >
             <div className="flex items-center mb-4">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
                 {player.squad_number}
               </div>
               <div className="ml-4">
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">
                   {player.first_name} {player.last_name}
                 </h3>
                 <p className="text-blue-400 font-medium">{player.position}</p>
                 <p className="text-gray-400 text-sm">Age: {player.age}</p>
               </div>
             </div>
+            <div className="text-xs text-gray-400 text-center">
+              Click to edit
+            </div>
           </div>
         ))}
       </div>
-    </div>
-  );
-};
 
-// Formation Pitch Component (keeping the same as it works)
-const FormationPitch = ({ formation, players, selectedPlayers, onPlayerSelect, substitutes, onSubstituteSelect }) => {
-  const [selectedPosition, setSelectedPosition] = useState(null);
-  
-  if (!formation || !formation.positions) return null;
-
-  const handlePositionClick = (position) => {
-    setSelectedPosition(selectedPosition === position.id ? null : position.id);
-  };
-
-  const handlePlayerSelection = (playerId, positionId) => {
-    onPlayerSelect(playerId, positionId);
-    setSelectedPosition(null);
-  };
-
-  const getPlayerAtPosition = (positionId) => {
-    return selectedPlayers.find(p => p.position === positionId);
-  };
-
-  const availablePlayers = players.filter(p => 
-    !selectedPlayers.some(sp => sp.playerId === p.id) &&
-    !substitutes.some(sub => sub.id === p.id)
-  );
-
-  return (
-    <div className="space-y-6">
-      {/* Main Pitch */}
-      <div className="relative bg-gradient-to-b from-green-400 to-green-500 rounded-xl shadow-lg">
-        <svg viewBox="0 0 100 100" className="w-full h-96">
-          {/* Pitch markings */}
-          <rect x="10" y="10" width="80" height="80" fill="none" stroke="white" strokeWidth="0.5"/>
-          <line x1="10" y1="50" x2="90" y2="50" stroke="white" strokeWidth="0.3"/>
-          <circle cx="50" cy="50" r="8" fill="none" stroke="white" strokeWidth="0.3"/>
-          <rect x="10" y="25" width="15" height="50" fill="none" stroke="white" strokeWidth="0.3"/>
-          <rect x="75" y="25" width="15" height="50" fill="none" stroke="white" strokeWidth="0.3"/>
-          
-          {/* Position markers */}
-          {formation.positions.map((position) => {
-            const assignedPlayer = getPlayerAtPosition(position.id);
-            const isSelected = selectedPosition === position.id;
-            
-            return (
-              <g key={position.id}>
-                <circle
-                  cx={position.x}
-                  cy={position.y}
-                  r="3"
-                  fill={assignedPlayer ? "#3B82F6" : "#EF4444"}
-                  stroke="white"
-                  strokeWidth="0.5"
-                  className="cursor-pointer hover:stroke-yellow-400 hover:stroke-2 transition-all"
-                  onClick={() => handlePositionClick(position)}
-                />
-                <text
-                  x={position.x}
-                  y={position.y + 1}
-                  textAnchor="middle"
-                  fontSize="2"
-                  fill="white"
-                  className="pointer-events-none font-bold"
-                >
-                  {position.label}
-                </text>
-                {assignedPlayer && (
-                  <text
-                    x={position.x}
-                    y={position.y - 4}
-                    textAnchor="middle"
-                    fontSize="1.5"
-                    fill="white"
-                    className="pointer-events-none"
-                  >
-                    {assignedPlayer.playerName.split(' ')[0]}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </svg>
-
-        {/* Player Selection Dropdown */}
-        {selectedPosition && (
-          <div className="absolute top-4 right-4 bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg shadow-lg p-4 w-64 z-10 border border-slate-700">
-            <h4 className="font-semibold mb-2 text-white">
-              Select Player for {formation.positions.find(p => p.id === selectedPosition)?.label}
-            </h4>
-            <div className="max-h-40 overflow-y-auto space-y-2">
-              {availablePlayers.map(player => (
-                <button
-                  key={player.id}
-                  onClick={() => handlePlayerSelection(player.id, selectedPosition)}
-                  className="w-full text-left p-2 hover:bg-slate-700 rounded flex items-center text-white"
-                >
-                  <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-2">
-                    {player.squad_number}
-                  </span>
-                  <div>
-                    <div className="font-medium">{player.first_name} {player.last_name}</div>
-                    <div className="text-sm text-gray-400">{player.position}</div>
-                  </div>
-                </button>
-              ))}
-              {availablePlayers.length === 0 && (
-                <p className="text-gray-400 text-sm">No available players</p>
-              )}
-            </div>
-            <button
-              onClick={() => setSelectedPosition(null)}
-              className="mt-2 w-full bg-gray-600 text-white py-1 rounded hover:bg-gray-700"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Substitutes Bench */}
-      <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-xl p-6 border border-slate-700/50">
-        <h3 className="text-lg font-semibold mb-4 flex items-center text-white">
-          <span className="mr-2">🪑</span>
-          Substitutes Bench ({substitutes.length}/6)
-        </h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {Array.from({length: 6}).map((_, index) => {
-            const substitute = substitutes[index];
-            return (
-              <div
-                key={index}
-                className={`border-2 border-dashed rounded-lg p-4 h-24 flex flex-col items-center justify-center cursor-pointer transition-colors ${
-                  substitute ? 'border-blue-500 bg-blue-500/20' : 'border-gray-600 hover:border-gray-500'
-                }`}
-                onClick={() => {
-                  if (!substitute && availablePlayers.length > 0) {
-                    // Open substitute selection
-                    const player = availablePlayers[0]; // For demo, select first available
-                    onSubstituteSelect(player);
-                  }
-                }}
-              >
-                {substitute ? (
-                  <>
-                    <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm">
-                      {substitute.squad_number}
-                    </div>
-                    <div className="text-xs text-center mt-1 text-white">
-                      {substitute.first_name}
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-gray-400 text-xs text-center">
-                    Available
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Available players for substitutes */}
-        {availablePlayers.length > 0 && (
-          <div className="mt-4">
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Available Players:</h4>
-            <div className="flex flex-wrap gap-2">
-              {availablePlayers.slice(0, 6 - substitutes.length).map(player => (
-                <button
-                  key={player.id}
-                  onClick={() => onSubstituteSelect(player)}
-                  className="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded-full text-sm flex items-center text-white"
-                >
-                  <span className="w-5 h-5 bg-gray-500 text-white rounded-full flex items-center justify-center text-xs mr-1">
-                    {player.squad_number}
-                  </span>
-                  {player.first_name} {player.last_name}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// Match View Component (keeping similar structure but with futuristic styling)
-const MatchView = ({ teams, onBack }) => {
-  const [step, setStep] = useState(1);
-  const [matchData, setMatchData] = useState({
-    home_team_id: '',
-    away_team_id: '',
-    date: '',
-    venue: '',
-    home_formation: '',
-    away_formation: '',
-    home_lineup: [],
-    away_lineup: [],
-    home_substitutes: [],
-    away_substitutes: []
-  });
-  const [homeTeamPlayers, setHomeTeamPlayers] = useState([]);
-  const [awayTeamPlayers, setAwayTeamPlayers] = useState([]);
-  const [selectedHomePlayers, setSelectedHomePlayers] = useState([]);
-  const [selectedAwayPlayers, setSelectedAwayPlayers] = useState([]);
-  const [homeSubstitutes, setHomeSubstitutes] = useState([]);
-  const [awaySubstitutes, setAwaySubstitutes] = useState([]);
-  const [homeTeamAgeGroup, setHomeTeamAgeGroup] = useState('');
-  const [awayTeamAgeGroup, setAwayTeamAgeGroup] = useState('');
-  const [availableFormations, setAvailableFormations] = useState({});
-
-  useEffect(() => {
-    const fetchFormations = async (ageGroup) => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/api/formations/${ageGroup}`);
-        return response.data.formations;
-      } catch (error) {
-        console.error('Error fetching formations:', error);
-        return {};
-      }
-    };
-
-    if (homeTeamAgeGroup) {
-      fetchFormations(homeTeamAgeGroup).then(formations => {
-        setAvailableFormations(prev => ({...prev, home: formations}));
-        // Set default formation
-        const formationNames = Object.keys(formations);
-        if (formationNames.length > 0) {
-          setMatchData(prev => ({...prev, home_formation: formationNames[0]}));
-        }
-      });
-    }
-
-    if (awayTeamAgeGroup) {
-      fetchFormations(awayTeamAgeGroup).then(formations => {
-        setAvailableFormations(prev => ({...prev, away: formations}));
-        // Set default formation
-        const formationNames = Object.keys(formations);
-        if (formationNames.length > 0) {
-          setMatchData(prev => ({...prev, away_formation: formationNames[0]}));
-        }
-      });
-    }
-  }, [homeTeamAgeGroup, awayTeamAgeGroup]);
-
-  const handleFormationChange = (team, formation) => {
-    if (team === 'home') {
-      setMatchData(prev => ({...prev, home_formation: formation}));
-      setSelectedHomePlayers([]); // Reset player selection when formation changes
-    } else {
-      setMatchData(prev => ({...prev, away_formation: formation}));
-      setSelectedAwayPlayers([]); // Reset player selection when formation changes
-    }
-  };
-
-  const handlePlayerSelect = (playerId, positionId, team) => {
-    const player = team === 'home' 
-      ? homeTeamPlayers.find(p => p.id === playerId)
-      : awayTeamPlayers.find(p => p.id === playerId);
-    
-    if (!player) return;
-
-    const newSelection = {
-      playerId: player.id,
-      playerName: `${player.first_name} ${player.last_name}`,
-      position: positionId,
-      squad_number: player.squad_number
-    };
-
-    if (team === 'home') {
-      setSelectedHomePlayers(prev => {
-        const filtered = prev.filter(p => p.position !== positionId);
-        return [...filtered, newSelection];
-      });
-    } else {
-      setSelectedAwayPlayers(prev => {
-        const filtered = prev.filter(p => p.position !== positionId);
-        return [...filtered, newSelection];
-      });
-    }
-  };
-
-  const handleSubstituteSelect = (player, team) => {
-    if (team === 'home') {
-      if (homeSubstitutes.length < 6) {
-        setHomeSubstitutes(prev => [...prev, player]);
-      }
-    } else {
-      if (awaySubstitutes.length < 6) {
-        setAwaySubstitutes(prev => [...prev, player]);
-      }
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (step === 1) {
-      // Fetch team players when moving to step 2
-      try {
-        const homeTeam = teams.find(t => t.id === matchData.home_team_id);
-        const awayTeam = teams.find(t => t.id === matchData.away_team_id);
-        
-        setHomeTeamAgeGroup(homeTeam?.age_group || 'U13');
-        setAwayTeamAgeGroup(awayTeam?.age_group || 'U13');
-
-        const homePlayersResponse = await axios.get(`${API_BASE_URL}/api/teams/${matchData.home_team_id}/players`);
-        const awayPlayersResponse = await axios.get(`${API_BASE_URL}/api/teams/${matchData.away_team_id}/players`);
-        
-        setHomeTeamPlayers(homePlayersResponse.data);
-        setAwayTeamPlayers(awayPlayersResponse.data);
-        setStep(2);
-      } catch (error) {
-        console.error('Error fetching team players:', error);
-      }
-    } else {
-      // Create match
-      try {
-        const finalMatchData = {
-          ...matchData,
-          home_lineup: selectedHomePlayers.map(p => p.playerId),
-          away_lineup: selectedAwayPlayers.map(p => p.playerId),
-          home_substitutes: homeSubstitutes.map(p => p.id),
-          away_substitutes: awaySubstitutes.map(p => p.id)
-        };
-        
-        await axios.post(`${API_BASE_URL}/api/matches`, finalMatchData);
-        alert('Match created successfully!');
-        onBack();
-      } catch (error) {
-        console.error('Error creating match:', error);
-        alert('Error creating match');
-      }
-    }
-  };
-
-  const canCreateMatch = () => {
-    const homeFormation = availableFormations.home?.[matchData.home_formation];
-    const awayFormation = availableFormations.away?.[matchData.away_formation];
-    
-    return selectedHomePlayers.length === (homeFormation?.positions?.length || 0) &&
-           selectedAwayPlayers.length === (awayFormation?.positions?.length || 0);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
-      <div className="flex items-center mb-8">
-        <button 
-          onClick={onBack}
-          className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
-        >
-          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
-          </svg>
-          <span>Back</span>
-        </button>
-        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">Create Match</h2>
-        <div className="ml-6 flex items-center space-x-4">
-          <div className={`flex items-center ${step >= 1 ? 'text-green-400' : 'text-gray-500'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-green-500 text-white' : 'bg-gray-600'}`}>
-              1
-            </div>
-            <span className="ml-2">Match Details</span>
-          </div>
-          <div className="w-8 h-0.5 bg-gray-600"></div>
-          <div className={`flex items-center ${step >= 2 ? 'text-green-400' : 'text-gray-500'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-green-500 text-white' : 'bg-gray-600'}`}>
-              2
-            </div>
-            <span className="ml-2">Squad Selection</span>
-          </div>
-        </div>
-      </div>
-
-      {step === 1 && (
-        <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50">
-          <h3 className="text-2xl font-semibold mb-6 text-white">Match Details</h3>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Home Team</label>
-                <select
-                  value={matchData.home_team_id}
-                  onChange={(e) => setMatchData({...matchData, home_team_id: e.target.value})}
-                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  required
-                >
-                  <option value="">Select Home Team</option>
-                  {teams.map(team => (
-                    <option key={team.id} value={team.id}>{team.name} ({team.age_group})</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Away Team</label>
-                <select
-                  value={matchData.away_team_id}
-                  onChange={(e) => setMatchData({...matchData, away_team_id: e.target.value})}
-                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  required
-                >
-                  <option value="">Select Away Team</option>
-                  {teams.filter(team => team.id !== matchData.home_team_id).map(team => (
-                    <option key={team.id} value={team.id}>{team.name} ({team.age_group})</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Date & Time</label>
-                <input
-                  type="datetime-local"
-                  value={matchData.date}
-                  onChange={(e) => setMatchData({...matchData, date: e.target.value})}
-                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Venue</label>
-                <input
-                  type="text"
-                  value={matchData.venue}
-                  onChange={(e) => setMatchData({...matchData, venue: e.target.value})}
-                  className="w-full p-4 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="Enter venue..."
-                  required
-                />
-              </div>
-            </div>
-            <button 
-              type="submit"
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-xl hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-medium"
-            >
-              Next: Squad Selection →
-            </button>
-          </form>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="space-y-8">
-          <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50">
-            <h3 className="text-2xl font-semibold mb-6 text-white">Squad Selection & Formation</h3>
-            
-            {/* Formation Selection */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-              <div>
-                <h4 className="text-lg font-medium mb-4 text-blue-400">Home Team Formation</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.keys(availableFormations.home || {}).map(formation => (
-                    <button
-                      key={formation}
-                      onClick={() => handleFormationChange('home', formation)}
-                      className={`p-3 rounded-xl border-2 transition-all font-medium ${
-                        matchData.home_formation === formation
-                          ? 'border-blue-500 bg-blue-500/20 text-blue-300'
-                          : 'border-slate-600 hover:border-slate-500 text-gray-300'
-                      }`}
-                    >
-                      {formation}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="text-lg font-medium mb-4 text-red-400">Away Team Formation</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.keys(availableFormations.away || {}).map(formation => (
-                    <button
-                      key={formation}
-                      onClick={() => handleFormationChange('away', formation)}
-                      className={`p-3 rounded-xl border-2 transition-all font-medium ${
-                        matchData.away_formation === formation
-                          ? 'border-red-500 bg-red-500/20 text-red-300'
-                          : 'border-slate-600 hover:border-slate-500 text-gray-300'
-                      }`}
-                    >
-                      {formation}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Squad Selection */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-              {/* Home Team */}
-              <div>
-                <h4 className="text-lg font-medium mb-4 text-blue-400">
-                  Home Team: {teams.find(t => t.id === matchData.home_team_id)?.name}
-                  <span className="ml-2 text-sm text-gray-400">({selectedHomePlayers.length}/{availableFormations.home?.[matchData.home_formation]?.positions?.length || 0})</span>
-                </h4>
-                {availableFormations.home?.[matchData.home_formation] && (
-                  <FormationPitch
-                    formation={availableFormations.home[matchData.home_formation]}
-                    players={homeTeamPlayers}
-                    selectedPlayers={selectedHomePlayers}
-                    onPlayerSelect={(playerId, positionId) => handlePlayerSelect(playerId, positionId, 'home')}
-                    substitutes={homeSubstitutes}
-                    onSubstituteSelect={(player) => handleSubstituteSelect(player, 'home')}
-                  />
-                )}
-              </div>
-
-              {/* Away Team */}
-              <div>
-                <h4 className="text-lg font-medium mb-4 text-red-400">
-                  Away Team: {teams.find(t => t.id === matchData.away_team_id)?.name}
-                  <span className="ml-2 text-sm text-gray-400">({selectedAwayPlayers.length}/{availableFormations.away?.[matchData.away_formation]?.positions?.length || 0})</span>
-                </h4>
-                {availableFormations.away?.[matchData.away_formation] && (
-                  <FormationPitch
-                    formation={availableFormations.away[matchData.away_formation]}
-                    players={awayTeamPlayers}
-                    selectedPlayers={selectedAwayPlayers}
-                    onPlayerSelect={(playerId, positionId) => handlePlayerSelect(playerId, positionId, 'away')}
-                    substitutes={awaySubstitutes}
-                    onSubstituteSelect={(player) => handleSubstituteSelect(player, 'away')}
-                  />
-                )}
-              </div>
-            </div>
-
-            <div className="mt-8 flex justify-between">
-              <button 
-                onClick={() => setStep(1)}
-                className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-8 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-medium"
-              >
-                ← Previous
-              </button>
-              <button 
-                onClick={handleSubmit}
-                disabled={!canCreateMatch()}
-                className={`px-8 py-3 rounded-xl font-medium transition-all ${
-                  canCreateMatch()
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 shadow-lg'
-                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                Create Match ⚽
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Player Edit Modal */}
+      <PlayerEditModal
+        isOpen={showPlayerModal}
+        onClose={() => setShowPlayerModal(false)}
+        player={selectedPlayer}
+        onSave={handlePlayerUpdate}
+        onDelete={handlePlayerDelete}
+      />
     </div>
   );
 };
@@ -1453,6 +1426,7 @@ const MatchView = ({ teams, onBack }) => {
 function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedTeamForStats, setSelectedTeamForStats] = useState(null);
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
@@ -1465,7 +1439,9 @@ function App() {
 
   const fetchTeams = async () => {
     try {
+      console.log('Fetching teams from:', `${API_BASE_URL}/api/teams`);
       const response = await axios.get(`${API_BASE_URL}/api/teams`);
+      console.log('Teams fetched:', response.data);
       setTeams(response.data);
     } catch (error) {
       console.error('Error fetching teams:', error);
@@ -1502,6 +1478,7 @@ function App() {
 
   const handlePlayerAdd = async (playerData) => {
     try {
+      console.log('Adding player:', playerData, 'to team:', selectedTeam.id);
       await axios.post(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players`, playerData);
       
       // Update team players
@@ -1516,9 +1493,56 @@ function App() {
     }
   };
 
+  const handlePlayerUpdate = async (updatedPlayer) => {
+    try {
+      await axios.put(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players/${updatedPlayer.id}`, updatedPlayer);
+      
+      // Update team players
+      const response = await axios.get(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players`);
+      setSelectedTeam({
+        ...selectedTeam,
+        players: response.data
+      });
+    } catch (error) {
+      console.error('Error updating player:', error);
+      throw error;
+    }
+  };
+
+  const handlePlayerDelete = async (playerId) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players/${playerId}`);
+      
+      // Update team players
+      const response = await axios.get(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players`);
+      setSelectedTeam({
+        ...selectedTeam,
+        players: response.data
+      });
+    } catch (error) {
+      console.error('Error deleting player:', error);
+      throw error;
+    }
+  };
+
+  const handleTeamDelete = async (teamId) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/api/teams/${teamId}`);
+      await fetchTeams(); // Refresh teams list
+    } catch (error) {
+      console.error('Error deleting team:', error);
+      throw error;
+    }
+  };
+
   const handleNavigate = (view) => {
     setCurrentView(view);
     setSelectedTeam(null);
+    setSelectedTeamForStats(null);
+  };
+
+  const handleTeamSelectForStats = (team) => {
+    setSelectedTeamForStats(team);
   };
 
   if (loading) {
@@ -1550,6 +1574,7 @@ function App() {
           teams={teams}
           onTeamSelect={setSelectedTeam}
           onAddTeam={handleTeamAdd}
+          onDeleteTeam={handleTeamDelete}
           onViewMatches={() => setCurrentView('matches')}
           onBack={() => setCurrentView('dashboard')}
         />
@@ -1560,6 +1585,8 @@ function App() {
           team={selectedTeam}
           onBack={() => setSelectedTeam(null)}
           onPlayerAdd={handlePlayerAdd}
+          onPlayerUpdate={handlePlayerUpdate}
+          onPlayerDelete={handlePlayerDelete}
         />
       )}
 
@@ -1570,17 +1597,18 @@ function App() {
         />
       )}
 
-      {currentView === 'statistics' && (
+      {currentView === 'statistics' && !selectedTeamForStats && (
         <StatisticsView 
           teams={teams}
           onBack={() => setCurrentView('dashboard')}
+          onTeamSelect={handleTeamSelectForStats}
         />
       )}
 
-      {currentView === 'players' && (
-        <PlayersView 
-          teams={teams}
-          onBack={() => setCurrentView('dashboard')}
+      {selectedTeamForStats && (
+        <TeamStatsView 
+          team={selectedTeamForStats}
+          onBack={() => setSelectedTeamForStats(null)}
         />
       )}
 
