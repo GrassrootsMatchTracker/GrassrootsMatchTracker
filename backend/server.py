@@ -431,13 +431,19 @@ async def get_team(team_id: str):
     if not team_doc:
         raise HTTPException(status_code=404, detail="Team not found")
     
-    # Skip the MongoDB _id field entirely
+    # Get all players for this team
+    players = []
+    async for player_doc in db.players.find({"team_id": team_id}):
+        clean_player = clean_mongo_doc(player_doc)
+        players.append(clean_player)
+    
+    # Build clean team data
     team_data = {
         "id": team_doc.get("id"),
         "name": team_doc.get("name"),
         "age_group": team_doc.get("age_group"),
         "logo_url": team_doc.get("logo_url"),
-        "players": team_doc.get("players", [])
+        "players": players
     }
     return team_data
 
