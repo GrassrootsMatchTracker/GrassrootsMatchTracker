@@ -1037,7 +1037,19 @@ def main():
     print("=" * 80)
     print("🔍 BACKEND API TESTS COMPLETED 🔍\n")
     
-    return 0 if tester.tests_passed == tester.tests_run else 1
+    # Run the live match workflow test
+    print("\n" + "=" * 80)
+    print("🔍 RUNNING LIVE MATCH WORKFLOW TEST 🔍")
+    print("=" * 80)
+    
+    live_match_success = test_live_match_workflow(tester, timestamp)
+    
+    if live_match_success:
+        print("\n✅ Live match workflow test completed successfully")
+    else:
+        print("\n❌ Live match workflow test failed")
+    
+    return 0 if tester.tests_passed == tester.tests_run and live_match_success else 1
 
 if __name__ == "__main__":
     sys.exit(main())
