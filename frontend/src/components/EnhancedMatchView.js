@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EnhancedPitchVisualization from './EnhancedPitchVisualization';
 import PlayerSelectionModal from './PlayerSelectionModal';
-import LiveMatchInterface from './LiveMatchInterface';
+import EnhancedLiveMatchInterface from './EnhancedLiveMatchInterface';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
