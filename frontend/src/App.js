@@ -835,6 +835,11 @@ function App() {
     setCurrentView('statistics');
   };
 
+  const handleViewStatistics = (team) => {
+    setSelectedTeam(team);
+    setCurrentView('statistics');
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'dashboard':
