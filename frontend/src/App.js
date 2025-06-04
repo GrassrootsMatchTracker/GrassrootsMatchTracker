@@ -463,6 +463,8 @@ const DashboardView = ({ teams, onNavigate }) => {
   );
 };
 
+// Team Statistics View
+const TeamStatsView = ({ team, onBack }) => {
   const teamStats = {
     matchesPlayed: 0,
     matchesWon: 0,
