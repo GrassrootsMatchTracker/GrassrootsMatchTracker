@@ -34,7 +34,7 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
     if (isTimerRunning) {
       interval = setInterval(() => {
         setCurrentMinute(prev => prev + 1);
-      }, 60000); // 1 minute = 60 seconds (for demo, using 60000ms)
+      }, 6000); // 6 seconds = 1 game minute (for demo purposes)
     }
     return () => {
       if (interval) clearInterval(interval);
