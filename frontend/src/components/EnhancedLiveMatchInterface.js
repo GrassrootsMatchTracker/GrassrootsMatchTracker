@@ -285,7 +285,19 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
                 </div>
                 <div className="text-center">
                   <p className="text-gray-400 text-sm">VS</p>
-                  <p className="text-2xl font-bold text-white">{currentMinute}'</p>
+                  {/* LCD Style Timer */}
+                  <div className="bg-black rounded-lg p-3 mb-2 border-2 border-cyan-400 shadow-lg shadow-cyan-400/20">
+                    <div className="font-mono text-3xl font-bold text-cyan-400 tracking-wider filter drop-shadow-lg">
+                      <span className="text-shadow-lg">{String(currentMinute).padStart(2, '0')}</span>
+                      <span className="animate-pulse">:</span>
+                      <span className="text-shadow-lg">{String(currentSecond).padStart(2, '0')}</span>
+                    </div>
+                    <div className="text-xs text-cyan-300 text-center mt-1 font-medium">
+                      {matchPhase === 'first_half' ? '1ST HALF' : 
+                       matchPhase === 'second_half' ? '2ND HALF' : 
+                       matchPhase === 'half_time' ? 'HALF TIME' : 'FULL TIME'}
+                    </div>
+                  </div>
                   <p className="text-gray-400 text-xs">{matchState.match_format}</p>
                 </div>
                 <div className="text-center">
@@ -294,25 +306,69 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
                 </div>
               </div>
               
-              <div className="flex space-x-4">
+              {/* Match Control Buttons */}
+              <div className="space-y-3">
                 {matchState.status !== 'live' ? (
                   <button
                     onClick={handleStartMatch}
-                    className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all"
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all"
                   >
                     Start Match
                   </button>
                 ) : (
-                  <button
-                    onClick={handlePauseTimer}
-                    className={`flex-1 py-3 rounded-xl transition-all ${
-                      isTimerRunning 
-                        ? 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700' 
-                        : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
-                    } text-white`}
-                  >
-                    {isTimerRunning ? 'Pause' : 'Resume'}
-                  </button>
+                  <>
+                    {/* Main Timer Control */}
+                    <button
+                      onClick={handlePauseTimer}
+                      disabled={matchPhase === 'half_time' || matchPhase === 'full_time'}
+                      className={`w-full py-3 rounded-xl transition-all ${
+                        matchPhase === 'half_time' || matchPhase === 'full_time'
+                          ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                          : isTimerRunning 
+                            ? 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700' 
+                            : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
+                      } text-white`}
+                    >
+                      {isTimerRunning ? 'Pause' : 'Resume'}
+                    </button>
+
+                    {/* Half Time Button */}
+                    {matchPhase === 'first_half' && (
+                      <button
+                        onClick={handleHalfTime}
+                        className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all"
+                      >
+                        Half Time
+                      </button>
+                    )}
+
+                    {/* Start Second Half Button */}
+                    {matchPhase === 'half_time' && (
+                      <button
+                        onClick={handleStartSecondHalf}
+                        className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all"
+                      >
+                        Start 2nd Half
+                      </button>
+                    )}
+
+                    {/* Full Time Button */}
+                    {(matchPhase === 'second_half' || matchPhase === 'first_half') && (
+                      <button
+                        onClick={handleFullTime}
+                        className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl hover:from-red-600 hover:to-red-700 transition-all"
+                      >
+                        Full Time
+                      </button>
+                    )}
+
+                    {/* Match Completed Message */}
+                    {matchPhase === 'full_time' && (
+                      <div className="w-full bg-gradient-to-r from-gray-700 to-gray-800 text-white py-3 rounded-xl text-center">
+                        Match Completed
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
