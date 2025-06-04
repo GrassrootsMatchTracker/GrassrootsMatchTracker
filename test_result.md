@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Check if my app is setup and working correctly"
+user_problem_statement: "I need you to test the current state of the Grassroots Match Tracker frontend application to identify which issues still need to be fixed: 1) Add player not working - Players cannot be added to teams, 2) Logo not showing - The app logo is not displaying properly, 3) Manage team & players button not working - Cannot access player management, 4) Remove away formation - User wants only one formation dropdown, 5) Add player selection on match details - Need clickable positions for player assignment"
 
 backend:
   - task: "FastAPI backend server setup"
