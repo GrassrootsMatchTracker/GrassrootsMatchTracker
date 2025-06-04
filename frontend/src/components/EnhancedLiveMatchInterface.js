@@ -131,6 +131,25 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
     setIsTimerRunning(!isTimerRunning);
   };
 
+  const handleHalfTime = () => {
+    setIsTimerRunning(false);
+    setMatchPhase('half_time');
+  };
+
+  const handleStartSecondHalf = () => {
+    setCurrentMinute(45);
+    setCurrentSecond(0);
+    setMatchPhase('second_half');
+    setIsTimerRunning(true);
+  };
+
+  const handleFullTime = () => {
+    setIsTimerRunning(false);
+    setMatchPhase('full_time');
+    // Update match status to completed
+    setMatchState({...matchState, status: 'completed'});
+  };
+
   const handleAddEvent = async (isUserTeam = true) => {
     if (!selectedPlayer || !selectedEventType) {
       alert('Please select a player and event type');
