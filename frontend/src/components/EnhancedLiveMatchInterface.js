@@ -33,15 +33,21 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
 
   useEffect(() => {
     let interval;
-    if (isTimerRunning) {
+    if (isTimerRunning && matchPhase !== 'half_time' && matchPhase !== 'full_time') {
       interval = setInterval(() => {
-        setCurrentMinute(prev => prev + 1);
-      }, 6000); // 6 seconds = 1 game minute (for demo purposes)
+        setCurrentSecond(prevSecond => {
+          if (prevSecond >= 59) {
+            setCurrentMinute(prevMinute => prevMinute + 1);
+            return 0;
+          }
+          return prevSecond + 1;
+        });
+      }, 1000); // Real-time seconds
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isTimerRunning]);
+  }, [isTimerRunning, matchPhase]);
 
   const loadMatchData = async () => {
     try {
