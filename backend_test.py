@@ -133,6 +133,21 @@ class GrassrootsMatchTrackerTester:
             print(f"Added player with ID: {response['player_id']}")
             return response['player_id']
         return None
+        
+    def test_add_player_with_photo(self, team_id, player_data, photo_base64):
+        """Test adding a player with photo to a team"""
+        player_data["photo_base64"] = photo_base64
+        success, response = self.run_test(
+            "Add Player with Photo to Team",
+            "POST",
+            f"api/teams/{team_id}/players",
+            200,
+            data=player_data
+        )
+        if success and 'player_id' in response:
+            print(f"Added player with photo, ID: {response['player_id']}")
+            return response['player_id']
+        return None
 
     def test_get_team_players(self, team_id):
         """Test getting all players for a team"""
