@@ -403,21 +403,15 @@ frontend:
 metadata:
   created_by: "main_agent"
   version: "1.0"
-  test_sequence: 1
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Player management UI"
-    - "Match creation interface"
-    - "Logo display"
     - "Player position selection"
   stuck_tasks:
-    - "Player management UI"
-    - "Match creation interface"
-    - "Logo display"
     - "Player position selection"
-  test_all: true
+  test_all: false
   test_priority: "high_first"
 
 agent_communication:
@@ -429,3 +423,5 @@ agent_communication:
     message: "Enhanced backend features testing completed. All new features are working correctly. Updated the test suite in backend_test.py to test the enhanced player model with photo_base64 field and stats tracking, live match features (starting matches, adding events, getting live state), enhanced statistics, and player stats updates. All tests passed successfully (64/64 tests). The enhanced backend is fully functional and ready for use."
   - agent: "testing"
     message: "Frontend testing completed. Found several issues that need to be fixed: 1) The 'Manage Team & Players' button is not working - returns a 500 error from the backend API. 2) The logo is visible but appears to be a very small image. 3) The match creation interface has both home and away formation fields, but the user requested to remove the away formation. 4) The player position selection feature is missing - there are no clickable positions for player assignment in the match details view."
+  - agent: "testing"
+    message: "Retested the application after fixes were implemented. Most issues have been resolved: 1) The 'Manage Team & Players' button now works correctly and allows access to the team squad view. 2) The logo has been updated to use an SVG format that displays properly. 3) The match creation interface now has only one formation dropdown as requested. However, the player position selection feature is still not working - the pitch visualization with clickable positions is not visible in the match creation interface."
