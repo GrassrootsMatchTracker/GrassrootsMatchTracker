@@ -1335,15 +1335,43 @@ function App() {
     }
   };
 
-  const handleTeamSelect = async (team) => {
+  const handleAddPlayer = async (playerData) => {
     try {
-      // Get full team details with players
-      const response = await axios.get(`${API_BASE_URL}/api/teams/${team.id}`);
-      setSelectedTeam(response.data);
-      setCurrentView('squad');
+      const response = await axios.post(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players`, playerData);
+      // Reload the selected team
+      const teamResponse = await axios.get(`${API_BASE_URL}/api/teams/${selectedTeam.id}`);
+      setSelectedTeam(teamResponse.data);
+      await loadTeams(); // Reload all teams
+      return response.data;
     } catch (error) {
-      console.error('Error loading team details:', error);
-      alert('Error loading team details');
+      console.error('Error adding player:', error);
+      throw error;
+    }
+  };
+
+  const handleUpdatePlayer = async (playerData) => {
+    try {
+      await axios.put(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players/${playerData.id}`, playerData);
+      // Reload the selected team
+      const teamResponse = await axios.get(`${API_BASE_URL}/api/teams/${selectedTeam.id}`);
+      setSelectedTeam(teamResponse.data);
+      await loadTeams(); // Reload all teams
+    } catch (error) {
+      console.error('Error updating player:', error);
+      throw error;
+    }
+  };
+
+  const handleDeletePlayer = async (playerId) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players/${playerId}`);
+      // Reload the selected team
+      const teamResponse = await axios.get(`${API_BASE_URL}/api/teams/${selectedTeam.id}`);
+      setSelectedTeam(teamResponse.data);
+      await loadTeams(); // Reload all teams
+    } catch (error) {
+      console.error('Error deleting player:', error);
+      throw error;
     }
   };
 
