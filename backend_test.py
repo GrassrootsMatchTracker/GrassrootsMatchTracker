@@ -344,6 +344,53 @@ class GrassrootsMatchTrackerTester:
         if success:
             print(f"Match update response: {response}")
         return success
+        
+    def test_start_match(self, match_id):
+        """Test starting a match"""
+        success, response = self.run_test(
+            "Start Match",
+            "POST",
+            f"api/matches/{match_id}/start",
+            200,
+            data={}
+        )
+        if success:
+            print(f"Match start response: {response}")
+        return success
+        
+    def test_add_match_event(self, match_id, player_id, event_type, minute=10):
+        """Test adding an event to a match"""
+        event_data = {
+            "match_id": match_id,
+            "player_id": player_id,
+            "event_type": event_type,
+            "minute": minute,
+            "additional_data": {}
+        }
+        
+        success, response = self.run_test(
+            f"Add Match Event ({event_type})",
+            "POST",
+            f"api/matches/{match_id}/events",
+            200,
+            data=event_data
+        )
+        if success and 'event_id' in response:
+            print(f"Added {event_type} event, ID: {response['event_id']}")
+            return response['event_id']
+        return None
+        
+    def test_get_live_match_state(self, match_id):
+        """Test getting live match state"""
+        success, response = self.run_test(
+            "Get Live Match State",
+            "GET",
+            f"api/matches/{match_id}/live",
+            200
+        )
+        if success:
+            print(f"Live match state: {json.dumps(response, indent=2)}")
+        return success, response
 
     # Error Handling Tests
     def test_invalid_endpoint(self):
