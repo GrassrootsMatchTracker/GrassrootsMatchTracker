@@ -83,7 +83,7 @@ class Player(BaseModel):
     position: str
     squad_number: int
     photo_url: Optional[str] = None
-    team_id: str
+    team_id: Optional[str] = None  # Made optional since it's set from URL parameter
 
 class Team(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
