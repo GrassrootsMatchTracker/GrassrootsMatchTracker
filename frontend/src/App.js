@@ -1295,6 +1295,18 @@ function App() {
     }
   };
 
+  const handleTeamSelect = async (team) => {
+    try {
+      // Get full team details with players
+      const response = await axios.get(`${API_BASE_URL}/api/teams/${team.id}`);
+      setSelectedTeam(response.data);
+      setCurrentView('squad');
+    } catch (error) {
+      console.error('Error loading team details:', error);
+      alert('Error loading team details');
+    }
+  };
+
   const handleAddPlayer = async (playerData) => {
     try {
       const response = await axios.post(`${API_BASE_URL}/api/teams/${selectedTeam.id}/players`, playerData);
