@@ -17,8 +17,7 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
   const [userTeamPlayers, setUserTeamPlayers] = useState([]);
   const [homeTeamName, setHomeTeamName] = useState('');
   const [awayTeamName, setAwayTeamName] = useState('');
-  const [userTeamName, setUserTeamName] = useState('');
-  const [oppositionTeamName, setOppositionTeamName] = useState('');
+  const [oppositionName, setOppositionName] = useState('');
   const [playerEventIndicators, setPlayerEventIndicators] = useState({});
 
   useEffect(() => {
