@@ -639,6 +639,8 @@ async def delete_match(match_id: str):
     await db.match_events.delete_many({"match_id": match_id})
     
     return {"message": "Match deleted successfully"}
+
+@app.get("/api/teams/{team_id}/statistics")
 async def get_team_statistics(team_id: str):
     """Get detailed team statistics including player stats"""
     team_doc = await db.teams.find_one({"id": team_id})
