@@ -245,6 +245,60 @@ class GrassrootsMatchTrackerTester:
             print(f"Created match with ID: {response['match_id']}")
             return response['match_id']
         return None
+        
+    def test_create_match_with_lineups(self, home_team_id, away_team_id, home_players, away_players):
+        """Test creating a match with lineups and positions"""
+        match_date = (datetime.now() + timedelta(days=7)).isoformat()
+        
+        # Select players for lineup and substitutes
+        home_lineup = home_players[:7] if len(home_players) >= 7 else home_players
+        home_subs = home_players[7:] if len(home_players) > 7 else []
+        
+        away_lineup = away_players[:7] if len(away_players) >= 7 else away_players
+        away_subs = away_players[7:] if len(away_players) > 7 else []
+        
+        # Create position mappings (simplified for test)
+        home_positions = {}
+        away_positions = {}
+        
+        positions = ["GK", "CB1", "CB2", "CM1", "CM2", "ST1", "ST2"]
+        for i, player_id in enumerate(home_lineup):
+            if i < len(positions):
+                home_positions[positions[i]] = player_id
+                
+        for i, player_id in enumerate(away_lineup):
+            if i < len(positions):
+                away_positions[positions[i]] = player_id
+        
+        match_data = {
+            "home_team_id": home_team_id,
+            "away_team_id": away_team_id,
+            "date": match_date,
+            "venue": "Test Stadium",
+            "home_formation": "4-4-2",
+            "away_formation": "4-3-3",
+            "home_lineup": home_lineup,
+            "away_lineup": away_lineup,
+            "home_substitutes": home_subs,
+            "away_substitutes": away_subs,
+            "home_positions": home_positions,
+            "away_positions": away_positions,
+            "score_home": 0,
+            "score_away": 0,
+            "status": "scheduled"
+        }
+        
+        success, response = self.run_test(
+            "Create Match with Lineups",
+            "POST",
+            "api/matches",
+            200,
+            data=match_data
+        )
+        if success and 'match_id' in response:
+            print(f"Created match with lineups, ID: {response['match_id']}")
+            return response['match_id']
+        return None
 
     def test_get_matches(self):
         """Test getting all matches"""
