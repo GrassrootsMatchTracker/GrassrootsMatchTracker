@@ -1439,15 +1439,8 @@ function App() {
       
       default:
         return <DashboardView teams={teams} onNavigate={handleNavigate} />;
-      
-      case 'squad':
-        return selectedTeam ? (
-          <SquadView
-            team={selectedTeam}
-            onBack={() => setCurrentView('teams')}
-            onPlayerAdd={handleAddPlayer}
-            onPlayerUpdate={handleUpdatePlayer}
-            onPlayerDelete={handleDeletePlayer}
+    }
+  };
           />
         ) : (
           <div>Loading...</div>
