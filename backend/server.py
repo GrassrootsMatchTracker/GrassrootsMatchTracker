@@ -101,6 +101,22 @@ class Team(BaseModel):
     logo_url: Optional[str] = None
     players: List[Player] = []
 
+class MatchEvent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    match_id: str
+    player_id: str
+    event_type: str  # "goal", "assist", "yellow_card", "red_card", "substitution"
+    minute: int
+    timestamp: datetime = Field(default_factory=datetime.now)
+    additional_data: Optional[Dict[str, Any]] = {}
+
+class LiveMatchState(BaseModel):
+    match_id: str
+    is_active: bool = False
+    current_minute: int = 0
+    timer_started_at: Optional[datetime] = None
+    events: List[MatchEvent] = []
+
 class Match(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     home_team_id: str
@@ -111,11 +127,14 @@ class Match(BaseModel):
     away_formation: str
     home_lineup: List[str] = []  # Player IDs
     away_lineup: List[str] = []
-    home_substitutes: List[str] = []  # Up to 6 substitutes
+    home_substitutes: List[str] = []  # Up to 5 substitutes
     away_substitutes: List[str] = []
+    home_positions: Dict[str, str] = {}  # position_id -> player_id mapping
+    away_positions: Dict[str, str] = {}
     score_home: int = 0
     score_away: int = 0
-    status: str = "scheduled"  # scheduled, in_progress, completed
+    status: str = "scheduled"  # scheduled, live, completed
+    events: List[MatchEvent] = []
 
 # Formation configurations based on age groups and PFSA standards
 FORMATIONS = {
