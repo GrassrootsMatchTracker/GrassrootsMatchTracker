@@ -453,3 +453,84 @@ body {
 .hover-glow:hover {
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
 }
+
+/* LCD Timer Styles */
+.lcd-timer {
+  background: linear-gradient(145deg, #000000, #1a1a1a);
+  border: 2px solid #00ffff;
+  border-radius: 8px;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.3),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.lcd-timer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 255, 0.03) 2px,
+      rgba(0, 255, 255, 0.03) 4px
+    );
+  pointer-events: none;
+}
+
+.lcd-digits {
+  font-family: 'Courier New', monospace;
+  color: #00ffff;
+  text-shadow: 
+    0 0 5px #00ffff,
+    0 0 10px #00ffff,
+    0 0 15px #00ffff;
+  position: relative;
+  z-index: 1;
+}
+
+.lcd-phase {
+  color: #00cccc;
+  text-shadow: 
+    0 0 3px #00cccc,
+    0 0 6px #00cccc;
+  font-family: 'Courier New', monospace;
+}
+
+/* Match Event Indicators */
+.event-indicator {
+  animation: eventPulse 2s ease-in-out infinite;
+}
+
+@keyframes eventPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Match Phase Transitions */
+.phase-transition {
+  animation: phaseChange 0.5s ease-in-out;
+}
+
+@keyframes phaseChange {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
