@@ -119,12 +119,15 @@ class LiveMatchState(BaseModel):
 
 class Match(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    home_team_id: str
-    away_team_id: str
+    home_team_id: Optional[str] = None
+    away_team_id: Optional[str] = None
+    opposition_name: Optional[str] = None  # For when one team is external
     date: datetime
     venue: str
     home_formation: str
-    away_formation: str
+    away_formation: str = "4-4-2"
+    match_format: str = "11v11"  # 5v5, 6v6, 7v7, 8v8, 9v9, 10v10, 11v11
+    match_type: str = "Friendly"  # League, Friendly, Cup
     home_lineup: List[str] = []  # Player IDs
     away_lineup: List[str] = []
     home_substitutes: List[str] = []  # Up to 5 substitutes
