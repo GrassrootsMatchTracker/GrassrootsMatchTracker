@@ -5,7 +5,7 @@ import PitchVisualization from './components/PitchVisualization';
 import PlayerSelectionModal from './components/PlayerSelectionModal';
 import LiveMatchInterface from './components/LiveMatchInterface';
 import SquadView from './components/SquadView';
-import MatchView from './components/MatchView';
+import EnhancedMatchView from './components/EnhancedMatchView';
 import { FixturesView, LeaguesView } from './components/SimpleViews';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
