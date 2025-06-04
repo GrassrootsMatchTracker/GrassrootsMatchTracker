@@ -150,7 +150,7 @@ const EnhancedMatchView = ({ teams, onBack }) => {
   };
 
   if (createdMatch) {
-    return <EnhancedLiveMatchInterface match={{...matchData, ...createdMatch}} onBack={onBack} />;
+    return <NewLiveMatchInterface match={{...matchData, ...createdMatch}} onBack={onBack} />;
   }
 
   return (
