@@ -552,7 +552,7 @@ const TeamStatsView = ({ team, onBack }) => {
 };
 
 // Enhanced Team View Component with Fixed Delete
-const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack, onDeleteTeam }) => {
+const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack, onDeleteTeam, onViewStatistics }) => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTeam, setNewTeam] = useState({
     name: '',
