@@ -347,3 +347,5 @@ agent_communication:
     message: "Application setup verification complete. All core features implemented and running. Backend on port 8001, frontend on port 3000. Ready for comprehensive testing."
   - agent: "testing"
     message: "Comprehensive backend API testing completed. All endpoints are working correctly. Created a complete test suite in backend_test.py that tests all API functionality including team management, player management, formation system, match management, and error handling. All tests passed successfully (40/40 tests). The backend is robust and ready for production use."
+  - agent: "testing"
+    message: "Enhanced backend features testing completed. All new features are working correctly. Updated the test suite in backend_test.py to test the enhanced player model with photo_base64 field and stats tracking, live match features (starting matches, adding events, getting live state), enhanced statistics, and player stats updates. All tests passed successfully (64/64 tests). The enhanced backend is fully functional and ready for use."
