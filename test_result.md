@@ -194,6 +194,54 @@ backend:
       - working: true
         agent: "testing"
         comment: "Match management API working correctly. Successfully tested creating matches between teams, retrieving all matches, getting specific match details, and updating match information (scores and status)."
+        
+  - task: "Enhanced Player Model"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Enhanced Player Model with photo_base64 field and stats tracking is working correctly. Successfully tested creating players with photos (base64 encoded) and verified that the stats fields (appearances, goals, assists, yellow_cards, red_cards, minutes_played) are properly initialized and stored."
+        
+  - task: "Live Match Features"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Live Match Features are working correctly. Successfully tested match creation with new fields (home_positions, away_positions, home_substitutes, away_substitutes), starting a match via POST /api/matches/{match_id}/start, adding match events via POST /api/matches/{match_id}/events, and getting live match state via GET /api/matches/{match_id}/live. All endpoints return the expected data and update the match state correctly."
+        
+  - task: "Enhanced Statistics"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Enhanced Statistics endpoint GET /api/teams/{team_id}/statistics is working correctly. Successfully retrieved detailed team statistics including player stats, matches played, goals for/against, and win percentage."
+        
+  - task: "Player Stats Updates"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Player Stats Updates are working correctly. Verified that match events (goals, assists, yellow cards, red cards) automatically update the corresponding player statistics. After adding events, the player stats were correctly incremented and could be retrieved via the team statistics endpoint."
 
 frontend:
   - task: "React application setup"
