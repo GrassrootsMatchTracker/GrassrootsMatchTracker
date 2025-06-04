@@ -381,9 +381,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "End-to-end application testing"
-    - "Frontend-backend integration"
-  stuck_tasks: []
+    - "Player management UI"
+    - "Match creation interface"
+    - "Logo display"
+    - "Player position selection"
+  stuck_tasks:
+    - "Player management UI"
+    - "Match creation interface"
+    - "Logo display"
+    - "Player position selection"
   test_all: true
   test_priority: "high_first"
 
@@ -394,3 +400,5 @@ agent_communication:
     message: "Comprehensive backend API testing completed. All endpoints are working correctly. Created a complete test suite in backend_test.py that tests all API functionality including team management, player management, formation system, match management, and error handling. All tests passed successfully (40/40 tests). The backend is robust and ready for production use."
   - agent: "testing"
     message: "Enhanced backend features testing completed. All new features are working correctly. Updated the test suite in backend_test.py to test the enhanced player model with photo_base64 field and stats tracking, live match features (starting matches, adding events, getting live state), enhanced statistics, and player stats updates. All tests passed successfully (64/64 tests). The enhanced backend is fully functional and ready for use."
+  - agent: "testing"
+    message: "Frontend testing completed. Found several issues that need to be fixed: 1) The 'Manage Team & Players' button is not working - returns a 500 error from the backend API. 2) The logo is visible but appears to be a very small image. 3) The match creation interface has both home and away formation fields, but the user requested to remove the away formation. 4) The player position selection feature is missing - there are no clickable positions for player assignment in the match details view."
