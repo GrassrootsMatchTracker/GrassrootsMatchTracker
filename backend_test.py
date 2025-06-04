@@ -5,7 +5,7 @@ import uuid
 from datetime import datetime, timedelta
 
 class GrassrootsMatchTrackerTester:
-    def __init__(self, base_url="https://38845ba4-f961-4e64-93c1-21e37eb937ef.preview.emergentagent.com"):
+    def __init__(self, base_url="https://b6dbc3a7-e80c-4140-9b06-8fd7858fdaef.preview.emergentagent.com"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
