@@ -856,10 +856,20 @@ function App() {
       
       case 'matches':
         return (
-          <MatchView
+          <EnhancedMatchView
             teams={teams}
             onBack={() => setCurrentView('dashboard')}
           />
+        );
+      
+      case 'statistics':
+        return selectedTeam ? (
+          <TeamStatsView
+            team={selectedTeam}
+            onBack={() => setCurrentView('teams')}
+          />
+        ) : (
+          <div>Select a team first</div>
         );
       
       case 'fixtures':
