@@ -1437,6 +1437,36 @@ function App() {
       case 'leagues':
         return <LeaguesView onBack={() => setCurrentView('dashboard')} />;
       
+      default:
+        return <DashboardView teams={teams} onNavigate={handleNavigate} />;
+      
+      case 'squad':
+        return selectedTeam ? (
+          <SquadView
+            team={selectedTeam}
+            onBack={() => setCurrentView('teams')}
+            onPlayerAdd={handleAddPlayer}
+            onPlayerUpdate={handleUpdatePlayer}
+            onPlayerDelete={handleDeletePlayer}
+          />
+        ) : (
+          <div>Loading...</div>
+        );
+      
+      case 'matches':
+        return (
+          <MatchView
+            teams={teams}
+            onBack={() => setCurrentView('dashboard')}
+          />
+        );
+      
+      case 'fixtures':
+        return <FixturesView onBack={() => setCurrentView('dashboard')} />;
+      
+      case 'leagues':
+        return <LeaguesView onBack={() => setCurrentView('dashboard')} />;
+      
       case 'statistics':
         return selectedTeam ? (
           <TeamStatsView
