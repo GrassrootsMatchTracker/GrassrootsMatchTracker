@@ -7,6 +7,7 @@ import LiveMatchInterface from './components/LiveMatchInterface';
 import SquadView from './components/SquadView';
 import MatchView from './components/MatchView';
 import { FixturesView, LeaguesView } from './components/SimpleViews';
+import { FixturesView, LeaguesView } from './components/SimpleViews';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
