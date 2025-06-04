@@ -398,9 +398,10 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">Your Team Player</label>
                 <select
-                  value={selectedPlayer}
-                  onChange={(e) => setSelectedPlayer(e.target.value)}
+                  value={selectedUserPlayer}
+                  onChange={(e) => setSelectedUserPlayer(e.target.value)}
                   className="w-full p-3 bg-slate-700 border border-slate-600 rounded-xl text-white"
+                  disabled={matchPhase === 'full_time'}
                 >
                   <option value="">Select Your Player</option>
                   {userTeamPlayers.map(player => (
@@ -413,9 +414,9 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
 
               <button
                 onClick={() => handleAddEvent(true)}
-                disabled={!selectedPlayer}
+                disabled={!selectedUserPlayer || matchPhase === 'full_time'}
                 className={`w-full py-3 rounded-xl transition-all ${
-                  selectedPlayer 
+                  selectedUserPlayer && matchPhase !== 'full_time'
                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700'
                     : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                 }`}
@@ -431,18 +432,19 @@ const EnhancedLiveMatchInterface = ({ match, onBack }) => {
                 <label className="block text-sm font-medium text-gray-300 mb-2">Opposition Player Name</label>
                 <input
                   type="text"
-                  value={selectedPlayer}
-                  onChange={(e) => setSelectedPlayer(e.target.value)}
+                  value={selectedOppositionPlayer}
+                  onChange={(e) => setSelectedOppositionPlayer(e.target.value)}
                   className="w-full p-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-gray-400"
                   placeholder="Enter opposition player name..."
+                  disabled={matchPhase === 'full_time'}
                 />
               </div>
 
               <button
                 onClick={() => handleAddEvent(false)}
-                disabled={!selectedPlayer}
+                disabled={!selectedOppositionPlayer || matchPhase === 'full_time'}
                 className={`w-full py-3 rounded-xl transition-all ${
-                  selectedPlayer 
+                  selectedOppositionPlayer && matchPhase !== 'full_time'
                     ? 'bg-gradient-to-r from-red-500 to-pink-600 text-white hover:from-red-600 hover:to-pink-700'
                     : 'bg-gray-600 text-gray-400 cursor-not-allowed'
                 }`}
