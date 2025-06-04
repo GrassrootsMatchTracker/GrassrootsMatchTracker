@@ -410,10 +410,8 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Player position selection"
-  stuck_tasks:
-    - "Player position selection"
+  current_focus: []
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
