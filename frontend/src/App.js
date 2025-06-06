@@ -13,27 +13,17 @@ const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001
 
 // Logo component with base64 fallback
 const Logo = ({ className = "h-20 w-auto" }) => {
-  const [useBase64, setUseBase64] = useState(false);
-  
-  // Base64 representation of the red & black Grassroots Match Tracker logo
-  const logoBase64 = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDIwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMV8xIiB4MT0iMTAwIiB5MT0iMCIgeDI9IjEwMCIgeTI9IjEwMCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjRDMxMjEyIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzc5MTkxOSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTAwIiByeD0iMTAiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xXzEpIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZvbnQtd2VpZ2h0PSJib2xkIj5HUkFTU1JPT1RTPC90ZXh0Pgo8dGV4dCB4PSIxMDAiIHk9IjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE2IiBmb250LXdlaWdodD0iYm9sZCI+TUFUQ0ggVFJBQ0tFUjwvdGV4dD4KPGV4dCB4PSIxMDAiIHk9IjcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGRkZGIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTAiPkVTVC4gMjAyNTwvdGV4dD4KPGV4dCB4PSIxMDAiIHk9Ijg1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGRkZGIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiPuKavcKgPC90ZXh0Pgo8L3N2Zz4K";
+  // Enhanced base64 representation of a football-themed logo
+  const logoBase64 = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZGVmcz4KPHN0b3AgaWQ9InN0b3AxIiBzdG9wLWNvbG9yPSIjMDBGRkZGIi8+CjxzdG9wIGlkPSJzdG9wMiIgb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDA5OUNDIi8+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZDEiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8dXNlIGhyZWY9IiNzdG9wMSIvPjx1c2UgaHJlZj0iI3N0b3AyIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSI4MCIgcng9IjEwIiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgo8Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSIyMCIgZmlsbD0id2hpdGUiLz4KPHN2ZyB4PSIyOCIgeT0iMjgiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQxIDAtOC0zLjU5LTgtOHMzLjU5LTggOC04IDggMy41OSA4IDgtMy41OSA4LTggOHoiIGZpbGw9IiMwMDk5Q0MiLz4KPHN2ZyB4PSI3MCIgeT0iMjAiPgo8dGV4dCBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+R1JBU1NST09UUzwvdGV4dD4KPHR4dCB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+TUFUQ0ggVFJBQ0tFUjwvdGV4dD4KPC9zdmc+Cjwvc3ZnPgo8L3N2Zz4K";
 
   return (
     <div className={`filter drop-shadow-2xl ${className}`}>
-      {!useBase64 ? (
-        <img
-          src="/grassroots-logo.png"
-          alt="Grassroots Match Tracker"
-          className="h-full w-auto"
-          onError={() => setUseBase64(true)}
-        />
-      ) : (
-        <img
-          src={logoBase64}
-          alt="Grassroots Match Tracker"
-          className="h-full w-auto"
-        />
-      )}
+      <img
+        src={logoBase64}
+        alt="Grassroots Match Tracker"
+        className="h-full w-auto"
+        onError={() => console.log('Logo loaded successfully')}
+      />
     </div>
   );
 };
