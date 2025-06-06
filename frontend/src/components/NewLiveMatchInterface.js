@@ -71,6 +71,24 @@ const NewLiveMatchInterface = ({ match, onBack }) => {
       setAwayTeamName(awayTeam);
       setOppositionName(opposition);
       
+      // Load existing events if match is live
+      if (matchState.status === 'live') {
+        try {
+          const eventsResponse = await axios.get(`${API_BASE_URL}/api/matches/${matchState.id}/live`);
+          if (eventsResponse.data && eventsResponse.data.events) {
+            const formattedEvents = eventsResponse.data.events.map(event => ({
+              ...event,
+              team_name: event.team_type === 'user' ? 
+                (matchState.user_team_type === 'home' ? homeTeam : awayTeam) : 
+                opposition
+            }));
+            setEvents(formattedEvents);
+          }
+        } catch (eventsError) {
+          console.error('Error loading match events:', eventsError);
+        }
+      }
+      
     } catch (error) {
       console.error('Error loading match data:', error);
       setHomeTeamName('Home Team');
