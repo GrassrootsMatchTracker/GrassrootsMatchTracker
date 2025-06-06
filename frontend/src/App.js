@@ -11,18 +11,18 @@ import { LeaguesView } from './components/SimpleViews';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
-// Logo component with base64 fallback
+// Logo component with working base64 logo
 const Logo = ({ className = "h-20 w-auto" }) => {
-  // Enhanced base64 representation of a football-themed logo
-  const logoBase64 = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZGVmcz4KPHN0b3AgaWQ9InN0b3AxIiBzdG9wLWNvbG9yPSIjMDBGRkZGIi8+CjxzdG9wIGlkPSJzdG9wMiIgb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDA5OUNDIi8+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZDEiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgo8dXNlIGhyZWY9IiNzdG9wMSIvPjx1c2UgaHJlZj0iI3N0b3AyIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSI4MCIgcng9IjEwIiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgo8Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSIyMCIgZmlsbD0id2hpdGUiLz4KPHN2ZyB4PSIyOCIgeT0iMjgiIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCI+CjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDE4Yy00LjQxIDAtOC0zLjU5LTgtOHMzLjU5LTggOC04IDggMy41OSA4IDgtMy41OSA4LTggOHoiIGZpbGw9IiMwMDk5Q0MiLz4KPHN2ZyB4PSI3MCIgeT0iMjAiPgo8dGV4dCBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+R1JBU1NST09UUzwvdGV4dD4KPHR4dCB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+TUFUQ0ggVFJBQ0tFUjwvdGV4dD4KPC9zdmc+Cjwvc3ZnPgo8L3N2Zz4K";
+  // Simple, working football logo
+  const logoBase64 = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iODAiIHJ4PSIxMCIgZmlsbD0iIzAwOTk3NSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik0zNSAzNWw1IDVsNS01bDUtNWwtNS01bC01LTV6IiBmaWxsPSIjMDA5OTc1Ii8+PHRleHQgeD0iNzUiIHk9IjMwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSI+R1JBU1NST09UUzwvdGV4dD48dGV4dCB4PSI3NSIgeT0iNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiPk1BVENIIFRSQUNLRVI8L3RleHQ+PC9zdmc+";
 
   return (
-    <div className={`filter drop-shadow-2xl ${className}`}>
+    <div className={`${className}`}>
       <img
         src={logoBase64}
         alt="Grassroots Match Tracker"
         className="h-full w-auto"
-        onError={() => console.log('Logo loaded successfully')}
+        style={{ maxHeight: '80px', width: 'auto' }}
       />
     </div>
   );
