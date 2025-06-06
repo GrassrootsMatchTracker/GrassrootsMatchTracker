@@ -292,37 +292,45 @@ const PlayerEditModal = ({ isOpen, onClose, player, onSave, onDelete }) => {
   );
 };
 
-// Enhanced Dashboard Component with Football Background
+// Enhanced Dashboard Component with REAL Football Background
 const DashboardView = ({ teams, onNavigate }) => {
   const totalPlayers = teams.reduce((total, team) => total + (team.players?.length || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 relative overflow-hidden">
-      {/* Football Stadium Background */}
-      <div className="absolute inset-0 opacity-20">
-        {/* Stadium Background Pattern */}
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 1px, transparent 1px),
-            radial-gradient(circle at 80% 50%, rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
-            linear-gradient(0deg, rgba(255,255,255,0.05) 1px, transparent 1px)
-          `,
-          backgroundSize: '100px 50px, 100px 50px, 20px 20px, 20px 20px'
-        }}>
-        </div>
-        
-        {/* Animated Football Icons */}
-        <div className="absolute top-10 left-10 text-white text-4xl animate-bounce">⚽</div>
-        <div className="absolute top-32 right-20 text-white text-3xl animate-pulse">🏆</div>
-        <div className="absolute bottom-20 left-32 text-white text-3xl animate-bounce" style={{animationDelay: '0.5s'}}>⚽</div>
-        <div className="absolute top-1/2 right-10 text-white text-2xl animate-pulse" style={{animationDelay: '1s'}}>🥅</div>
-        
-        {/* Stadium Lights Effect */}
-        <div className="absolute top-0 left-1/4 w-32 h-32 bg-yellow-400 rounded-full blur-3xl opacity-10"></div>
-        <div className="absolute top-0 right-1/4 w-32 h-32 bg-yellow-400 rounded-full blur-3xl opacity-10"></div>
-        <div className="absolute bottom-0 left-1/3 w-40 h-40 bg-yellow-400 rounded-full blur-3xl opacity-10"></div>
-        <div className="absolute bottom-0 right-1/3 w-40 h-40 bg-yellow-400 rounded-full blur-3xl opacity-10"></div>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* REAL Football Stadium Background */}
+      <div className="absolute inset-0">
+        <img 
+          src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1920&h=1080&fit=crop&crop=center" 
+          alt="Football Stadium" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/80 via-green-800/70 to-teal-900/80"></div>
+      </div>
+      
+      {/* Football Players Action Images */}
+      <div className="absolute top-10 right-10 opacity-30">
+        <img 
+          src="https://images.unsplash.com/photo-1528054433354-7ab84caaccc0?w=200&h=200&fit=crop&crop=center" 
+          alt="Football Player" 
+          className="w-32 h-32 rounded-full object-cover shadow-2xl"
+        />
+      </div>
+      
+      <div className="absolute bottom-20 left-10 opacity-25">
+        <img 
+          src="https://images.unsplash.com/photo-1526864947482-382a25347d51?w=200&h=200&fit=crop&crop=center" 
+          alt="Football Action" 
+          className="w-40 h-40 rounded-lg object-cover shadow-2xl"
+        />
+      </div>
+      
+      <div className="absolute top-1/3 left-10 opacity-20">
+        <img 
+          src="https://images.pexels.com/photos/32366169/pexels-photo-32366169.jpeg?w=200&h=200&fit=crop&crop=center" 
+          alt="Match Action" 
+          className="w-36 h-36 rounded-full object-cover shadow-2xl"
+        />
       </div>
       
       <div className="relative z-10 p-8">
@@ -331,10 +339,10 @@ const DashboardView = ({ teams, onNavigate }) => {
           <div className="flex items-center justify-center mb-8">
             <Logo />
           </div>
-          <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-green-300 to-teal-400 mb-6 drop-shadow-2xl">
+          <h1 className="text-6xl font-bold text-white mb-6 drop-shadow-2xl">
             GRASSROOTS MATCH TRACKER
           </h1>
-          <p className="text-2xl text-gray-200 font-light tracking-wide drop-shadow-lg">
+          <p className="text-2xl text-white font-light tracking-wide drop-shadow-lg">
             ⚽ Where Champions Are Made ⚽
           </p>
         </div>
@@ -343,7 +351,7 @@ const DashboardView = ({ teams, onNavigate }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-4xl mx-auto">
           <button
             onClick={() => onNavigate('teams')}
-            className="group bg-gradient-to-br from-emerald-600/80 to-green-700/80 backdrop-blur-lg rounded-3xl p-12 border border-emerald-400/30 hover:border-emerald-300 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20"
+            className="group bg-gradient-to-br from-emerald-600/90 to-green-700/90 backdrop-blur-lg rounded-3xl p-12 border border-emerald-400/30 hover:border-emerald-300 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20"
           >
             <div className="flex flex-col items-center text-center">
               <div className="p-6 bg-gradient-to-br from-emerald-400 to-green-500 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
@@ -365,7 +373,7 @@ const DashboardView = ({ teams, onNavigate }) => {
 
           <button
             onClick={() => onNavigate('matches')}
-            className="group bg-gradient-to-br from-blue-600/80 to-indigo-700/80 backdrop-blur-lg rounded-3xl p-12 border border-blue-400/30 hover:border-blue-300 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
+            className="group bg-gradient-to-br from-blue-600/90 to-indigo-700/90 backdrop-blur-lg rounded-3xl p-12 border border-blue-400/30 hover:border-blue-300 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
           >
             <div className="flex flex-col items-center text-center">
               <div className="p-6 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
@@ -390,7 +398,7 @@ const DashboardView = ({ teams, onNavigate }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           <button
             onClick={() => onNavigate('fixtures')}
-            className="group bg-gradient-to-br from-purple-600/60 to-pink-700/60 backdrop-blur-lg rounded-2xl p-8 border border-purple-400/20 hover:border-purple-300 transition-all duration-300 hover:scale-105"
+            className="group bg-gradient-to-br from-purple-600/80 to-pink-700/80 backdrop-blur-lg rounded-2xl p-8 border border-purple-400/20 hover:border-purple-300 transition-all duration-300 hover:scale-105"
           >
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl mr-4 group-hover:scale-110 transition-transform">
@@ -411,7 +419,7 @@ const DashboardView = ({ teams, onNavigate }) => {
 
           <button
             onClick={() => onNavigate('leagues')}
-            className="group bg-gradient-to-br from-orange-600/60 to-yellow-700/60 backdrop-blur-lg rounded-2xl p-8 border border-orange-400/20 hover:border-orange-300 transition-all duration-300 hover:scale-105"
+            className="group bg-gradient-to-br from-orange-600/80 to-yellow-700/80 backdrop-blur-lg rounded-2xl p-8 border border-orange-400/20 hover:border-orange-300 transition-all duration-300 hover:scale-105"
           >
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-xl mr-4 group-hover:scale-110 transition-transform">
@@ -433,7 +441,7 @@ const DashboardView = ({ teams, onNavigate }) => {
 
         {/* Fun Football Quote */}
         <div className="text-center mt-16">
-          <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-lg rounded-2xl p-6 max-w-2xl mx-auto border border-white/10">
+          <div className="bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-lg rounded-2xl p-6 max-w-2xl mx-auto border border-white/20">
             <p className="text-xl text-white font-light italic">
               "Football is not just a game, it's a way of life. Every match tells a story."
             </p>
