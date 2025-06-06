@@ -292,161 +292,152 @@ const PlayerEditModal = ({ isOpen, onClose, player, onSave, onDelete }) => {
   );
 };
 
-// Enhanced Dashboard Component
+// Enhanced Dashboard Component with Football Background
 const DashboardView = ({ teams, onNavigate }) => {
   const totalPlayers = teams.reduce((total, team) => total + (team.players?.length || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="relative overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-pink-500/10"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-500/5 to-transparent"></div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 relative overflow-hidden">
+      {/* Football Stadium Background */}
+      <div className="absolute inset-0 opacity-20">
+        {/* Stadium Background Pattern */}
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 1px, transparent 1px),
+            radial-gradient(circle at 80% 50%, rgba(255,255,255,0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+            linear-gradient(0deg, rgba(255,255,255,0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '100px 50px, 100px 50px, 20px 20px, 20px 20px'
+        }}>
         </div>
         
-        <div className="relative z-10 p-8">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center mb-6">
-              <Logo />
+        {/* Animated Football Icons */}
+        <div className="absolute top-10 left-10 text-white text-4xl animate-bounce">⚽</div>
+        <div className="absolute top-32 right-20 text-white text-3xl animate-pulse">🏆</div>
+        <div className="absolute bottom-20 left-32 text-white text-3xl animate-bounce" style={{animationDelay: '0.5s'}}>⚽</div>
+        <div className="absolute top-1/2 right-10 text-white text-2xl animate-pulse" style={{animationDelay: '1s'}}>🥅</div>
+        
+        {/* Stadium Lights Effect */}
+        <div className="absolute top-0 left-1/4 w-32 h-32 bg-yellow-400 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute top-0 right-1/4 w-32 h-32 bg-yellow-400 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute bottom-0 left-1/3 w-40 h-40 bg-yellow-400 rounded-full blur-3xl opacity-10"></div>
+        <div className="absolute bottom-0 right-1/3 w-40 h-40 bg-yellow-400 rounded-full blur-3xl opacity-10"></div>
+      </div>
+      
+      <div className="relative z-10 p-8">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center mb-8">
+            <Logo />
+          </div>
+          <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-green-300 to-teal-400 mb-6 drop-shadow-2xl">
+            GRASSROOTS MATCH TRACKER
+          </h1>
+          <p className="text-2xl text-gray-200 font-light tracking-wide drop-shadow-lg">
+            ⚽ Where Champions Are Made ⚽
+          </p>
+        </div>
+
+        {/* Main Action Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 max-w-4xl mx-auto">
+          <button
+            onClick={() => onNavigate('teams')}
+            className="group bg-gradient-to-br from-emerald-600/80 to-green-700/80 backdrop-blur-lg rounded-3xl p-12 border border-emerald-400/30 hover:border-emerald-300 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="p-6 bg-gradient-to-br from-emerald-400 to-green-500 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+                </svg>
+              </div>
+              <h3 className="text-3xl font-bold text-white mb-4 group-hover:text-emerald-100 transition-colors">
+                Manage Teams
+              </h3>
+              <p className="text-emerald-100 group-hover:text-white transition-colors text-lg">
+                Create and manage your football squads
+              </p>
+              <div className="mt-4 px-6 py-2 bg-white/20 rounded-full text-white font-semibold">
+                {teams.length} Teams • {totalPlayers} Players
+              </div>
             </div>
-            <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 mb-4">
-              GRASSROOTS MATCH TRACKER
-            </h1>
-            <p className="text-xl text-gray-300 font-light tracking-wide">
-              The Future of Football Management
+          </button>
+
+          <button
+            onClick={() => onNavigate('matches')}
+            className="group bg-gradient-to-br from-blue-600/80 to-indigo-700/80 backdrop-blur-lg rounded-3xl p-12 border border-blue-400/30 hover:border-blue-300 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className="p-6 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"></path>
+                </svg>
+              </div>
+              <h3 className="text-3xl font-bold text-white mb-4 group-hover:text-blue-100 transition-colors">
+                Create Match
+              </h3>
+              <p className="text-blue-100 group-hover:text-white transition-colors text-lg">
+                Schedule and track live matches
+              </p>
+              <div className="mt-4 px-6 py-2 bg-white/20 rounded-full text-white font-semibold">
+                Live Match Tracking
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Secondary Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+          <button
+            onClick={() => onNavigate('fixtures')}
+            className="group bg-gradient-to-br from-purple-600/60 to-pink-700/60 backdrop-blur-lg rounded-2xl p-8 border border-purple-400/20 hover:border-purple-300 transition-all duration-300 hover:scale-105"
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl mr-4 group-hover:scale-110 transition-transform">
+                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"></path>
+                </svg>
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-semibold text-white group-hover:text-purple-100 transition-colors">
+                  Fixtures & Results
+                </h3>
+                <p className="text-purple-100 group-hover:text-white transition-colors">
+                  View schedule and match history
+                </p>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onNavigate('leagues')}
+            className="group bg-gradient-to-br from-orange-600/60 to-yellow-700/60 backdrop-blur-lg rounded-2xl p-8 border border-orange-400/20 hover:border-orange-300 transition-all duration-300 hover:scale-105"
+          >
+            <div className="flex items-center">
+              <div className="p-3 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-xl mr-4 group-hover:scale-110 transition-transform">
+                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+              </div>
+              <div className="text-left">
+                <h3 className="text-xl font-semibold text-white group-hover:text-orange-100 transition-colors">
+                  Leagues & Tournaments
+                </h3>
+                <p className="text-orange-100 group-hover:text-white transition-colors">
+                  Manage competitive leagues
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Fun Football Quote */}
+        <div className="text-center mt-16">
+          <div className="bg-gradient-to-r from-white/10 to-white/5 backdrop-blur-lg rounded-2xl p-6 max-w-2xl mx-auto border border-white/10">
+            <p className="text-xl text-white font-light italic">
+              "Football is not just a game, it's a way of life. Every match tells a story."
             </p>
-          </div>
-
-          {/* Stats Dashboard */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <div className="bg-gradient-to-br from-cyan-500/20 to-blue-600/20 backdrop-blur-lg rounded-2xl p-6 border border-cyan-500/30 hover:border-cyan-400 transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-cyan-400 text-sm font-medium uppercase tracking-wider">Teams</p>
-                  <p className="text-3xl font-bold text-white mt-2">{teams.length}</p>
-                </div>
-                <div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-500/20 to-emerald-600/20 backdrop-blur-lg rounded-2xl p-6 border border-green-500/30 hover:border-green-400 transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-green-400 text-sm font-medium uppercase tracking-wider">Players</p>
-                  <p className="text-3xl font-bold text-white mt-2">{totalPlayers}</p>
-                </div>
-                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-yellow-500/20 to-orange-600/20 backdrop-blur-lg rounded-2xl p-6 border border-yellow-500/30 hover:border-yellow-400 transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-yellow-400 text-sm font-medium uppercase tracking-wider">Matches</p>
-                  <p className="text-3xl font-bold text-white mt-2">0</p>
-                </div>
-                <div className="p-3 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-purple-500/20 to-pink-600/20 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30 hover:border-purple-400 transition-all duration-300 hover:scale-105">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-purple-400 text-sm font-medium uppercase tracking-wider">Leagues</p>
-                  <p className="text-3xl font-bold text-white mt-2">0</p>
-                </div>
-                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <button
-              onClick={() => onNavigate('teams')}
-              className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50 hover:border-cyan-500/50 transition-all duration-300 hover:scale-105 group text-left"
-            >
-              <div className="flex items-center mb-4">
-                <div className="p-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl group-hover:scale-110 transition-transform">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-white ml-4 group-hover:text-cyan-300 transition-colors">Manage Teams</h3>
-              </div>
-              <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
-                Create and manage your football teams
-              </p>
-            </button>
-
-            <button
-              onClick={() => onNavigate('matches')}
-              className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50 hover:border-green-500/50 transition-all duration-300 hover:scale-105 group text-left"
-            >
-              <div className="flex items-center mb-4">
-                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-white ml-4 group-hover:text-green-300 transition-colors">Create Match</h3>
-              </div>
-              <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
-                Schedule and manage matches
-              </p>
-            </button>
-
-            <button
-              onClick={() => onNavigate('fixtures')}
-              className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:scale-105 group text-left"
-            >
-              <div className="flex items-center mb-4">
-                <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl group-hover:scale-110 transition-transform">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-white ml-4 group-hover:text-purple-300 transition-colors">Fixtures</h3>
-              </div>
-              <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
-                View upcoming fixtures and results
-              </p>
-            </button>
-
-            <button
-              onClick={() => onNavigate('leagues')}
-              className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-lg rounded-2xl p-8 border border-slate-700/50 hover:border-yellow-500/50 transition-all duration-300 hover:scale-105 group text-left"
-            >
-              <div className="flex items-center mb-4">
-                <div className="p-3 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl group-hover:scale-110 transition-transform">
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-white ml-4 group-hover:text-yellow-300 transition-colors">Leagues</h3>
-              </div>
-              <p className="text-gray-300 group-hover:text-gray-200 transition-colors">
-                Manage leagues and tournaments
-              </p>
-            </button>
+            <p className="text-emerald-300 mt-2 font-semibold">- Grassroots Champions</p>
           </div>
         </div>
       </div>
