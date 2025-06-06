@@ -135,8 +135,10 @@ const NewLiveMatchInterface = ({ match, onBack }) => {
         team_type: isUserTeam ? 'user' : 'opposition'
       };
 
+      // Save event to backend
       await axios.post(`${API_BASE_URL}/api/matches/${matchState.id}/events`, eventData);
       
+      // Create local event for display
       const newEvent = {
         ...eventData,
         id: Date.now().toString(),
@@ -144,29 +146,58 @@ const NewLiveMatchInterface = ({ match, onBack }) => {
         team_name: isUserTeam ? (matchState.user_team_type === 'home' ? homeTeamName : awayTeamName) : oppositionName
       };
       
+      // Add to events list
       setEvents([newEvent, ...events]);
       
-      // Update score if it's a goal
+      // Update score ONLY if it's a goal
       if (selectedEventType === 'goal') {
         if (isUserTeam) {
           if (matchState.user_team_type === 'home') {
-            setMatchState(prev => ({...prev, score_home: prev.score_home + 1}));
+            const newScore = matchState.score_home + 1;
+            setMatchState(prev => ({...prev, score_home: newScore}));
+            // Update backend with new score
+            await axios.put(`${API_BASE_URL}/api/matches/${matchState.id}`, {
+              score_home: newScore,
+              score_away: matchState.score_away
+            });
           } else {
-            setMatchState(prev => ({...prev, score_away: prev.score_away + 1}));
+            const newScore = matchState.score_away + 1;
+            setMatchState(prev => ({...prev, score_away: newScore}));
+            // Update backend with new score
+            await axios.put(`${API_BASE_URL}/api/matches/${matchState.id}`, {
+              score_home: matchState.score_home,
+              score_away: newScore
+            });
           }
         } else {
+          // Opposition goal
           if (matchState.user_team_type === 'home') {
-            setMatchState(prev => ({...prev, score_away: prev.score_away + 1}));
+            const newScore = matchState.score_away + 1;
+            setMatchState(prev => ({...prev, score_away: newScore}));
+            // Update backend with new score
+            await axios.put(`${API_BASE_URL}/api/matches/${matchState.id}`, {
+              score_home: matchState.score_home,
+              score_away: newScore
+            });
           } else {
-            setMatchState(prev => ({...prev, score_home: prev.score_home + 1}));
+            const newScore = matchState.score_home + 1;
+            setMatchState(prev => ({...prev, score_home: newScore}));
+            // Update backend with new score
+            await axios.put(`${API_BASE_URL}/api/matches/${matchState.id}`, {
+              score_home: newScore,
+              score_away: matchState.score_away
+            });
           }
         }
       }
 
+      // Reset form
       if (isUserTeam) {
         setSelectedUserPlayer('');
       }
       setSelectedEventType('goal');
+      
+      console.log('Event added successfully:', newEvent);
     } catch (error) {
       console.error('Error adding event:', error);
       alert('Error adding event');
