@@ -213,7 +213,7 @@ backend:
     file: "/app/frontend/src/components/EnhancedLiveMatchInterface.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
@@ -248,6 +248,42 @@ backend:
       - working: true
         agent: "testing"
         comment: "Player Stats Updates are working correctly. Verified that match events (goals, assists, yellow cards, red cards) automatically update the corresponding player statistics. After adding events, the player stats were correctly incremented and could be retrieved via the team statistics endpoint."
+
+  - task: "Team Deletion Functionality"
+    implemented: true
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "Team deletion endpoint DELETE /api/teams/{team_id} successfully removes the team from the database and returns a 200 status code with a success message. However, there's an issue with data consistency: when trying to get players for a deleted team via GET /api/teams/{team_id}/players, the API returns an empty array with a 200 status code instead of a 404 error. This suggests that while the team is deleted, the players might not be properly cleaned up from the database, potentially leading to orphaned data."
+
+  - task: "Player Deletion Functionality"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Player deletion endpoint DELETE /api/teams/{team_id}/players/{player_id} works correctly. Successfully tested deleting individual players from a team. The player is properly removed from the database and from the team's player list. Other players remain unaffected. The API also properly handles deletion of non-existent players with a 404 error."
+
+  - task: "Match Events Saving"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "Match events saving functionality works correctly. Successfully tested adding various types of events (goals, assists, yellow cards, red cards) to a match via POST /api/matches/{match_id}/events. Events are properly saved to the database and can be retrieved via GET /api/matches/{match_id}/live. Player statistics are also correctly updated based on the events."
 
 frontend:
   - task: "React application setup"
@@ -416,7 +452,8 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus: 
+    - "Team Deletion Functionality"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -436,3 +473,5 @@ agent_communication:
     message: "Tested the completely redesigned Grassroots Match Tracker match creation interface with all the new features. All requested features are now working correctly: 1) Enhanced Match Creation UI with pitch layout above create match button, smaller pitch size, and home/away team selection. 2) Formation System with additional formations that automatically update the pitch layout. 3) Match Format Selection (5v5, 7v7, 11v11, etc.) that alters the pitch layout. 4) Match Type Selection (League, Friendly, Cup). 5) Statistics Button on team cards. The player position selection feature is now fully implemented with clickable positions on the pitch and substitutes shown to the right. The interface is intuitive and responsive."
   - agent: "testing"
     message: "Completed comprehensive testing of the live match functionality. Created a dedicated test function in backend_test.py that tests the entire match lifecycle from creation to completion. All core live match features are working correctly: team loading, match creation, match phase controls (start, half time, second half, full time), event recording for both teams, and player statistics updates. The only minor issue is that the score_home and score_away fields are not automatically updated when goal events are added - they need to be manually updated via the PUT /api/matches/{match_id} endpoint. This is a minor issue that doesn't affect core functionality."
+  - agent: "testing"
+    message: "Tested the delete functionality for teams and players, as well as match events saving. Found an issue with team deletion: when a team is deleted, the GET /api/teams/{team_id}/players endpoint returns an empty array with a 200 status code instead of a 404 error. This suggests that while the team is deleted, the players might not be properly cleaned up from the database, potentially leading to orphaned data. Individual player deletion works correctly, and match events are properly saved to the database."
