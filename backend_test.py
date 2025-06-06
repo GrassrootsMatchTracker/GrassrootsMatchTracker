@@ -1049,7 +1049,19 @@ def main():
     else:
         print("\n❌ Live match workflow test failed")
     
-    return 0 if tester.tests_passed == tester.tests_run and live_match_success else 1
+    # Run the delete functionality and match events test
+    print("\n" + "=" * 80)
+    print("🔍 RUNNING DELETE FUNCTIONALITY AND MATCH EVENTS TEST 🔍")
+    print("=" * 80)
+    
+    delete_test_success = test_delete_functionality_and_match_events(tester, timestamp)
+    
+    if delete_test_success:
+        print("\n✅ Delete functionality and match events test completed successfully")
+    else:
+        print("\n❌ Delete functionality and match events test failed")
+    
+    return 0 if tester.tests_passed == tester.tests_run and live_match_success and delete_test_success else 1
 
 def test_delete_functionality_and_match_events(tester, timestamp):
     """Test the delete functionality for teams and players, and match events saving"""
