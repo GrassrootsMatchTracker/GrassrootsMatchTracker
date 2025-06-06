@@ -1051,5 +1051,249 @@ def main():
     
     return 0 if tester.tests_passed == tester.tests_run and live_match_success else 1
 
+def test_delete_functionality_and_match_events(tester, timestamp):
+    """Test the delete functionality for teams and players, and match events saving"""
+    print("\n" + "=" * 80)
+    print("🔍 TESTING DELETE FUNCTIONALITY AND MATCH EVENTS 🔍")
+    print("=" * 80)
+    
+    # 1. Create a team with multiple players
+    print("\n📋 CREATING TEST DATA")
+    team_name = f"Delete Test Team {timestamp}"
+    team_id = tester.test_create_team(team_name, "U13")
+    
+    if not team_id:
+        print("❌ Failed to create team for delete test")
+        return False
+    
+    print(f"✅ Created team with ID: {team_id}")
+    
+    # Add multiple players to the team
+    player_ids = []
+    for i in range(5):
+        player_data = {
+            "first_name": f"DeleteTest{i}",
+            "last_name": f"Player{timestamp}",
+            "age": 12,
+            "position": "Forward" if i < 2 else ("Midfielder" if i < 3 else "Defender"),
+            "squad_number": i + 1
+        }
+        player_id = tester.test_add_player(team_id, player_data)
+        if player_id:
+            player_ids.append(player_id)
+            print(f"✅ Added player {i+1} with ID: {player_id}")
+    
+    if len(player_ids) < 3:
+        print("❌ Failed to create enough players for delete test")
+        return False
+    
+    # 2. Verify the team and players exist
+    print("\n📋 VERIFYING TEAM AND PLAYERS EXIST")
+    success, players = tester.test_get_team_players(team_id)
+    if not success:
+        print("❌ Failed to get team players")
+        return False
+    
+    if len(players) != len(player_ids):
+        print(f"❌ Expected {len(player_ids)} players, but found {len(players)}")
+        return False
+    
+    print(f"✅ Verified team has {len(players)} players")
+    
+    # 3. Delete one player and verify it's removed while others remain
+    print("\n📋 TESTING INDIVIDUAL PLAYER DELETION")
+    player_to_delete = player_ids[0]
+    if not tester.test_delete_player(team_id, player_to_delete):
+        print(f"❌ Failed to delete player {player_to_delete}")
+        return False
+    
+    print(f"✅ Successfully deleted player {player_to_delete}")
+    
+    # Verify the player is removed
+    success, remaining_players = tester.test_get_team_players(team_id)
+    if not success:
+        print("❌ Failed to get remaining team players")
+        return False
+    
+    # Check if the deleted player is gone
+    deleted_player_exists = any(p.get('id') == player_to_delete for p in remaining_players)
+    if deleted_player_exists:
+        print(f"❌ Player {player_to_delete} still exists after deletion")
+        return False
+    
+    # Check if other players still exist
+    if len(remaining_players) != len(player_ids) - 1:
+        print(f"❌ Expected {len(player_ids) - 1} players, but found {len(remaining_players)}")
+        return False
+    
+    print(f"✅ Verified player deletion: {len(remaining_players)} players remain")
+    
+    # 4. Try to delete a non-existent player and verify error handling
+    print("\n📋 TESTING ERROR HANDLING FOR NON-EXISTENT PLAYER")
+    non_existent_player_id = "non-existent-player-id"
+    success, response = tester.run_test(
+        "Delete Non-existent Player",
+        "DELETE",
+        f"api/teams/{team_id}/players/{non_existent_player_id}",
+        404
+    )
+    
+    if not success:
+        print("❌ Failed to handle non-existent player deletion properly")
+        return False
+    
+    print("✅ Properly handled non-existent player deletion with 404 error")
+    
+    # 5. Create a match and add events to test match events saving
+    print("\n📋 TESTING MATCH EVENTS SAVING")
+    
+    # Create another team for the match
+    opponent_team_name = f"Opponent Team {timestamp}"
+    opponent_team_id = tester.test_create_team(opponent_team_name, "U13")
+    
+    if not opponent_team_id:
+        print("❌ Failed to create opponent team for match test")
+        return False
+    
+    # Add a player to the opponent team for events
+    opponent_player_data = {
+        "first_name": "Opponent",
+        "last_name": f"Player{timestamp}",
+        "age": 12,
+        "position": "Forward",
+        "squad_number": 9
+    }
+    opponent_player_id = tester.test_add_player(opponent_team_id, opponent_player_data)
+    
+    if not opponent_player_id:
+        print("❌ Failed to add player to opponent team")
+        return False
+    
+    # Create a match
+    match_date = (datetime.now() + timedelta(days=1)).isoformat()
+    match_data = {
+        "home_team_id": team_id,
+        "away_team_id": opponent_team_id,
+        "date": match_date,
+        "venue": "Delete Test Stadium",
+        "home_formation": "4-4-2",
+        "away_formation": "4-3-3",
+        "match_format": "11v11",
+        "match_type": "Friendly",
+        "home_lineup": player_ids[1:],  # Use remaining players
+        "away_lineup": [opponent_player_id],
+        "score_home": 0,
+        "score_away": 0,
+        "status": "scheduled"
+    }
+    
+    success, response = tester.run_test(
+        "Create Match for Events Test",
+        "POST",
+        "api/matches",
+        200,
+        data=match_data
+    )
+    
+    if not success or 'match_id' not in response:
+        print("❌ Failed to create match for events test")
+        return False
+    
+    match_id = response['match_id']
+    print(f"✅ Created match with ID: {match_id}")
+    
+    # Start the match
+    if not tester.test_start_match(match_id):
+        print("❌ Failed to start match")
+        return False
+    
+    # Add multiple events to the match
+    event_types = ["goal", "assist", "yellow_card", "red_card"]
+    event_ids = []
+    
+    for i, event_type in enumerate(event_types):
+        if i < len(player_ids[1:]):  # Use remaining players
+            event_id = tester.test_add_match_event(match_id, player_ids[i+1], event_type, minute=10+i*5)
+            if event_id:
+                event_ids.append(event_id)
+                print(f"✅ Added {event_type} event with ID: {event_id}")
+            else:
+                print(f"❌ Failed to add {event_type} event")
+    
+    # Verify events were saved to the match
+    success, match_state = tester.test_get_live_match_state(match_id)
+    if not success:
+        print("❌ Failed to get match state")
+        return False
+    
+    if 'events' not in match_state or len(match_state['events']) != len(event_ids):
+        print(f"❌ Expected {len(event_ids)} events, but found {len(match_state.get('events', []))}")
+        return False
+    
+    print(f"✅ Verified all {len(event_ids)} events were saved to the match")
+    
+    # 6. Delete the entire team and verify all players are removed
+    print("\n📋 TESTING TEAM DELETION AND DATA CONSISTENCY")
+    if not tester.test_delete_team(team_id):
+        print(f"❌ Failed to delete team {team_id}")
+        return False
+    
+    print(f"✅ Successfully deleted team {team_id}")
+    
+    # Verify the team is removed
+    success, response = tester.run_test(
+        "Get Deleted Team",
+        "GET",
+        f"api/teams/{team_id}",
+        404
+    )
+    
+    if not success:
+        print("❌ Failed to verify team deletion")
+        return False
+    
+    print("✅ Verified team no longer exists")
+    
+    # Verify all players are removed
+    success, response = tester.run_test(
+        "Get Players of Deleted Team",
+        "GET",
+        f"api/teams/{team_id}/players",
+        404
+    )
+    
+    if not success:
+        print("❌ Failed to verify player deletion")
+        return False
+    
+    print("✅ Verified all players were removed with the team")
+    
+    # 7. Try to delete a non-existent team and verify error handling
+    print("\n📋 TESTING ERROR HANDLING FOR NON-EXISTENT TEAM")
+    non_existent_team_id = "non-existent-team-id"
+    success, response = tester.run_test(
+        "Delete Non-existent Team",
+        "DELETE",
+        f"api/teams/{non_existent_team_id}",
+        404
+    )
+    
+    if not success:
+        print("❌ Failed to handle non-existent team deletion properly")
+        return False
+    
+    print("✅ Properly handled non-existent team deletion with 404 error")
+    
+    # 8. Clean up - Delete the opponent team
+    print("\n📋 CLEANING UP TEST DATA")
+    if not tester.test_delete_team(opponent_team_id):
+        print(f"❌ Failed to delete opponent team {opponent_team_id}")
+    
+    print("\n" + "=" * 80)
+    print("🔍 DELETE FUNCTIONALITY AND MATCH EVENTS TEST COMPLETED 🔍")
+    print("=" * 80)
+    
+    return True
+
 if __name__ == "__main__":
     sys.exit(main())
