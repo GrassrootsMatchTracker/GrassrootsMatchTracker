@@ -342,9 +342,9 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
                     {getOpponent(fixture)}
                   </div>
 
-                  {/* Competition */}
+                  {/* Fixture Type */}
                   <div className="text-sm text-gray-600">
-                    {fixture.match_type || 'League'}
+                    {fixture.match_type || fixture.age_group || 'League'}
                   </div>
 
                   {/* KO/Score */}
@@ -356,11 +356,6 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
                     ) : (
                       <span className="text-gray-600">{getScoreOrTime(fixture)}</span>
                     )}
-                  </div>
-
-                  {/* Attendance */}
-                  <div className="text-sm text-gray-600">
-                    {fixture.attendance || '-'}
                   </div>
 
                   {/* Actions */}
