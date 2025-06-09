@@ -195,9 +195,9 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
               {/* Match Header */}
               <div className="text-center mb-8">
                 <h3 className="text-3xl font-bold text-gray-800 mb-4">
-                  {selectedMatch.user_team_type === 'home' ? getUserTeamName(selectedMatch) : selectedMatch.opposition_name}
+                  {selectedMatch.user_team_type === 'home' ? getUserTeamName(selectedMatch) : getOpponent(selectedMatch)}
                   <span className="mx-6 text-purple-600">VS</span>
-                  {selectedMatch.user_team_type === 'away' ? getUserTeamName(selectedMatch) : selectedMatch.opposition_name}
+                  {selectedMatch.user_team_type === 'away' ? getUserTeamName(selectedMatch) : getOpponent(selectedMatch)}
                 </h3>
                 <p className="text-gray-600">{formatDate(selectedMatch.date)} • {selectedMatch.venue}</p>
                 <p className="text-gray-500">{selectedMatch.match_format} • {selectedMatch.match_type}</p>
