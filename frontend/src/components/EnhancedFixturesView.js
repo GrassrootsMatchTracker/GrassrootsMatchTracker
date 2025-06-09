@@ -322,7 +322,7 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
               </div>
             ) : (
               fixtures.map((fixture) => (
-                <div key={fixture.id} className="grid grid-cols-8 gap-4 p-4 hover:bg-gray-50 transition-colors items-center">
+                <div key={fixture.id} className="grid grid-cols-7 gap-4 p-4 hover:bg-gray-50 transition-colors items-center">
                   {/* Date */}
                   <div className="text-sm text-gray-800 font-medium">
                     {formatDate(fixture.date)}
