@@ -228,6 +228,19 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Formation</label>
+                <select
+                  value={newFixture.formation}
+                  onChange={(e) => setNewFixture({...newFixture, formation: e.target.value})}
+                  className="w-full p-2 border border-gray-300 rounded text-gray-800"
+                >
+                  {formations.map(formation => (
+                    <option key={formation} value={formation}>{formation}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Age Group</label>
                 <select
                   value={newFixture.age_group}
@@ -273,17 +286,6 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
                   className="w-full p-2 border border-gray-300 rounded text-gray-800"
                   placeholder="Venue"
                   required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Attendance</label>
-                <input
-                  type="number"
-                  value={newFixture.attendance}
-                  onChange={(e) => setNewFixture({...newFixture, attendance: e.target.value})}
-                  className="w-full p-2 border border-gray-300 rounded text-gray-800"
-                  placeholder="0"
                 />
               </div>
 
