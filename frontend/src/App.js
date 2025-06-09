@@ -867,6 +867,8 @@ function App() {
       
       case 'start-match':
       return <StartMatchView onBack={() => setCurrentView('dashboard')} teams={teams} />;
+    case 'start-match':
+      return <StartMatchView onBack={() => setCurrentView('dashboard')} teams={teams} />;
     case 'fixtures':
         return <EnhancedFixturesView teams={teams} onBack={() => setCurrentView('dashboard')} />;
       
