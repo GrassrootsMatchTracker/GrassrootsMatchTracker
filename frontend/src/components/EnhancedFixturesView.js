@@ -76,9 +76,22 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
     }
   };
 
-  const handleStartMatch = (fixture) => {
+  const handleViewResult = (fixture) => {
     setSelectedMatch(fixture);
-    setViewMode('live');
+    setViewMode('result');
+  };
+
+  const handleDeleteFixture = async (fixtureId) => {
+    if (window.confirm('Are you sure you want to delete this fixture?')) {
+      try {
+        await axios.delete(`${API_BASE_URL}/api/matches/${fixtureId}`);
+        loadFixtures();
+        alert('Fixture deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting fixture:', error);
+        alert('Error deleting fixture. Please try again.');
+      }
+    }
   };
 
   const getTeamName = (teamId) => {
