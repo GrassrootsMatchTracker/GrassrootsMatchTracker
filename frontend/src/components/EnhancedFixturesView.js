@@ -162,6 +162,120 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
     );
   }
 
+  if (viewMode === 'result' && selectedMatch) {
+    return (
+      <div className="min-h-screen relative overflow-hidden">
+        {/* Football Background */}
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=1920&h=1080&fit=crop&crop=center" 
+            alt="Football Stadium" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/90 via-slate-800/85 to-slate-900/90"></div>
+        </div>
+
+        <div className="relative z-10 p-8">
+          <div className="flex items-center mb-8">
+            <button 
+              onClick={() => {
+                setViewMode('list');
+                setSelectedMatch(null);
+              }}
+              className="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 mr-4 flex items-center space-x-2"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L4.414 9H17a1 1 0 110 2H4.414l5.293 5.293a1 1 0 010 1.414z" clipRule="evenodd"></path>
+              </svg>
+              <span>Back to Fixtures</span>
+            </button>
+            <h2 className="text-4xl font-bold text-white">Match Result</h2>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-8 border border-gray-200">
+              {/* Match Header */}
+              <div className="text-center mb-8">
+                <h3 className="text-3xl font-bold text-gray-800 mb-4">
+                  {selectedMatch.user_team_type === 'home' ? getUserTeamName(selectedMatch) : selectedMatch.opposition_name}
+                  <span className="mx-6 text-purple-600">VS</span>
+                  {selectedMatch.user_team_type === 'away' ? getUserTeamName(selectedMatch) : selectedMatch.opposition_name}
+                </h3>
+                <p className="text-gray-600">{formatDate(selectedMatch.date)} • {selectedMatch.venue}</p>
+                <p className="text-gray-500">{selectedMatch.match_format} • {selectedMatch.match_type}</p>
+              </div>
+
+              {/* Score */}
+              <div className="flex items-center justify-center mb-8">
+                <div className="text-center">
+                  <p className="text-6xl font-bold text-blue-600">{selectedMatch.score_home}</p>
+                </div>
+                <div className="mx-8">
+                  <p className="text-2xl text-gray-400">-</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-6xl font-bold text-red-600">{selectedMatch.score_away}</p>
+                </div>
+              </div>
+
+              {/* Formation Display */}
+              <div className="grid grid-cols-2 gap-8 mb-8">
+                <div className="text-center">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                    {selectedMatch.user_team_type === 'home' ? getUserTeamName(selectedMatch) : selectedMatch.opposition_name}
+                  </h4>
+                  <p className="text-gray-600">Formation: {selectedMatch.home_formation || '4-4-2'}</p>
+                </div>
+                <div className="text-center">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                    {selectedMatch.user_team_type === 'away' ? getUserTeamName(selectedMatch) : selectedMatch.opposition_name}
+                  </h4>
+                  <p className="text-gray-600">Formation: {selectedMatch.away_formation || '4-4-2'}</p>
+                </div>
+              </div>
+
+              {/* Match Events */}
+              {selectedMatch.events && selectedMatch.events.length > 0 && (
+                <div className="mt-8">
+                  <h4 className="text-xl font-semibold text-gray-800 mb-4">Match Events</h4>
+                  <div className="space-y-3">
+                    {selectedMatch.events.map((event, index) => (
+                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-l-4 border-blue-400">
+                        <div className="flex items-center space-x-3">
+                          <span className="text-2xl">
+                            {event.event_type === 'goal' && '⚽'}
+                            {event.event_type === 'assist' && '🎯'}
+                            {event.event_type === 'yellow_card' && '🟨'}
+                            {event.event_type === 'red_card' && '🟥'}
+                            {event.event_type === 'substitution' && '🔄'}
+                          </span>
+                          <div>
+                            <p className="text-gray-800 font-medium">
+                              {event.player_name || 'Player'}
+                            </p>
+                            <p className="text-gray-600 text-sm capitalize">
+                              {event.event_type.replace('_', ' ')}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-blue-600 font-bold">{event.minute}'</p>
+                          <p className="text-gray-500 text-sm">
+                            {event.team_type === 'user' ? 'Your Team' : 'Opposition'}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Football Background */}
