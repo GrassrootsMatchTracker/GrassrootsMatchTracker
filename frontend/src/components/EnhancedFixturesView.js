@@ -141,9 +141,7 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
 
   const getScoreOrTime = (fixture) => {
     if (fixture.status === 'completed') {
-      return `${fixture.score_home} - ${fixture.score_away}`;
-    } else if (fixture.status === 'live') {
-      return 'LIVE';
+      return `${fixture.score_home || 0} - ${fixture.score_away || 0}`;
     } else {
       return formatTime(fixture.date);
     }
