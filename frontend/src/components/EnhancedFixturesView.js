@@ -15,12 +15,15 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
     opposition_name: '',
     date: '',
     venue: '',
+    formation: '4-4-2',
+    match_format: '11v11',
     age_group: 'U13',
     fixture_type: 'League'
   });
 
   const ageGroups = ['U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18'];
   const fixtureTypes = ['League', 'Cup', 'Friendly', 'Tournament', 'Play-off'];
+  const formations = ['4-4-2', '4-3-3', '3-5-2', '4-5-1', '3-4-3', '5-3-2', '4-2-3-1'];
 
   useEffect(() => {
     loadFixtures();
