@@ -600,6 +600,26 @@ async def add_match_event(match_id: str, event: MatchEvent):
             {"id": event.player_id},
             {"$inc": {"stats.goals": 1}}
         )
+        
+        # Get the match to determine which team scored
+        match_doc = await db.matches.find_one({"id": match_id})
+        if match_doc:
+            # Get the player to determine which team they belong to
+            player_doc = await db.players.find_one({"id": event.player_id})
+            if player_doc and player_doc.get("team_id"):
+                player_team_id = player_doc.get("team_id")
+                
+                # Update the appropriate team's score
+                if player_team_id == match_doc.get("home_team_id"):
+                    await db.matches.update_one(
+                        {"id": match_id},
+                        {"$inc": {"score_home": 1}}
+                    )
+                elif player_team_id == match_doc.get("away_team_id"):
+                    await db.matches.update_one(
+                        {"id": match_id},
+                        {"$inc": {"score_away": 1}}
+                    )
     elif event.event_type == "assist":
         await db.players.update_one(
             {"id": event.player_id},
