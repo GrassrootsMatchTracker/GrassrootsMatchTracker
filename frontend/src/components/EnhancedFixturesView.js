@@ -304,13 +304,12 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
         {/* Fixtures Table */}
         <div className="bg-white/95 backdrop-blur-lg rounded-lg overflow-hidden border border-gray-200">
           {/* Table Header */}
-          <div className="grid grid-cols-8 gap-4 p-4 bg-gray-100 border-b border-gray-200 text-sm font-semibold text-gray-700">
+          <div className="grid grid-cols-7 gap-4 p-4 bg-gray-100 border-b border-gray-200 text-sm font-semibold text-gray-700">
             <div>Date</div>
             <div>H/A</div>
             <div className="col-span-2">Opponent</div>
-            <div>Competition</div>
+            <div>Type</div>
             <div>KO/Score</div>
-            <div>Attd</div>
             <div>Actions</div>
           </div>
 
