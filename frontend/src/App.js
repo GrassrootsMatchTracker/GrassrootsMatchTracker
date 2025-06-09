@@ -865,7 +865,9 @@ function App() {
           <div>Select a team first</div>
         );
       
-      case 'fixtures':
+      case 'start-match':
+      return <StartMatchView onBack={() => setCurrentView('dashboard')} teams={teams} />;
+    case 'fixtures':
         return <EnhancedFixturesView teams={teams} onBack={() => setCurrentView('dashboard')} />;
       
       case 'leagues':
