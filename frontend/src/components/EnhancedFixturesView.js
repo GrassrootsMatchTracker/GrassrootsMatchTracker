@@ -29,8 +29,8 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
   const loadFixtures = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/matches`);
-      // Sort fixtures by date (newest first for results, oldest first for upcoming)
-      const sortedFixtures = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+      // Sort fixtures by date (oldest first - chronological order)
+      const sortedFixtures = response.data.sort((a, b) => new Date(a.date) - new Date(b.date));
       setFixtures(sortedFixtures);
     } catch (error) {
       console.error('Error loading fixtures:', error);
