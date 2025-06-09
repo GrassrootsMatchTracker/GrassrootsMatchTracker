@@ -372,7 +372,7 @@ const DashboardView = ({ teams, onNavigate }) => {
           </button>
 
           <button
-            onClick={() => onNavigate('matches')}
+            onClick={() => onNavigate('start-match')}
             className="group bg-gradient-to-br from-blue-600/90 to-indigo-700/90 backdrop-blur-lg rounded-3xl p-12 border border-blue-400/30 hover:border-blue-300 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20"
           >
             <div className="flex flex-col items-center text-center">
@@ -382,10 +382,10 @@ const DashboardView = ({ teams, onNavigate }) => {
                 </svg>
               </div>
               <h3 className="text-3xl font-bold text-white mb-4 group-hover:text-blue-100 transition-colors">
-                Create Match
+                Start Match
               </h3>
               <p className="text-blue-100 group-hover:text-white transition-colors text-lg">
-                Schedule and track live matches
+                Select and start live match tracking
               </p>
               <div className="mt-4 px-6 py-2 bg-white/20 rounded-full text-white font-semibold">
                 Live Match Tracking
