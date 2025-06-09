@@ -574,17 +574,7 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack, onDel
     }
   };
 
-  const handleTeamDelete = async (teamId, teamName) => {
-    if (window.confirm(`Are you sure you want to delete "${teamName}" and all its players? This action cannot be undone.`)) {
-      try {
-        await onDeleteTeam(teamId);
-        alert('Team deleted successfully!');
-      } catch (error) {
-        console.error('Error deleting team:', error);
-        alert('Error deleting team. Please try again.');
-      }
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
