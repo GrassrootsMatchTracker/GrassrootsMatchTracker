@@ -574,7 +574,7 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack, onDel
     }
   };
 
-  const handleDeleteTeam = async (teamId, teamName) => {
+  const handleTeamDelete = async (teamId, teamName) => {
     if (window.confirm(`Are you sure you want to delete "${teamName}" and all its players? This action cannot be undone.`)) {
       try {
         await onDeleteTeam(teamId);
