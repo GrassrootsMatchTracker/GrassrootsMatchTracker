@@ -15,11 +15,12 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
     opposition_name: '',
     date: '',
     venue: '',
-    competition: 'League',
-    attendance: ''
+    age_group: 'U13',
+    fixture_type: 'League'
   });
 
-  const competitions = ['Premier League', 'League Cup', 'FA Cup', 'Championship', 'League One', 'League Two', 'Friendly'];
+  const ageGroups = ['U7', 'U8', 'U9', 'U10', 'U11', 'U12', 'U13', 'U14', 'U15', 'U16', 'U17', 'U18'];
+  const fixtureTypes = ['League', 'Cup', 'Friendly', 'Tournament', 'Play-off'];
 
   useEffect(() => {
     loadFixtures();
