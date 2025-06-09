@@ -220,13 +220,13 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
               <div className="grid grid-cols-2 gap-8 mb-8">
                 <div className="text-center">
                   <h4 className="text-lg font-semibold text-gray-800 mb-2">
-                    {selectedMatch.user_team_type === 'home' ? getUserTeamName(selectedMatch) : selectedMatch.opposition_name}
+                    {selectedMatch.user_team_type === 'home' ? getUserTeamName(selectedMatch) : getOpponent(selectedMatch)}
                   </h4>
                   <p className="text-gray-600">Formation: {selectedMatch.home_formation || '4-4-2'}</p>
                 </div>
                 <div className="text-center">
                   <h4 className="text-lg font-semibold text-gray-800 mb-2">
-                    {selectedMatch.user_team_type === 'away' ? getUserTeamName(selectedMatch) : selectedMatch.opposition_name}
+                    {selectedMatch.user_team_type === 'away' ? getUserTeamName(selectedMatch) : getOpponent(selectedMatch)}
                   </h4>
                   <p className="text-gray-600">Formation: {selectedMatch.away_formation || '4-4-2'}</p>
                 </div>
