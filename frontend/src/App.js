@@ -8,6 +8,7 @@ import SquadView from './components/SquadView';
 import EnhancedMatchView from './components/EnhancedMatchView';
 import EnhancedFixturesView from './components/EnhancedFixturesView';
 import { LeaguesView } from './components/SimpleViews';
+import StartMatchView from './components/StartMatchView';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
 
