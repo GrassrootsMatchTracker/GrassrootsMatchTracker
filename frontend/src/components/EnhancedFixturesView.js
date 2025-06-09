@@ -8,7 +8,7 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
   const [fixtures, setFixtures] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // 'list', 'live'
+  const [viewMode, setViewMode] = useState('list'); // 'list', 'result'
   const [newFixture, setNewFixture] = useState({
     user_team_id: '',
     user_team_type: 'home',
