@@ -61,6 +61,8 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
         opposition_name: '',
         date: '',
         venue: '',
+        formation: '4-4-2',
+        match_format: '11v11',
         age_group: 'U13',
         fixture_type: 'League'
       });
