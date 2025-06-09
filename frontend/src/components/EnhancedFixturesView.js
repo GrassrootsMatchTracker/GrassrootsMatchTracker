@@ -47,8 +47,9 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
         ...newFixture,
         home_team_id: newFixture.user_team_type === 'home' ? newFixture.user_team_id : null,
         away_team_id: newFixture.user_team_type === 'away' ? newFixture.user_team_id : null,
+        home_formation: newFixture.user_team_type === 'home' ? newFixture.formation : '4-4-2',
+        away_formation: newFixture.user_team_type === 'away' ? newFixture.formation : '4-4-2',
         match_type: newFixture.fixture_type,
-        match_format: '11v11',
         status: 'scheduled',
         score_home: 0,
         score_away: 0
