@@ -502,12 +502,20 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
                       </button>
                     )}
                     {fixture.status === 'scheduled' && (
-                      <button
-                        onClick={() => handleDeleteFixture(fixture.id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-all"
-                      >
-                        Delete
-                      </button>
+                      <>
+                        <button
+                          onClick={() => handleEditFixture(fixture)}
+                          className="bg-orange-600 text-white px-3 py-1 rounded text-xs hover:bg-orange-700 transition-all"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteFixture(fixture.id)}
+                          className="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-all"
+                        >
+                          Delete
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
