@@ -676,7 +676,7 @@ const TeamView = ({ teams, onTeamSelect, onAddTeam, onViewMatches, onBack, onDel
                 </div>
               </div>
               <button
-                onClick={() => handleDeleteTeam(team.id, team.name)}
+                onClick={() => onDeleteTeam(team.id)}
                 className="text-red-400 hover:text-red-300 p-2 rounded-lg hover:bg-red-500/20 transition-all"
                 title="Delete Team"
               >
