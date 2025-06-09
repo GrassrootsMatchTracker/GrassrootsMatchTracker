@@ -225,12 +225,12 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Competition</label>
                 <select
-                  value={newFixture.competition}
-                  onChange={(e) => setNewFixture({...newFixture, competition: e.target.value})}
+                  value={newFixture.fixture_type}
+                  onChange={(e) => setNewFixture({...newFixture, fixture_type: e.target.value})}
                   className="w-full p-2 border border-gray-300 rounded text-gray-800"
                 >
-                  {competitions.map(comp => (
-                    <option key={comp} value={comp}>{comp}</option>
+                  {fixtureTypes.map(type => (
+                    <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
               </div>
