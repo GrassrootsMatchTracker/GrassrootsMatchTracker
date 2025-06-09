@@ -106,7 +106,18 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
   };
 
   const getOpponent = (fixture) => {
-    return fixture.opposition_name || 'Unknown';
+    if (fixture.user_team_type === 'home') {
+      // User is home, show away team (opposition)
+      return fixture.opposition_name || 'Unknown';
+    } else {
+      // User is away, show home team (opposition) 
+      return fixture.opposition_name || 'Unknown';
+    }
+  };
+
+  const getUserTeamName = (fixture) => {
+    const team = teams.find(t => t.id === fixture.user_team_id);
+    return team ? team.name : 'Your Team';
   };
 
   const getScoreOrTime = (fixture) => {
