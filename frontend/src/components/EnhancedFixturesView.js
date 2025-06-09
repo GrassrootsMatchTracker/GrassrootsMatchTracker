@@ -368,27 +368,20 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
 
                   {/* Actions */}
                   <div className="flex space-x-1">
-                    {fixture.status === 'scheduled' && (
-                      <button
-                        onClick={() => handleStartMatch(fixture)}
-                        className="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition-all"
-                      >
-                        Start
-                      </button>
-                    )}
-                    {fixture.status === 'live' && (
-                      <button
-                        onClick={() => handleStartMatch(fixture)}
-                        className="bg-orange-600 text-white px-3 py-1 rounded text-xs hover:bg-orange-700 transition-all animate-pulse"
-                      >
-                        Live
-                      </button>
-                    )}
                     {fixture.status === 'completed' && (
                       <button
+                        onClick={() => handleViewResult(fixture)}
                         className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition-all"
                       >
                         View
+                      </button>
+                    )}
+                    {fixture.status === 'scheduled' && (
+                      <button
+                        onClick={() => handleDeleteFixture(fixture.id)}
+                        className="bg-red-600 text-white px-3 py-1 rounded text-xs hover:bg-red-700 transition-all"
+                      >
+                        Delete
                       </button>
                     )}
                   </div>
