@@ -44,7 +44,7 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
         ...newFixture,
         home_team_id: newFixture.user_team_type === 'home' ? newFixture.user_team_id : null,
         away_team_id: newFixture.user_team_type === 'away' ? newFixture.user_team_id : null,
-        match_type: newFixture.competition,
+        match_type: newFixture.fixture_type,
         match_format: '11v11',
         status: 'scheduled',
         score_home: 0,
@@ -58,8 +58,8 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
         opposition_name: '',
         date: '',
         venue: '',
-        competition: 'League',
-        attendance: ''
+        age_group: 'U13',
+        fixture_type: 'League'
       });
       setShowAddForm(false);
       loadFixtures();
