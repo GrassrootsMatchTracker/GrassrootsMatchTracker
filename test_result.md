@@ -284,6 +284,21 @@ backend:
       - working: true
         agent: "testing"
         comment: "Match events saving functionality works correctly. Successfully tested adding various types of events (goals, assists, yellow cards, red cards) to a match via POST /api/matches/{match_id}/events. Events are properly saved to the database and can be retrieved via GET /api/matches/{match_id}/live. Player statistics are also correctly updated based on the events."
+        
+  - task: "Match Score Calculation"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "There was an issue with score calculation in the live match tracking. When goal events were added via POST /api/matches/{match_id}/events, the player statistics were updated correctly, but the match score (score_home, score_away) remained at 0-0. This caused a discrepancy between the number of goal events and the displayed score."
+      - working: true
+        agent: "testing"
+        comment: "Fixed the score calculation issue by updating the add_match_event function to increment the appropriate team's score (score_home or score_away) when a goal event is added. The function now determines which team the player belongs to and updates the corresponding score field. Verified that the fix works correctly by testing the entire match workflow from creation to completion, including adding multiple goal events for both teams and checking that the scores are updated correctly."
 
 frontend:
   - task: "React application setup"
