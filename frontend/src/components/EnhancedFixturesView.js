@@ -223,7 +223,20 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Competition</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Age Group</label>
+                <select
+                  value={newFixture.age_group}
+                  onChange={(e) => setNewFixture({...newFixture, age_group: e.target.value})}
+                  className="w-full p-2 border border-gray-300 rounded text-gray-800"
+                >
+                  {ageGroups.map(age => (
+                    <option key={age} value={age}>{age}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fixture Type</label>
                 <select
                   value={newFixture.fixture_type}
                   onChange={(e) => setNewFixture({...newFixture, fixture_type: e.target.value})}
