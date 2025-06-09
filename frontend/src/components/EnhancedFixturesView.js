@@ -81,6 +81,21 @@ const EnhancedFixturesView = ({ onBack, teams }) => {
     setViewMode('result');
   };
 
+  const handleEditFixture = (fixture) => {
+    setNewFixture({
+      user_team_id: fixture.user_team_id || '',
+      user_team_type: fixture.user_team_type || 'home',
+      opposition_name: fixture.opposition_name || '',
+      date: fixture.date || '',
+      venue: fixture.venue || '',
+      formation: fixture.home_formation || fixture.away_formation || '4-4-2',
+      match_format: fixture.match_format || '11v11',
+      age_group: fixture.age_group || 'U13',
+      fixture_type: fixture.match_type || 'League'
+    });
+    setShowAddForm(true);
+  };
+
   const handleDeleteFixture = async (fixtureId) => {
     if (window.confirm('Are you sure you want to delete this fixture?')) {
       try {
